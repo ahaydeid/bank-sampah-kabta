@@ -107,16 +107,21 @@ const Content = ({
 
 const DropdownLink = ({
     className = '',
+    variant = 'default',
     children,
     ...props
-}: InertiaLinkProps) => {
+}: InertiaLinkProps & { variant?: 'default' | 'danger' }) => {
+    const baseClasses = 'block w-full px-4 py-2 text-start text-sm leading-5 transition duration-150 ease-in-out focus:outline-none';
+    
+    const variantClasses = {
+        default: 'text-gray-700 hover:bg-gray-100 focus:bg-gray-100',
+        danger: 'text-gray-700 hover:text-red-600 hover:bg-red-50 focus:bg-red-50 focus:text-red-600',
+    };
+
     return (
         <Link
             {...props}
-            className={
-                'block w-full px-4 py-2 text-start text-sm leading-5 text-gray-700 transition duration-150 ease-in-out hover:bg-gray-100 focus:bg-gray-100 focus:outline-none ' +
-                className
-            }
+            className={`${baseClasses} ${variantClasses[variant]} ${className}`}
         >
             {children}
         </Link>

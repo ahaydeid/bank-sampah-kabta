@@ -1,7 +1,7 @@
 import InputError from '@/Components/InputError';
-import InputLabel from '@/Components/InputLabel';
-import PrimaryButton from '@/Components/PrimaryButton';
-import TextInput from '@/Components/TextInput';
+import Label from '@/Components/Base/Label';
+import Button from '@/Components/Base/Button';
+import Input from '@/Components/Base/Input';
 import GuestLayout from '@/Layouts/GuestLayout';
 import { Head, useForm } from '@inertiajs/react';
 import { FormEventHandler } from 'react';
@@ -34,9 +34,9 @@ export default function ResetPassword({
 
             <form onSubmit={submit}>
                 <div>
-                    <InputLabel htmlFor="email" value="Email" />
+                    <Label htmlFor="email" value="Email" />
 
-                    <TextInput
+                    <Input
                         id="email"
                         type="email"
                         name="email"
@@ -50,9 +50,9 @@ export default function ResetPassword({
                 </div>
 
                 <div className="mt-4">
-                    <InputLabel htmlFor="password" value="Password" />
+                    <Label htmlFor="password" value="Password" />
 
-                    <TextInput
+                    <Input
                         id="password"
                         type="password"
                         name="password"
@@ -67,12 +67,12 @@ export default function ResetPassword({
                 </div>
 
                 <div className="mt-4">
-                    <InputLabel
+                    <Label
                         htmlFor="password_confirmation"
                         value="Confirm Password"
                     />
 
-                    <TextInput
+                    <Input
                         type="password"
                         name="password_confirmation"
                         value={data.password_confirmation}
@@ -90,9 +90,9 @@ export default function ResetPassword({
                 </div>
 
                 <div className="mt-4 flex items-center justify-end">
-                    <PrimaryButton className="ms-4" disabled={processing}>
+                    <Button variant="primary" className="ms-4" disabled={processing}>
                         Reset Password
-                    </PrimaryButton>
+                    </Button>
                 </div>
             </form>
         </GuestLayout>

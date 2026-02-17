@@ -13,7 +13,13 @@ export default {
     theme: {
         extend: {
             fontFamily: {
-                sans: ['Figtree', ...defaultTheme.fontFamily.sans],
+                sans: ['Poppins', ...defaultTheme.fontFamily.sans],
+            },
+            colors: {
+                kabta: {
+                    purple: '#622a83',
+                    gold: '#fcd34d',
+                },
             },
         },
     },

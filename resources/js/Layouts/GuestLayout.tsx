@@ -1,18 +1,23 @@
-import ApplicationLogo from '@/Components/ApplicationLogo';
-import { Link } from '@inertiajs/react';
 import { PropsWithChildren } from 'react';
 
 export default function Guest({ children }: PropsWithChildren) {
     return (
-        <div className="flex min-h-screen flex-col items-center bg-gray-100 pt-6 sm:justify-center sm:pt-0">
-            <div>
-                <Link href="/">
-                    <ApplicationLogo className="h-20 w-20 fill-current text-gray-500" />
-                </Link>
-            </div>
+        <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4 lg:p-6 font-sans">
+            <div className="w-full max-w-3xl bg-white rounded-2xl shadow-xl shadow-slate-200/50 overflow-hidden flex flex-col lg:flex-row min-h-[500px]">
+                {/* Left Side: Illustration */}
+                <div className="hidden lg:block lg:w-[45%] relative bg-kabta-purple/5">
+                    <img 
+                        src="/images/auth-login.webp" 
+                        alt="Auth Illustration" 
+                        className="absolute inset-0 w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-kabta-purple/20 to-transparent"></div>
+                </div>
 
-            <div className="mt-6 w-full overflow-hidden bg-white px-6 py-4 shadow-md sm:max-w-md sm:rounded-lg">
-                {children}
+                {/* Right Side: Form Content */}
+                <div className="w-full lg:w-[55%] p-8 lg:p-12 flex flex-col justify-center bg-white">
+                    {children}
+                </div>
             </div>
         </div>
     );

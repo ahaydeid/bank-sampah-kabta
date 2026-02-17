@@ -1,7 +1,7 @@
 import InputError from '@/Components/InputError';
-import InputLabel from '@/Components/InputLabel';
-import PrimaryButton from '@/Components/PrimaryButton';
-import TextInput from '@/Components/TextInput';
+import Label from '@/Components/Base/Label';
+import Button from '@/Components/Base/Button';
+import Input from '@/Components/Base/Input';
 import GuestLayout from '@/Layouts/GuestLayout';
 import { Head, Link, useForm } from '@inertiajs/react';
 import { FormEventHandler } from 'react';
@@ -24,13 +24,18 @@ export default function Register() {
 
     return (
         <GuestLayout>
-            <Head title="Register" />
+            <Head title="Daftar" />
 
-            <form onSubmit={submit}>
+            <div className="mb-6 text-center">
+                <h2 className="text-2xl font-black text-kabta-purple uppercase tracking-tight">Daftar Akun Baru</h2>
+                <div className="h-1 w-10 bg-kabta-gold mx-auto mt-2"></div>
+            </div>
+
+            <form onSubmit={submit} className="space-y-5">
                 <div>
-                    <InputLabel htmlFor="name" value="Name" />
+                    <Label htmlFor="name" value="Nama Lengkap" />
 
-                    <TextInput
+                    <Input
                         id="name"
                         name="name"
                         value={data.name}
@@ -38,16 +43,17 @@ export default function Register() {
                         autoComplete="name"
                         isFocused={true}
                         onChange={(e) => setData('name', e.target.value)}
+                        placeholder="Masukkan nama lengkap"
                         required
                     />
 
                     <InputError message={errors.name} className="mt-2" />
                 </div>
 
-                <div className="mt-4">
-                    <InputLabel htmlFor="email" value="Email" />
+                <div>
+                    <Label htmlFor="email" value="Alamat Email" />
 
-                    <TextInput
+                    <Input
                         id="email"
                         type="email"
                         name="email"
@@ -55,16 +61,17 @@ export default function Register() {
                         className="mt-1 block w-full"
                         autoComplete="username"
                         onChange={(e) => setData('email', e.target.value)}
+                        placeholder="contoh@kabta.id"
                         required
                     />
 
                     <InputError message={errors.email} className="mt-2" />
                 </div>
 
-                <div className="mt-4">
-                    <InputLabel htmlFor="password" value="Password" />
+                <div>
+                    <Label htmlFor="password" value="Password" />
 
-                    <TextInput
+                    <Input
                         id="password"
                         type="password"
                         name="password"
@@ -72,19 +79,20 @@ export default function Register() {
                         className="mt-1 block w-full"
                         autoComplete="new-password"
                         onChange={(e) => setData('password', e.target.value)}
+                        placeholder="Minimal 8 karakter"
                         required
                     />
 
                     <InputError message={errors.password} className="mt-2" />
                 </div>
 
-                <div className="mt-4">
-                    <InputLabel
+                <div>
+                    <Label
                         htmlFor="password_confirmation"
-                        value="Confirm Password"
+                        value="Konfirmasi Password"
                     />
 
-                    <TextInput
+                    <Input
                         id="password_confirmation"
                         type="password"
                         name="password_confirmation"
@@ -94,6 +102,7 @@ export default function Register() {
                         onChange={(e) =>
                             setData('password_confirmation', e.target.value)
                         }
+                        placeholder="Ulangi password"
                         required
                     />
 
@@ -103,17 +112,19 @@ export default function Register() {
                     />
                 </div>
 
-                <div className="mt-4 flex items-center justify-end">
-                    <Link
-                        href={route('login')}
-                        className="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                    >
-                        Already registered?
-                    </Link>
+                <div className="pt-2">
+                    <Button className="w-full" size="lg" disabled={processing}>
+                        Daftar Sekarang
+                    </Button>
+                </div>
 
-                    <PrimaryButton className="ms-4" disabled={processing}>
-                        Register
-                    </PrimaryButton>
+                <div className="text-center pt-4">
+                    <p className="text-xs font-medium text-slate-400 uppercase tracking-widest">
+                        Sudah punya akun?{' '}
+                        <Link href={route('login')} className="text-kabta-purple font-bold hover:underline">
+                            Masuk Disini
+                        </Link>
+                    </p>
                 </div>
             </form>
         </GuestLayout>

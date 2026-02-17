@@ -17,6 +17,7 @@ class Profil extends Model
         'jabatan',
         'saldo_poin',
         'token_qr',
+        'foto_profil',
     ];
 
     public function pengguna()
