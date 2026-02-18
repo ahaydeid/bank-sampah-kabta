@@ -159,21 +159,21 @@ export default function Sidebar({ isCollapsed }: { isCollapsed: boolean }) {
         {
             title: 'Operasional',
             items: [
-                { label: 'Setoran Sampah', icon: Recycle, href: undefined, active: false },
-                { label: 'Tukar Poin', icon: Wallet, href: undefined, active: false },
-                { label: 'Stok Sembako', icon: Package, href: undefined, active: false },
+                { label: 'Setoran Sampah', icon: Recycle, href: route('operasional.setoran.index'), active: route().current('operasional.setoran.*') },
+                { label: 'Tukar Poin', icon: Wallet, href: route('operasional.tukar-poin'), active: route().current('operasional.tukar-poin') },
+                { label: 'Stok Sembako', icon: Package, href: route('operasional.stok-sembako'), active: route().current('operasional.stok-sembako') },
             ]
         },
         {
             title: 'Analitik',
             items: [
-                { label: 'Laporan Transaksi', icon: LineChart, href: undefined, active: false },
+                { label: 'Laporan Transaksi', icon: LineChart, href: route('analitik.laporan'), active: route().current('analitik.laporan') },
             ]
         },
         {
             title: 'Nasabah',
             items: [
-                { label: 'Akun Nasabah', icon: Users, href: route('master.nasabah.index'), active: route().current('master.nasabah.*') },
+                { label: 'Nasabah', icon: Users, href: route('master.nasabah.index'), active: route().current('master.nasabah.*') },
             ]
         },
         {
@@ -184,9 +184,9 @@ export default function Sidebar({ isCollapsed }: { isCollapsed: boolean }) {
                     icon: Database, 
                     active: route().current('master.sampah.*') || route().current('master.pos-lokasi.*') || route().current('master.reward.*'),
                     children: [
+                        { label: 'Sembako', href: route('master.reward.index'), active: route().current('master.reward.*') },
                         { label: 'Kategori Sampah', href: route('master.sampah.index'), active: route().current('master.sampah.*') },
                         { label: 'Pos Unit', href: route('master.pos-lokasi.index'), active: route().current('master.pos-lokasi.*') },
-                        { label: 'Sembako', href: route('master.reward.index'), active: route().current('master.reward.*') },
                     ]
                 },
             ]
@@ -200,7 +200,15 @@ export default function Sidebar({ isCollapsed }: { isCollapsed: boolean }) {
                     href: route('master.staff.index'),
                     active: route().current('master.staff.*'),
                 },
-                { label: 'Pengaturan', icon: Settings, href: undefined, active: false },
+                { 
+                    label: 'Pengaturan', 
+                    icon: Settings, 
+                    active: route().current('sistem.pengaturan.*'),
+                    children: [
+                        { label: 'Penukaran Poin', href: route('sistem.pengaturan.penukaran-poin'), active: route().current('sistem.pengaturan.penukaran-poin') },
+                        // Placeholder menu lain jika diperlukan di masa depan
+                    ]
+                },
             ]
         }
     ];
@@ -229,7 +237,7 @@ export default function Sidebar({ isCollapsed }: { isCollapsed: boolean }) {
             {/* Navigation Body */}
             <div 
                 ref={scrollRef}
-                className="flex-1 overflow-y-auto min-h-0 max-h-full pt-4 pb-4 custom-scrollbar"
+                className="flex-1 overflow-y-auto min-h-0 max-h-full pb-4 custom-scrollbar"
             >
                 {menuGroups.map((group) => (
                     <div key={group.title} className={isCollapsed ? 'mb-2' : 'mb-4'}>

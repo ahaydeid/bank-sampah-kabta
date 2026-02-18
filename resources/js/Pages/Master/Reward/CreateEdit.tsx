@@ -13,19 +13,19 @@ interface Reward {
     stok: number;
     poin_tukar: number;
     kategori_reward: string;
+    stok_per_pos?: any[];
 }
 
 interface Props {
     reward?: Reward;
+    pos_lokasi: any[];
 }
 
-export default function CreateEdit({ reward }: Props) {
+export default function CreateEdit({ reward, pos_lokasi }: Props) {
     const isEdit = !!reward;
-
     const { data, setData, post, patch, processing, errors } = useForm({
         nama_reward: reward?.nama_reward || '',
-        stok: reward?.stok || 0,
-        poin_tukar: reward?.poin_tukar || 0,
+        poin_tukar: Number(reward?.poin_tukar || 0),
         kategori_reward: reward?.kategori_reward || 'Sembako',
     });
 
@@ -72,78 +72,64 @@ export default function CreateEdit({ reward }: Props) {
             <Head title={isEdit ? 'Edit Reward' : 'Tambah Reward'} />
 
             <div className="space-y-6">
-                <div className="flex items-center space-x-4">
-                    <Link
-                        href={route('master.reward.index')}
-                        className="p-2 hover:bg-slate-100 rounded transition-colors"
-                    >
-                        <ArrowLeft className="w-5 h-5 text-slate-600" />
-                    </Link>
-                    <div>
-                        <h1 className="text-2xl font-bold text-slate-800">
+                <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                        <Link
+                            href={route('master.reward.index')}
+                            className="p-2 hover:bg-gray-100 rounded-sm transition-colors border border-gray-200"
+                        >
+                            <ArrowLeft className="w-5 h-5 text-gray-600" />
+                        </Link>
+                        <h1 className="text-2xl font-bold text-gray-800 tracking-tight">
                             {isEdit ? 'Edit Reward' : 'Tambah Reward'}
                         </h1>
                     </div>
                 </div>
 
-                <div className="bg-white rounded-sm border border-slate-200 p-6 max-w-2xl shadow-sm">
+                <div className="bg-white rounded-sm border border-gray-200 p-8 max-w-2xl shadow-xs">
                     <form onSubmit={handleSubmit} className="space-y-6">
                         <div>
-                            <Label value="Nama Barang / Reward" />
+                            <Label value="Nama Barang / Reward" className="text-gray-700 font-semibold mb-1.5" />
                             <Input
                                 type="text"
                                 value={data.nama_reward}
                                 onChange={(e) => setData('nama_reward', e.target.value)}
-                                className="w-full mt-1"
+                                className="w-full rounded-sm border-gray-300 focus:border-gray-800 focus:ring-gray-800"
                                 placeholder="Contoh: Beras 5kg, Minyak Goreng 1L, dll"
                             />
                             {errors.nama_reward && <p className="text-red-500 text-xs mt-1">{errors.nama_reward}</p>}
                         </div>
 
                         <div>
-                            <Label value="Kategori" />
+                            <Label value="Kategori" className="text-gray-700 font-semibold mb-1.5" />
                             <Input
                                 type="text"
                                 value={data.kategori_reward}
                                 onChange={(e) => setData('kategori_reward', e.target.value)}
-                                className="w-full mt-1"
+                                className="w-full rounded-sm border-gray-300 focus:border-gray-800 focus:ring-gray-800"
                                 placeholder="Contoh: Sembako, Alat Tulis, dll"
                             />
                             {errors.kategori_reward && <p className="text-red-500 text-xs mt-1">{errors.kategori_reward}</p>}
                         </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <Label value="Stok Tersedia" />
-                                <Input
-                                    type="number"
-                                    value={data.stok}
-                                    onChange={(e) => setData('stok', Number(e.target.value))}
-                                    className="w-full mt-1"
-                                    placeholder="0"
-                                />
-                                {errors.stok && <p className="text-red-500 text-xs mt-1">{errors.stok}</p>}
-                            </div>
 
-                            <div>
-                                <Label value="Poin yang Dibutuhkan" />
-                                <Input
-                                    type="number"
-                                    value={data.poin_tukar}
-                                    onChange={(e) => setData('poin_tukar', Number(e.target.value))}
-                                    className="w-full mt-1"
-                                    placeholder="0"
-                                />
-                                {errors.poin_tukar && <p className="text-red-500 text-xs mt-1">{errors.poin_tukar}</p>}
-                            </div>
+                        <div>
+                            <Label value="Poin yang Dibutuhkan" className="text-gray-700 font-semibold mb-1.5" />
+                            <Input
+                                type="number"
+                                value={data.poin_tukar}
+                                onChange={(e) => setData('poin_tukar', Number(e.target.value))}
+                                className="w-full rounded-sm border-gray-300 focus:border-gray-800 focus:ring-gray-800"
+                                placeholder="0"
+                            />
+                            {errors.poin_tukar && <p className="text-red-500 text-xs mt-1">{errors.poin_tukar}</p>}
                         </div>
 
-                        <div className="flex justify-end pt-4 border-t border-slate-100">
+                        <div className="flex justify-end pt-6 border-t border-gray-50">
                             <Button
                                 type="submit"
-                                variant="primary"
                                 isLoading={processing}
-                                className="px-8 py-3"
+                                className="bg-sky-600 text-white hover:bg-sky-700 uppercase tracking-widest font-bold rounded-sm h-12 px-10 shadow-xs"
                             >
                                 <Save className="w-4 h-4 me-2" />
                                 {isEdit ? 'Simpan Perubahan' : 'Tambah Reward'}

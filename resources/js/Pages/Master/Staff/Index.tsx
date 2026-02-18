@@ -4,6 +4,7 @@ import { Plus, Edit, Trash2, ShieldCheck, Eye } from 'lucide-react';
 import { Table, THead, TBody, TR, TH, TD, TableSearch, Pagination, PerPageSelector } from '@/Components/Base/Table';
 import Button from '@/Components/Base/Button';
 import Alert from '@/Components/Base/Alert';
+import Avatar from '@/Components/Avatar';
 import { useState, useCallback } from 'react';
 import { debounce } from '@/lib/debounce';
 
@@ -12,6 +13,7 @@ interface Profil {
     nama: string;
     jabatan: string;
     no_hp: string;
+    foto_profil?: string | null;
 }
 
 interface Staff {
@@ -101,7 +103,7 @@ export default function Index({ staff, filters }: Props) {
                         <h1 className="text-2xl font-bold text-slate-800">Manajemen Staff</h1>
                     </div>
                     <Link href={route('master.staff.create')}>
-                        <Button variant="primary" className="w-full md:w-auto">
+                        <Button variant="primary" size="sm" className="w-full md:w-auto">
                             <Plus className="w-4 h-4 me-2" />
                             Tambah Staff
                         </Button>
@@ -136,9 +138,12 @@ export default function Index({ staff, filters }: Props) {
                                     <TR className="whitespace-nowrap" key={item.id} index={(staff.meta.current_page - 1) * staff.meta.per_page + index}>
                                         <TD>
                                             <div className="flex items-center whitespace-nowrap">
-                                                <div className="w-9 h-9 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center me-3 shrink-0 font-bold uppercase border border-slate-200">
-                                                    {item.profil.nama.charAt(0)}
-                                                </div>
+                                                <Avatar 
+                                                    src={item.profil?.foto_profil ? `/storage/${item.profil.foto_profil}` : null} 
+                                                    name={item.profil?.nama}
+                                                    size="sm"
+                                                    className="me-3"
+                                                />
                                                 <div>
                                                     <div className="font-medium text-slate-700">{item.profil.nama}</div>
                                                 </div>
@@ -165,8 +170,8 @@ export default function Index({ staff, filters }: Props) {
                                             </div>
                                         </TD>
                                         <TD>
-                                            <span className={`px-2 py-0.5 text-[10px] font-bold text-white rounded-sm uppercase tracking-wider whitespace-nowrap ${
-                                                item.is_aktif ? 'bg-emerald-600' : 'bg-red-600'
+                                            <span className={`px-3 py-1.5 text-[9px] font-medium text-white uppercase tracking-wider whitespace-nowrap ${
+                                                item.is_aktif ? 'bg-emerald-500' : 'bg-red-500'
                                             }`}>
                                                 {item.is_aktif ? 'Aktif' : 'Non-Aktif'}
                                             </span>
@@ -174,27 +179,22 @@ export default function Index({ staff, filters }: Props) {
                                         <TD className="text-center">
                                             <div className="flex justify-center space-x-2 whitespace-nowrap">
                                                 <Link href={route('master.staff.show', item.id)}>
-                                                    <Button variant="info" size="sm" className="px-3" title="Detail">
-                                                        <Eye className="w-3.5 h-3.5 me-1.5" />
-                                                        Detail
+                                                    <Button className="bg-amber-500 text-white hover:bg-amber-600 p-2 rounded-sm shadow-xs" title="Detail">
+                                                        <Eye className="w-3.5 h-3.5" />
                                                     </Button>
                                                 </Link>
                                                 <Link href={route('master.staff.edit', item.id)}>
-                                                    <Button variant="warning" size="sm" className="px-3" title="Ubah">
-                                                        <Edit className="w-3.5 h-3.5 me-1.5" />
-                                                        Ubah
+                                                    <Button className="bg-amber-500 text-white hover:bg-amber-600 p-2 rounded-sm shadow-xs" title="Edit">
+                                                        <Edit className="w-3.5 h-3.5" />
                                                     </Button>
                                                 </Link>
                                                 <Button 
-                                                    variant="danger" 
-                                                    size="sm" 
-                                                    className="px-3" 
+                                                    className="bg-red-600 text-white hover:bg-red-700 p-2 rounded-sm shadow-xs" 
                                                     title="Hapus"
                                                     onClick={() => handleDelete(item.id)}
-                                                    disabled={item.id === 1} // Protection for first admin
+                                                    disabled={item.id === 1}
                                                 >
-                                                    <Trash2 className="w-3.5 h-3.5 me-1.5" />
-                                                    Hapus
+                                                    <Trash2 className="w-3.5 h-3.5" />
                                                 </Button>
                                             </div>
                                         </TD>

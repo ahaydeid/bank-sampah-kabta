@@ -20,6 +20,43 @@ class TransaksiSetor extends Model
         'status',
     ];
 
+    protected $casts = [
+        'foto_bukti' => 'json',
+        'tanggal_waktu' => 'datetime',
+    ];
+
+    public function getFotoBuktiAttribute($value)
+    {
+        if (is_array($value)) {
+            $photos = $value;
+        } else {
+            $photos = json_decode($value, true) ?: [];
+        }
+
+        // Handle potential double encoding (if the database has a double-encoded string)
+        if (is_string($photos)) {
+            $decodeAgain = json_decode($photos, true);
+            if (is_array($decodeAgain)) {
+                $photos = $decodeAgain;
+            }
+        }
+
+        // Ensure we always return an array
+        if (!is_array($photos)) {
+            $photos = [];
+        }
+
+        return array_map(function ($photo) {
+            if (!is_string($photo)) {
+                return $photo;
+            }
+            if (str_starts_with($photo, 'http')) {
+                return $photo;
+            }
+            return url($photo);
+        }, $photos);
+    }
+
     public function member()
     {
         return $this->belongsTo(Pengguna::class, 'member_id');

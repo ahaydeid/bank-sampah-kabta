@@ -6,6 +6,7 @@ use App\Models\Sampah;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\DB;
 
 class SampahController extends Controller
 {
@@ -15,8 +16,9 @@ class SampahController extends Controller
         $perPage = $request->input('per_page', 10);
 
         $sampah = Sampah::when($search, function ($query, $search) {
-                $query->where('nama_sampah', 'like', "%{$search}%")
-                      ->orWhere('kategori', 'like', "%{$search}%");
+                $search = strtolower($search);
+                $query->where(DB::raw('LOWER(nama_sampah)'), 'ilike', "%{$search}%")
+                      ->orWhere(DB::raw('LOWER(kategori)'), 'ilike', "%{$search}%");
             })
             ->latest()
             ->paginate($perPage)

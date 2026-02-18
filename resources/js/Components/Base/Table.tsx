@@ -156,7 +156,7 @@ export function TH({ children, className = '', ...props }: ThHTMLAttributes<HTML
 
 export function TD({ children, className = '', ...props }: TdHTMLAttributes<HTMLTableCellElement> & BaseTableProps) {
     return (
-        <td {...props} className={`px-6 py-4 text-slate-600 ${className}`}>
+        <td {...props} className={`px-6 py-3 text-slate-600 ${className}`}>
             {children}
         </td>
     );

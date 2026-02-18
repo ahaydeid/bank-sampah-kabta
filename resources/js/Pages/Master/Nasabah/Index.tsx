@@ -1,9 +1,9 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link, useForm, router } from '@inertiajs/react';
-import { Plus, Edit, Trash2, QrCode } from 'lucide-react';
+import { Plus, Edit, QrCode } from 'lucide-react';
 import { Table, THead, TBody, TR, TH, TD, TableSearch, Pagination, PerPageSelector } from '@/Components/Base/Table';
 import Button from '@/Components/Base/Button';
-import Alert from '@/Components/Base/Alert';
+import Avatar from '@/Components/Avatar';
 import { useState, useEffect, useCallback } from 'react';
 import { debounce } from '@/lib/debounce';
 
@@ -15,6 +15,7 @@ interface Profil {
     alamat: string;
     saldo_poin: number;
     token_qr: string;
+    foto_profil?: string | null;
 }
 
 interface Nasabah {
@@ -72,26 +73,6 @@ export default function Index({ nasabah, filters }: Props) {
         );
     };
 
-    const handleDelete = (id: number) => {
-        Alert.confirm({
-            title: 'Hapus Nasabah?',
-            text: 'Data nasabah dan profilnya akan dihapus permanen.',
-            confirmButtonText: 'Ya, Hapus',
-        }).then((result) => {
-            if (result.isConfirmed) {
-                destroy(route('master.nasabah.destroy', id), {
-                    onSuccess: () => {
-                        Alert.success({
-                            title: 'Terhapus!',
-                            text: 'Data nasabah berhasil dihapus.',
-                            timer: 1500,
-                            showConfirmButton: false,
-                        });
-                    }
-                });
-            }
-        });
-    };
 
     return (
         <AuthenticatedLayout>
@@ -103,7 +84,7 @@ export default function Index({ nasabah, filters }: Props) {
                         <h1 className="text-2xl font-bold text-slate-800">Manajemen Nasabah</h1>
                     </div>
                     <Link href={route('master.nasabah.create')}>
-                        <Button variant="primary" className="w-full md:w-auto">
+                        <Button variant="primary" size="sm" className="w-full md:w-auto">
                             <Plus className="w-4 h-4 me-2" />
                             Tambah Nasabah
                         </Button>
@@ -124,7 +105,6 @@ export default function Index({ nasabah, filters }: Props) {
                         <THead>
                             <TR isHeader className='whitespace-nowrap'>
                                 <TH>Nasabah</TH>
-                                <TH>NIK / Username</TH>
                                 <TH>Alamat</TH>
                                 <TH>Email</TH>
                                 <TH>Telepon</TH>
@@ -139,16 +119,16 @@ export default function Index({ nasabah, filters }: Props) {
                                     <TR className='whitespace-nowrap' key={item.id} index={(nasabah.meta.current_page - 1) * nasabah.meta.per_page + index}>
                                         <TD>
                                             <div className="flex items-center">
-                                                <div className="w-9 h-9 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center me-3 shrink-0 font-bold uppercase">
-                                                    {item.profil.nama.charAt(0)}
-                                                </div>
+                                                <Avatar 
+                                                    src={item.profil?.foto_profil ? `/storage/${item.profil.foto_profil}` : null} 
+                                                    name={item.profil?.nama}
+                                                    size="sm"
+                                                    className="me-3"
+                                                />
                                                 <div>
                                                     <div className="font-medium text-slate-700">{item.profil.nama}</div>
                                                 </div>
                                             </div>
-                                        </TD>
-                                        <TD>
-                                            <div className="text-slate-600 font-mono text-sm">{item.profil.nik}</div>
                                         </TD>
                                         <TD>
                                             <div className="text-sm text-slate-600 max-w-[200px] truncate" title={item.profil.alamat}>
@@ -165,41 +145,28 @@ export default function Index({ nasabah, filters }: Props) {
                                                 {item.profil.no_hp || '-'}
                                             </div>
                                         </TD>
-                                        <TD className="text-right">
-                                            <span className="font-bold text-slate-800">
+                                        <TD className="text-center">
+                                            <span className="font-medium text-slate-800">
                                                 {new Intl.NumberFormat('id-ID').format(item.profil.saldo_poin)}
                                             </span>
-                                            <span className="text-[10px] text-slate-400 ms-1 uppercase">Poin</span>
                                         </TD>
                                         <TD>
-                                            <span className={`px-2 py-0.5 text-[10px] font-bold text-white rounded-sm uppercase tracking-wider ${
-                                                item.is_aktif ? 'bg-emerald-600' : 'bg-red-600'
+                                            <span className={`px-3 py-1.5 text-[9px] font-medium text-white uppercase tracking-wider ${
+                                                item.is_aktif ? 'bg-emerald-500' : 'bg-red-500'
                                             }`}>
                                                 {item.is_aktif ? 'Aktif' : 'Non-Aktif'}
                                             </span>
                                         </TD>
                                         <TD className="text-right">
                                             <div className="flex justify-center space-x-2">
-                                                <Button variant="secondary" size="sm" className="p-1.5" title="QR Code">
-                                                    <QrCode className="w-3.5 h-3.5 me-1.5" />
-                                                    QR Code
+                                                <Button className="!bg-gray-200 !text-gray-800 hover:bg-gray-600 p-2 rounded-sm shadow-xs" title="QR Code">
+                                                    <QrCode className="w-3.5 h-3.5" />
                                                 </Button>
                                                 <Link href={route('master.nasabah.edit', item.id)}>
-                                                    <Button variant="warning" size="sm" className="p-1.5" title="Edit">
-                                                        <Edit className="w-3.5 h-3.5 me-1.5" />
-                                                        Ubah
+                                                    <Button className="bg-amber-500 text-white hover:bg-amber-600 p-2 rounded-sm shadow-xs" title="Edit">
+                                                        <Edit className="w-3.5 h-3.5" />
                                                     </Button>
                                                 </Link>
-                                                <Button 
-                                                    variant="danger" 
-                                                    size="sm" 
-                                                    className="p-1.5" 
-                                                    title="Hapus"
-                                                    onClick={() => handleDelete(item.id)}
-                                                >
-                                                    <Trash2 className="w-3.5 h-3.5 me-1.5" />
-                                                    Hapus
-                                                </Button>
                                             </div>
                                         </TD>
                                     </TR>

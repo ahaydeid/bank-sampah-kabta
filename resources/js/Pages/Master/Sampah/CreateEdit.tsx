@@ -113,7 +113,7 @@ export default function CreateEdit({ sampah }: Props) {
                         </div>
 
                         <div>
-                            <Label value="Poin per Satuan (gram/kg)" />
+                            <Label value="Poin per Satuan (kg)" />
                             <Input
                                 type="number"
                                 value={data.poin_per_satuan}

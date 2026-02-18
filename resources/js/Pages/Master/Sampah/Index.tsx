@@ -91,7 +91,7 @@ export default function Index({ sampah, filters }: Props) {
                         <h1 className="text-2xl font-bold text-slate-800">Kategori Sampah</h1>
                     </div>
                     <Link href={route('master.sampah.create')}>
-                        <Button variant="primary" size="md">
+                        <Button variant="primary" size="sm">
                             <Plus className="w-4 h-4 me-2" />
                             Tambah Sampah
                         </Button>
@@ -121,11 +121,11 @@ export default function Index({ sampah, filters }: Props) {
                             {sampah.data.length > 0 ? (
                                 sampah.data.map((item, index) => (
                                     <TR key={item.id} index={(sampah.meta.current_page - 1) * sampah.meta.per_page + index}>
-                                        <TD className="font-medium text-slate-700">{item.nama_sampah}</TD>
+                                        <TD className="text-slate-800">{item.nama_sampah}</TD>
                                         <TD>
-                                            <span className={`px-2 py-0.5 text-[10px] font-bold text-white rounded-sm uppercase tracking-wider ${
-                                                item.kategori === 'Organik' ? 'bg-emerald-600' : 
-                                                item.kategori === 'Anorganik' ? 'bg-blue-600' : 
+                                            <span className={`px-3 py-1.5 text-[9px] font-medium text-white uppercase tracking-wider ${
+                                                item.kategori === 'Organik' ? 'bg-emerald-500' : 
+                                                item.kategori === 'Anorganik' ? 'bg-blue-500' : 
                                                 'bg-slate-600'
                                             }`}>
                                                 {item.kategori}
@@ -137,20 +137,17 @@ export default function Index({ sampah, filters }: Props) {
                                         <TD className="text-right">
                                             <div className="flex justify-end space-x-2">
                                                 <Link href={route('master.sampah.edit', item.id)}>
-                                                    <Button variant="warning" size="sm" className="p-1.5" title="Edit">
-                                                        <Edit className="w-3.5 h-3.5 me-1.5" />
-                                                        Ubah
+                                                    <Button className="bg-amber-500 text-white hover:bg-amber-600 p-2 rounded-sm shadow-xs" title="Edit">
+                                                        <Edit className="w-3.5 h-3.5" />
                                                     </Button>
                                                 </Link>
                                                 <Button 
                                                     variant="danger" 
-                                                    size="sm" 
-                                                    className="p-1.5" 
+                                                    className="bg-red-600 text-white hover:bg-red-700 p-2 rounded-sm shadow-xs" 
                                                     title="Hapus"
                                                     onClick={() => handleDelete(item.id)}
                                                 >
-                                                    <Trash2 className="w-3.5 h-3.5 me-1.5" />
-                                                    Hapus
+                                                    <Trash2 className="w-3.5 h-3.5" />
                                                 </Button>
                                             </div>
                                         </TD>

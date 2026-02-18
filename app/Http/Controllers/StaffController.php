@@ -21,9 +21,9 @@ class StaffController extends Controller
             ->with('profil')
             ->when($search, function ($query, $search) {
                 $query->whereHas('profil', function ($q) use ($search) {
-                    $q->where('nama', 'like', "%{$search}%")
-                      ->orWhere('jabatan', 'like', "%{$search}%");
-                })->orWhere('email', 'like', "%{$search}%");
+                    $q->where('nama', 'ilike', "%{$search}%")
+                      ->orWhere('jabatan', 'ilike', "%{$search}%");
+                })->orWhere('email', 'ilike', "%{$search}%");
             })
             ->latest()
             ->paginate($perPage)

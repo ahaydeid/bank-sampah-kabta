@@ -11,6 +11,8 @@ interface Reward {
     id: number;
     nama_reward: string;
     stok: number;
+    total_stok?: number;
+    stok_tampil?: number;
     poin_tukar: number;
     kategori_reward: string;
 }
@@ -28,16 +30,18 @@ interface Props {
             last_page: number;
         };
     };
+    pos_lokasi: any[];
     filters: {
         search?: string;
+        pos_id?: string | number;
         per_page?: string | number;
     }
 }
 
-export default function Index({ reward, filters }: Props) {
+export default function Index({ reward, pos_lokasi, filters }: Props) {
     const [search, setSearch] = useState(filters.search || '');
 
-    const handleSearch = useCallback(
+    const handleFilter = useCallback(
         debounce((query: string) => {
             router.get(
                 route('master.reward.index'),
@@ -50,7 +54,7 @@ export default function Index({ reward, filters }: Props) {
 
     const onSearchChange = (value: string) => {
         setSearch(value);
-        handleSearch(value);
+        handleFilter(value);
     };
 
     const handlePerPageChange = (perPage: number) => {
@@ -89,75 +93,64 @@ export default function Index({ reward, filters }: Props) {
             <div className="space-y-6">
                 <div className="flex items-center justify-between">
                     <div>
-                        <h1 className="text-2xl font-bold text-slate-800">Reward <span className="text-slate-400 font-normal italic text-lg"> (Sembako)</span></h1>
+                        <h1 className="text-2xl font-bold text-gray-800 tracking-tight">Master Data Sembako</h1>
                     </div>
                     <Link href={route('master.reward.create')}>
-                        <Button variant="primary" size="md">
+                        <Button variant="primary" size="sm">
                             <Plus className="w-4 h-4 me-2" />
                             Tambah Reward
                         </Button>
                     </Link>
                 </div>
 
-                <div className="bg-white overflow-hidden py-4">
-                    <div className="flex flex-col md:flex-row md:items-center justify-end gap-4 mb-4">
+                <div className="bg-white py-4 rounded-sm border border-gray-200 shadow-xs">
+                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 px-4 mb-6">
+                        <div className="flex flex-1 items-center gap-4">
+                            <TableSearch 
+                                value={search} 
+                                onChange={onSearchChange} 
+                                placeholder="Cari nama barang..." 
+                                className="flex-1 max-w-sm rounded-sm border-gray-200"
+                            />
+                        </div>
                         <PerPageSelector value={reward.meta.per_page} onChange={handlePerPageChange} />
-                        <TableSearch 
-                            value={search} 
-                            onChange={onSearchChange} 
-                            placeholder="Cari nama barang atau kategori..." 
-                        />
                     </div>
 
                     <Table>
                         <THead>
-                            <TR isHeader>
-                                <TH>Nama Barang</TH>
-                                <TH>Kategori</TH>
-                                <TH className="text-center">Stok</TH>
-                                <TH>Poin Tukar</TH>
-                                <TH className="text-right">Aksi</TH>
+                            <TR isHeader className="whitespace-nowrap bg-white border-b border-gray-100">
+                                <TH className="font-bold text-gray-500 uppercase p-4 text-[11px] tracking-wider text-left">Nama Barang</TH>
+                                <TH className="font-bold text-gray-500 uppercase p-4 text-[11px] tracking-wider text-left">Kategori</TH>
+                                <TH className="font-bold text-gray-500 uppercase p-4 text-[11px] tracking-wider text-right">Poin Tukar</TH>
+                                <TH className="font-bold text-gray-500 uppercase p-4 text-[11px] tracking-wider text-center w-24">Aksi</TH>
                             </TR>
                         </THead>
                         <TBody>
                             {reward.data.length > 0 ? (
                                 reward.data.map((item, index) => (
-                                    <TR key={item.id} index={(reward.meta.current_page - 1) * reward.meta.per_page + index}>
-                                        <TD>
-                                            <div className="flex items-center">
-                                                <span className="font-medium text-slate-700">{item.nama_reward}</span>
-                                            </div>
+                                    <TR key={item.id} index={(reward.meta.current_page - 1) * reward.meta.per_page + index} className='whitespace-nowrap border-b border-gray-100 hover:bg-gray-50/50 transition-colors'>
+                                        <TD className="py-5 px-4 text-left">
+                                            <span className="font-medium text-gray-800 text-sm">{item.nama_reward}</span>
                                         </TD>
-                                        <TD className="text-slate-500">
+                                        <TD className="py-5 px-4 text-sm font-medium text-gray-500 text-left">
                                             {item.kategori_reward}
                                         </TD>
-                                        <TD className="text-center">
-                                            <span className={`px-2 py-0.5 text-[10px] font-bold text-white rounded-sm uppercase tracking-wider ${
-                                                item.stok > 10 ? 'bg-slate-600' : 'bg-red-600'
-                                            }`}>
-                                                {item.stok}
-                                            </span>
+                                        <TD className="text-right py-5 px-4 text-sm font-medium text-gray-500">
+                                            {new Intl.NumberFormat('id-ID').format(item.poin_tukar)}
                                         </TD>
-                                        <TD className="text-slate-800 font-semibold">
-                                            {new Intl.NumberFormat('id-ID').format(item.poin_tukar)} Poin
-                                        </TD>
-                                        <TD className="text-right">
-                                            <div className="flex justify-end space-x-2 whitespace-nowrap">
+                                        <TD className="text-center py-5 px-4">
+                                            <div className="flex justify-center space-x-2 whitespace-nowrap">
                                                 <Link href={route('master.reward.edit', item.id)}>
-                                                    <Button variant="warning" size="sm" className="p-1.5" title="Edit">
-                                                        <Edit className="w-3.5 h-3.5 me-1.5" />
-                                                        Ubah
+                                                    <Button className="bg-amber-500 text-white hover:bg-amber-600 p-2 rounded-sm shadow-xs" title="Edit">
+                                                        <Edit className="w-3.5 h-3.5" />
                                                     </Button>
                                                 </Link>
                                                 <Button 
-                                                    variant="danger" 
-                                                    size="sm" 
-                                                    className="p-1.5" 
+                                                    className="bg-red-600 text-white hover:bg-red-700 p-2 rounded-sm shadow-xs" 
                                                     title="Hapus"
                                                     onClick={() => handleDelete(item.id)}
                                                 >
-                                                    <Trash2 className="w-3.5 h-3.5 me-1.5" />
-                                                    Hapus
+                                                    <Trash2 className="w-3.5 h-3.5" />
                                                 </Button>
                                             </div>
                                         </TD>
@@ -165,8 +158,8 @@ export default function Index({ reward, filters }: Props) {
                                 ))
                             ) : (
                                 <TR>
-                                    <TD colSpan={6} className="py-12 text-center text-slate-400">
-                                        <p>Belum ada data reward tersedia.</p>
+                                    <TD colSpan={5} className="py-20 text-center text-gray-400">
+                                        <p className="text-sm font-medium">Belum ada data reward tersedia.</p>
                                     </TD>
                                 </TR>
                             )}

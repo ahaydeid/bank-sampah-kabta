@@ -1,6 +1,13 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\SampahController;
+use App\Http\Controllers\PosLokasiController;
+use App\Http\Controllers\RewardController;
+use App\Http\Controllers\NasabahController;
+use App\Http\Controllers\StaffController;
+use App\Http\Controllers\TransaksiSetorController;
+use App\Http\Controllers\TransaksiTukarController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -25,11 +32,41 @@ Route::middleware('auth')->group(function () {
 
     // Master Data
     Route::prefix('master')->name('master.')->group(function () {
-        Route::resource('sampah', \App\Http\Controllers\SampahController::class);
-        Route::resource('pos-lokasi', \App\Http\Controllers\PosLokasiController::class);
-        Route::resource('reward', \App\Http\Controllers\RewardController::class);
-        Route::resource('nasabah', \App\Http\Controllers\NasabahController::class);
-        Route::resource('staff', \App\Http\Controllers\StaffController::class);
+        Route::resource('sampah', SampahController::class);
+        Route::resource('pos-lokasi', PosLokasiController::class);
+        Route::resource('reward', RewardController::class);
+        Route::resource('nasabah', NasabahController::class);
+        Route::resource('staff', StaffController::class);
+    });
+
+    // Operasional
+    Route::prefix('operasional')->name('operasional.')->group(function () {
+        Route::get('/setoran', [TransaksiSetorController::class, 'index'])->name('setoran.index');
+        Route::get('/setoran/{setoran}', [TransaksiSetorController::class, 'show'])->name('setoran.show');
+        Route::patch('/setoran/{setoran}/status', [TransaksiSetorController::class, 'updateStatus'])->name('setoran.update-status');
+        
+        Route::get('/tukar-poin', [TransaksiTukarController::class, 'index'])->name('tukar-poin');
+        Route::get('/tukar-poin/{id}', [TransaksiTukarController::class, 'show'])->name('tukar-poin.show');
+        Route::patch('/tukar-poin/{id}/approve', [TransaksiTukarController::class, 'approve'])->name('tukar-poin.approve');
+        Route::patch('/tukar-poin/{id}/reject', [TransaksiTukarController::class, 'reject'])->name('tukar-poin.reject');
+        Route::get('/stok-sembako', [RewardController::class, 'stok'])->name('stok-sembako');
+        Route::get('/stok-sembako/kelola', [RewardController::class, 'stokEdit'])->name('stok-sembako.edit');
+        Route::post('/stok-sembako/kelola', [RewardController::class, 'stokUpdate'])->name('stok-sembako.update');
+        Route::post('/stok-sembako/register', [RewardController::class, 'stokStore'])->name('stok-sembako.register');
+        Route::delete('/stok-sembako/unregister/{rewardId}/{posId}', [RewardController::class, 'stokDestroy'])->name('stok-sembako.destroy');
+    });
+
+    // Analitik
+    Route::prefix('analitik')->name('analitik.')->group(function () {
+        Route::get('/laporan', fn() => Inertia::render('UnderDevelopment'))->name('laporan');
+    });
+
+    // Sistem
+    Route::prefix('sistem')->name('sistem.')->group(function () {
+        Route::prefix('pengaturan')->name('pengaturan.')->group(function () {
+            Route::get('/penukaran-poin', [App\Http\Controllers\Sistem\SettingController::class, 'penukaranPoin'])->name('penukaran-poin');
+            Route::post('/update', [App\Http\Controllers\Sistem\SettingController::class, 'update'])->name('update');
+        });
     });
 });
 

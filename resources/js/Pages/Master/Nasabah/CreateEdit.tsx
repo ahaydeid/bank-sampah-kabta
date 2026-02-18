@@ -1,12 +1,13 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head, Link, useForm } from '@inertiajs/react';
-import { ArrowLeft, Save, User } from 'lucide-react';
-import { FormEventHandler } from 'react';
+import { Head, Link, useForm, router } from '@inertiajs/react';
+import { ArrowLeft, Save, User, Trash2, X, Camera } from 'lucide-react';
+import { FormEventHandler, useState, useRef } from 'react';
 import Alert from '@/Components/Base/Alert';
 import Button from '@/Components/Base/Button';
 import Input from '@/Components/Base/Input';
 import Label from '@/Components/Base/Label';
 import Checkbox from '@/Components/Checkbox';
+import Modal from '@/Components/Modal';
 
 interface Profil {
     id: number;
@@ -15,6 +16,7 @@ interface Profil {
     no_hp: string;
     alamat: string;
     saldo_poin: number;
+    foto_profil?: string | null;
 }
 
 interface Nasabah {
@@ -31,15 +33,62 @@ interface Props {
 
 export default function CreateEdit({ nasabah }: Props) {
     const isEdit = !!nasabah;
+    const fileInputRef = useRef<HTMLInputElement>(null);
+    const [previewUrl, setPreviewUrl] = useState<string | null>(
+        nasabah?.profil.foto_profil ? `/storage/${nasabah.profil.foto_profil}` : null
+    );
 
-    const { data, setData, post, patch, processing, errors } = useForm({
+    const { data, setData, post, patch, delete: destroy, processing, errors } = useForm({
+        _method: isEdit ? 'PATCH' : undefined,
         nama: nasabah?.profil.nama || '',
         nik: nasabah?.profil.nik || '',
         email: nasabah?.email || '',
         no_hp: nasabah?.profil.no_hp || '',
         alamat: nasabah?.profil.alamat || '',
         is_aktif: nasabah?.is_aktif ?? true,
+        foto_profil: null as File | null,
     });
+
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            setData('foto_profil', file);
+            setPreviewUrl(URL.createObjectURL(file));
+        }
+    };
+
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [confirmName, setConfirmName] = useState('');
+
+    const handleDeleteInitiate = () => {
+        Alert.confirm({
+            title: 'Hapus Akun Nasabah?',
+            text: 'Tindakan ini akan menghapus seluruh data nasabah dan bersifat permanen.',
+            confirmButtonText: 'Lanjutkan',
+            cancelButtonText: 'Batal',
+            confirmButtonColor: '#d33',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                setShowDeleteModal(true);
+            }
+        });
+    };
+
+    const handleFinalDelete = () => {
+        if (confirmName !== nasabah?.profil.nama) return;
+
+        destroy(route('master.nasabah.destroy', nasabah.id), {
+            onSuccess: () => {
+                setShowDeleteModal(false);
+                Alert.success({
+                    title: 'Dihapus!',
+                    text: 'Data nasabah berhasil dihapus.',
+                    timer: 1500,
+                    showConfirmButton: false,
+                });
+            }
+        });
+    };
 
     const handleSubmit: FormEventHandler = (e) => {
         e.preventDefault();
@@ -53,7 +102,7 @@ export default function CreateEdit({ nasabah }: Props) {
         }).then((result) => {
             if (result.isConfirmed) {
                 if (isEdit) {
-                    patch(route('master.nasabah.update', nasabah.id), {
+                    post(route('master.nasabah.update', nasabah.id), {
                         onSuccess: () => {
                             Alert.success({
                                 title: 'Berhasil!',
@@ -98,13 +147,43 @@ export default function CreateEdit({ nasabah }: Props) {
                     </div>
                 </div>
 
-                <div className="bg-white rounded-sm border border-slate-200 p-6 max-w-3xl shadow-sm">
+                <div className="bg-white rounded-sm border border-slate-200 p-6 shadow-sm">
                     <div className="flex items-center space-x-2 text-slate-400 mb-6 pb-4 border-b border-slate-100">
-                        <User className="w-4 h-4" />
-                        <span className="text-xs font-bold uppercase tracking-wider">Informasi Personal</span>
+                        <span className="text-xs font-bold uppercase tracking-wider">Informasi nasabah</span>
                     </div>
 
                     <form onSubmit={handleSubmit} className="space-y-6">
+                        <div className="flex flex-col items-center mb-6">
+                            <div className="relative group cursor-pointer" onClick={() => fileInputRef.current?.click()}>
+                                <div className="w-28 h-28 rounded-full overflow-hidden border-2 border-slate-100 shadow-sm relative bg-slate-50 flex items-center justify-center">
+                                    {previewUrl ? (
+                                        <img src={previewUrl} alt="Preview" className="w-full h-full object-cover" />
+                                    ) : (
+                                        <User className="w-12 h-12 text-slate-300" />
+                                    )}
+                                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors flex items-center justify-center">
+                                        
+                                    </div>
+                                </div>
+                                <button
+                                    type="button"
+                                    className="absolute bottom-1 right-1 p-2 bg-kabta-purple text-white rounded-full hover:bg-kabta-purple/90 border-2 border-white"
+                                >
+                                    <Camera size={16} />
+                                </button>
+                            </div>
+                            <p className="text-xs text-slate-400 mt-3 font-medium">Klik untuk ubah foto profil</p>
+                            <input
+                                type="file"
+                                ref={fileInputRef}
+                                className="hidden"
+                                accept="image/*"
+                                onChange={handleFileChange}
+                            />
+                            {/* @ts-ignore */}
+                            {errors.foto_profil && <p className="text-red-500 text-xs text-center mt-1">{errors.foto_profil}</p>}
+                        </div>
+
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div className="space-y-6">
                                 <div>
@@ -186,12 +265,26 @@ export default function CreateEdit({ nasabah }: Props) {
                             </div>
                         )}
 
-                        <div className="flex justify-end pt-4 border-t border-slate-100">
+                        <div className="flex justify-between pt-4 border-t border-slate-100">
+                            <div>
+                                {isEdit && (
+                                    <Button
+                                        type="button"
+                                        variant="danger"
+                                        onClick={handleDeleteInitiate}
+                                        disabled={processing}
+                                        className="px-6"
+                                    >
+                                        <Trash2 className="w-4 h-4 me-2" />
+                                        Hapus Akun
+                                    </Button>
+                                )}
+                            </div>
                             <Button
                                 type="submit"
                                 variant="primary"
                                 isLoading={processing}
-                                className="px-8 py-3"
+                                className="px-8"
                             >
                                 <Save className="w-4 h-4 me-2" />
                                 {isEdit ? 'Simpan Perubahan' : 'Daftarkan Nasabah'}
@@ -200,6 +293,59 @@ export default function CreateEdit({ nasabah }: Props) {
                     </form>
                 </div>
             </div>
+
+            {/* Final Confirmation Modal */}
+            <Modal show={showDeleteModal} onClose={() => setShowDeleteModal(false)} maxWidth="md">
+                <div className="p-6">
+                    <div className="flex items-center justify-between mb-4 border-b pb-3">
+                        <h3 className="text-lg font-bold text-slate-800 flex items-center">
+                            Konfirmasi Terakhir
+                        </h3>
+                        <button onClick={() => setShowDeleteModal(false)} className="text-slate-400 hover:text-slate-600">
+                            <X size={20} />
+                        </button>
+                    </div>
+
+                    <p className="text-sm text-slate-600 mb-4 leading-relaxed">
+                        Untuk menghapus akun silakan ketik nama lengkap nasabah tersebut di bawah ini sebagai konfirmasi.
+                    </p>
+
+                    <div className="space-y-4">
+                        <div className="text-center">
+                            <label className="block text-sm font-bold text-slate-700 mb-2">
+                                "{nasabah?.profil.nama}"
+                            </label>
+                            <Input
+                                type="text"
+                                className="w-full mt-1 text-sm border-gray-100  focus:border-red-500 focus:ring-red-500 text-center"
+                                value={confirmName}
+                                onChange={(e) => setConfirmName(e.target.value)}
+                                placeholder="ketik di sini..."
+                                autoComplete='off'
+                            />
+                        </div>
+
+                        <div className="flex gap-3 pt-2">
+                            <Button
+                                variant="secondary"
+                                className="flex-1"
+                                onClick={() => setShowDeleteModal(false)}
+                            >
+                                Batal
+                            </Button>
+                            <Button
+                                variant="danger"
+                                className="flex-[2] bg-red-600 hover:bg-red-700"
+                                onClick={handleFinalDelete}
+                                disabled={confirmName !== nasabah?.profil.nama || processing}
+                                isLoading={processing}
+                            >
+                                Hapus Sekarang
+                            </Button>
+                        </div>
+                    </div>
+                </div>
+            </Modal>
         </AuthenticatedLayout>
     );
 }

@@ -10,10 +10,12 @@ import { debounce } from '@/lib/debounce';
 interface PosLokasi {
     id: number;
     nama_pos: string;
+    kode_pos: string;
     alamat: string;
     latitude: number;
     longitude: number;
     is_aktif: boolean;
+    rewards_count?: number;
 }
 
 interface Props {
@@ -90,71 +92,78 @@ export default function Index({ pos_lokasi, filters }: Props) {
             <div className="space-y-6">
                 <div className="flex items-center justify-between">
                     <div>
-                        <h1 className="text-2xl font-bold text-slate-800">Pos Unit</h1>
+                        <h1 className="text-2xl font-bold text-gray-800 tracking-tight">Pos Unit</h1>
                     </div>
                     <Link href={route('master.pos-lokasi.create')}>
-                        <Button variant="primary" size="md">
+                        <Button variant="primary" size="sm">
                             <Plus className="w-4 h-4 me-2" />
                             Tambah Pos Unit
                         </Button>
                     </Link>
                 </div>
 
-                <div className="bg-white overflow-hidden py-4">
-                    <div className="flex flex-col md:flex-row md:items-center justify-end gap-4 mb-4">
+                <div className="bg-white py-4 rounded-sm border border-gray-200 shadow-xs">
+                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 px-4 mb-6">
+                        <div className="flex flex-1 items-center gap-4">
+                            <TableSearch 
+                                value={search} 
+                                onChange={onSearchChange} 
+                                placeholder="Cari nama pos atau alamat..." 
+                                className="flex-1 max-w-sm rounded-sm border-gray-200"
+                            />
+                        </div>
                         <PerPageSelector value={pos_lokasi.meta.per_page} onChange={handlePerPageChange} />
-                        <TableSearch 
-                            value={search} 
-                            onChange={onSearchChange} 
-                            placeholder="Cari nama pos atau alamat..." 
-                        />
                     </div>
 
                     <Table>
                         <THead>
-                            <TR isHeader>
-                                <TH>Nama Pos</TH>
-                                <TH>Alamat</TH>
-                                <TH>Status</TH>
-                                <TH className="text-right">Aksi</TH>
+                            <TR isHeader className="whitespace-nowrap bg-gray-50/50">
+                                <TH className="font-bold text-gray-700 uppercase p-4 text-[10px] tracking-widest border-b border-gray-100">Nama Pos</TH>
+                                <TH className="font-bold text-gray-700 uppercase p-4 text-[10px] tracking-widest border-b border-gray-100 text-center">Kode</TH>
+                                <TH className="font-bold text-gray-700 uppercase p-4 text-[10px] tracking-widest border-b border-gray-100">Alamat</TH>
+                                <TH className="font-bold text-gray-700 uppercase p-4 text-[10px] tracking-widest border-b border-gray-100 text-center">Barang Terdaftar</TH>
+                                <TH className="font-bold text-gray-700 uppercase p-4 text-[10px] tracking-widest border-b border-gray-100 text-center">Status</TH>
+                                <TH className="font-bold text-gray-700 uppercase p-4 text-[10px] tracking-widest border-b border-gray-100 text-right">Aksi</TH>
                             </TR>
                         </THead>
                         <TBody>
                             {pos_lokasi.data.length > 0 ? (
                                 pos_lokasi.data.map((item, index) => (
-                                    <TR key={item.id} index={(pos_lokasi.meta.current_page - 1) * pos_lokasi.meta.per_page + index}>
-                                        <TD>
-                                            <div className="flex items-center">
-                                                <span className="font-medium text-slate-700">{item.nama_pos}</span>
-                                            </div>
+                                    <TR key={item.id} index={(pos_lokasi.meta.current_page - 1) * pos_lokasi.meta.per_page + index} className="whitespace-nowrap border-b border-gray-50 hover:bg-gray-50/30 transition-colors">
+                                        <TD className="py-3 px-4">
+                                            <span className="font-normal text-gray-800 text-sm">{item.nama_pos}</span>
                                         </TD>
-                                        <TD className="max-w-xs truncate text-slate-500">
+                                        <TD className="text-center py-3 px-4">
+                                            <span className="text-gray-700 text-sm">{item.kode_pos || '-'}</span>
+                                        </TD>
+                                        <TD className="py-3 px-4 max-w-xs truncate text-gray-500 text-sm">
                                             {item.alamat || '-'}
                                         </TD>
-                                        <TD>
-                                            <span className={`px-2 py-0.5 text-[10px] font-bold text-white rounded-sm uppercase tracking-wider ${
-                                                item.is_aktif ? 'bg-emerald-600' : 'bg-red-600'
+                                        <TD className="text-center py-3 px-4">
+                                            <span className="inline-flex items-center font-bold px-2.5 py-1 text-sm text-gray-700 tracking-widest">
+                                                {item.rewards_count ?? 0} <span className="text-xs font-normal text-gray-500 ml-1">item</span>
+                                            </span>
+                                        </TD>
+                                        <TD className="text-center py-3 px-4">
+                                            <span className={`inline-flex items-center px-3 py-0.5 text-[9px] font-medium uppercase tracking-widest ${
+                                                item.is_aktif ? 'bg-emerald-500 text-white' : 'bg-red-500 text-white'
                                             }`}>
                                                 {item.is_aktif ? 'Aktif' : 'Non-Aktif'}
                                             </span>
                                         </TD>
-                                        <TD className="text-right">
+                                        <TD className="text-right py-3 px-4">
                                             <div className="flex justify-end space-x-2 whitespace-nowrap">
                                                 <Link href={route('master.pos-lokasi.edit', item.id)}>
-                                                    <Button variant="warning" size="sm" className="p-1.5" title="Edit">
-                                                        <Edit className="w-3.5 h-3.5 me-1.5" />
-                                                        Ubah
+                                                    <Button className="bg-amber-500 text-white hover:bg-amber-600 p-2 rounded-sm shadow-xs" title="Edit">
+                                                        <Edit className="w-3.5 h-3.5" />
                                                     </Button>
                                                 </Link>
                                                 <Button 
-                                                    variant="danger" 
-                                                    size="sm" 
-                                                    className="p-1.5" 
+                                                    className="bg-red-600 text-white hover:bg-red-700 p-2 rounded-sm shadow-xs" 
                                                     title="Hapus"
                                                     onClick={() => handleDelete(item.id)}
                                                 >
-                                                    <Trash2 className="w-3.5 h-3.5 me-1.5" />
-                                                    Hapus
+                                                    <Trash2 className="w-3.5 h-3.5" />
                                                 </Button>
                                             </div>
                                         </TD>
@@ -162,7 +171,7 @@ export default function Index({ pos_lokasi, filters }: Props) {
                                 ))
                             ) : (
                                 <TR>
-                                    <TD colSpan={4} className="py-12 text-center text-slate-400">
+                                    <TD colSpan={5} className="py-12 text-center text-slate-400">
                                         <p>Belum ada data pos unit tersedia.</p>
                                     </TD>
                                 </TR>

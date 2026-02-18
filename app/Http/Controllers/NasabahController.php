@@ -9,6 +9,7 @@ use Inertia\Inertia;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class NasabahController extends Controller
 {
@@ -20,11 +21,12 @@ class NasabahController extends Controller
         $nasabah = Pengguna::where('peran', 'member')
             ->with('profil')
             ->when($search, function ($query, $search) {
+                $search = strtolower($search);
                 $query->whereHas('profil', function ($q) use ($search) {
-                    $q->where('nama', 'like', "%{$search}%")
-                      ->orWhere('nik', 'like', "%{$search}%");
-                })->orWhere('email', 'like', "%{$search}%")
-                  ->orWhere('username', 'like', "%{$search}%");
+                    $q->where(DB::raw('LOWER(nama)'), 'ilike', "%{$search}%")
+                      ->orWhere(DB::raw('LOWER(nik)'), 'ilike', "%{$search}%");
+                })->orWhere(DB::raw('LOWER(email)'), 'ilike', "%{$search}%")
+                  ->orWhere(DB::raw('LOWER(username)'), 'ilike', "%{$search}%");
             })
             ->latest()
             ->paginate($perPage)
@@ -60,9 +62,10 @@ class NasabahController extends Controller
             'email' => ['required', 'email', 'unique:pengguna,email'],
             'no_hp' => ['nullable', 'string', 'max:20'],
             'alamat' => ['nullable', 'string'],
+            'foto_profil' => ['nullable', 'image', 'max:2048'],
         ]);
 
-        DB::transaction(function () use ($validated) {
+        DB::transaction(function () use ($validated, $request) {
             $pengguna = Pengguna::create([
                 'username' => $validated['nik'],
                 'email' => $validated['email'],
@@ -71,6 +74,11 @@ class NasabahController extends Controller
                 'is_aktif' => true,
             ]);
 
+            $fotoPath = null;
+            if ($request->hasFile('foto_profil')) {
+                $fotoPath = $request->file('foto_profil')->store('profil', 'public');
+            }
+
             $pengguna->profil()->create([
                 'nama' => $validated['nama'],
                 'nik' => $validated['nik'],
@@ -78,6 +86,7 @@ class NasabahController extends Controller
                 'alamat' => $validated['alamat'],
                 'saldo_poin' => 0,
                 'token_qr' => bin2hex(random_bytes(16)), // Generate a simple token for QR
+                'foto_profil' => $fotoPath,
             ]);
         });
 
@@ -109,21 +118,31 @@ class NasabahController extends Controller
             'no_hp' => ['nullable', 'string', 'max:20'],
             'alamat' => ['nullable', 'string'],
             'is_aktif' => ['required', 'boolean'],
+            'foto_profil' => ['nullable', 'image', 'max:2048'],
         ]);
 
-        DB::transaction(function () use ($validated, $nasabah) {
+        DB::transaction(function () use ($validated, $nasabah, $request) {
             $nasabah->update([
                 'username' => $validated['nik'],
                 'email' => $validated['email'],
                 'is_aktif' => $validated['is_aktif'],
             ]);
 
-            $nasabah->profil()->update([
+            $profilData = [
                 'nama' => $validated['nama'],
                 'nik' => $validated['nik'],
                 'no_hp' => $validated['no_hp'],
                 'alamat' => $validated['alamat'],
-            ]);
+            ];
+
+            if ($request->hasFile('foto_profil')) {
+                if ($nasabah->profil && $nasabah->profil->foto_profil) {
+                    Storage::disk('public')->delete($nasabah->profil->foto_profil);
+                }
+                $profilData['foto_profil'] = $request->file('foto_profil')->store('profil', 'public');
+            }
+
+            $nasabah->profil()->update($profilData);
         });
 
         return redirect()->route('master.nasabah.index')->with('success', 'Data nasabah berhasil diperbarui');
