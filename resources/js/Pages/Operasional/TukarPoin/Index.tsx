@@ -12,7 +12,7 @@ import {
     Pagination 
 } from '@/Components/Base/Table';
 import { useState, useEffect } from 'react';
-import { Loader2 } from 'lucide-react';
+import { Eye, Loader2 } from 'lucide-react';
 import Button from '@/Components/Base/Button';
 import Swal from 'sweetalert2';
 
@@ -81,6 +81,8 @@ export default function Index({ transaksi, filters }: Props) {
         });
     };
 
+
+
     const formatDate = (dateStr: string) => {
         if (!dateStr) return '-';
         const date = new Date(dateStr);
@@ -97,12 +99,37 @@ export default function Index({ transaksi, filters }: Props) {
         const s = status ? status.trim().toLowerCase() : '';
         switch (s) {
             case 'menunggu': return { label: 'Menunggu', color: 'bg-slate-500 text-white' };
-            case 'disetujui': return { label: 'Siap Diambil', color: 'bg-sky-500 text-white' };
-            case 'selesai': return { label: 'Selesai', color: 'bg-emerald-500 text-white' };
+            case 'disetujui': return { label: 'Disetujui', color: 'bg-sky-500 text-white' };
             case 'kadaluwarsa': return { label: 'Kadaluwarsa', color: 'bg-slate-200 text-slate-500' };
-            case 'dibatalkan': return { label: 'Batal', color: 'bg-rose-500 text-white' };
+            case 'dibatalkan': return { label: 'Ditolak', color: 'bg-rose-500 text-white' };
             default: return { label: status ? status : 'Tidak dikenal', color: 'bg-amber-400 text-white' };
         }
+    };
+
+    const getCompletionInfo = (item: any) => {
+        const status = item.status ? item.status.trim().toLowerCase() : '';
+        
+        if (status === 'disetujui') {
+            if (item.tanggal_selesai) {
+                return { label: 'Selesai', color: 'text-slate-700 font-medium' };
+            } else {
+                return { label: 'Belum Diambil', color: 'text-slate-700 font-medium' };
+            }
+        }
+        
+        if (status === 'dibatalkan') {
+            if (item.tanggal_selesai) {
+                return { label: 'Selesai', color: 'text-slate-700 font-medium' };
+            } else {
+                return { label: 'Menunggu Penyelesaian', color: 'text-slate-700 font-medium' };
+            }
+        }
+        
+        if (status === 'kadaluwarsa') {
+             return { label: 'Selesai (Kadaluwarsa)', color: 'text-slate-700 font-medium' };
+        }
+
+        return { label: '-', color: 'text-gray-400' };
     };
 
     return (
@@ -131,10 +158,10 @@ export default function Index({ transaksi, filters }: Props) {
                         >
                             <option value="">Status</option>
                             <option value="menunggu">Menunggu</option>
-                            <option value="disetujui">Siap Diambil</option>
+                            <option value="disetujui">Disetujui</option>
                             <option value="selesai">Selesai</option>
                             <option value="kadaluwarsa">Kadaluwarsa</option>
-                            <option value="dibatalkan">Batal</option>
+                            <option value="dibatalkan">Ditolak</option>
                         </select>
                     </div>
                     <PerPageSelector 
@@ -151,6 +178,7 @@ export default function Index({ transaksi, filters }: Props) {
                             <TH className="font-bold text-gray-700 uppercase p-4 text-xs tracking-wider text-right">Poin</TH>
                             <TH className="font-bold text-gray-700 uppercase p-4 text-xs tracking-wider">Tanggal Request</TH>
                             <TH className="font-bold text-gray-700 uppercase p-4 text-xs tracking-wider">Status</TH>
+                            <TH className="font-bold text-gray-700 uppercase p-4 text-xs tracking-wider">PENYELESAIAN</TH>
                             <TH className="font-bold text-gray-700 uppercase p-4 text-xs tracking-wider text-center">Aksi</TH>
                         </TR>
                     </THead>
@@ -183,11 +211,29 @@ export default function Index({ transaksi, filters }: Props) {
                                             );
                                         })()}
                                     </TD>
+                                    <TD className="py-4">
+                                         {(() => {
+                                            const completion = getCompletionInfo(item);
+                                            return (
+                                                <span className={`text-xs tracking-wider ${completion.color}`}>
+                                                    {completion.label}
+                                                </span>
+                                            );
+                                        })()}
+                                    </TD>
                                     <TD className="text-center py-4">
                                         <Link href={route('operasional.tukar-poin.show', item.id)}>
-                                            <Button className="bg-amber-500 text-white hover:bg-amber-600 p-2 rounded-sm">
-                                                <Loader2 className="w-3.5 h-3.5" />
-                                            </Button>
+                                            {item.tanggal_selesai ? (
+                                                <Button className="bg-slate-600 text-white hover:bg-slate-700 rounded-sm" title="Lihat">
+                                                    <Eye className="w-4 h-4 mr-1" />
+                                                    Lihat
+                                                </Button>
+                                            ) : (
+                                                <Button className="bg-amber-500 text-white hover:bg-amber-600 rounded-sm" title="Proses">
+                                                    <Loader2 className="w-4 h-4 mr-1" />
+                                                    Proses
+                                                </Button>
+                                            )}
                                         </Link>
                                     </TD>
                                 </TR>

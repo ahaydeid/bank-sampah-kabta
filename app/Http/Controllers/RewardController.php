@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class RewardController extends Controller
 {
@@ -79,7 +80,12 @@ class RewardController extends Controller
             'nama_reward' => ['required', 'string', 'max:255'],
             'poin_tukar' => ['required', 'numeric', 'min:0'],
             'kategori_reward' => ['required', 'string', 'max:255'],
+            'foto' => ['nullable', 'image', 'max:2048'],
         ]);
+
+        if ($request->hasFile('foto')) {
+            $validated['foto'] = $request->file('foto')->store('reward', 'public');
+        }
 
         Reward::create($validated);
 
@@ -101,7 +107,15 @@ class RewardController extends Controller
             'nama_reward' => ['required', 'string', 'max:255'],
             'poin_tukar' => ['required', 'numeric', 'min:0'],
             'kategori_reward' => ['required', 'string', 'max:255'],
+            'foto' => ['nullable', 'image', 'max:2048'],
         ]);
+
+        if ($request->hasFile('foto')) {
+            if ($reward->foto) {
+                Storage::disk('public')->delete($reward->foto);
+            }
+            $validated['foto'] = $request->file('foto')->store('reward', 'public');
+        }
 
         $reward->update($validated);
 

@@ -113,7 +113,6 @@ class NasabahController extends Controller
 
         $validated = $request->validate([
             'nama' => ['required', 'string', 'max:255'],
-            'nik' => ['required', 'string', 'max:20', 'unique:profil,nik,' . ($nasabah->profil->id ?? 0)],
             'email' => ['required', 'email', 'unique:pengguna,email,' . $nasabah->id],
             'no_hp' => ['nullable', 'string', 'max:20'],
             'alamat' => ['nullable', 'string'],
@@ -123,14 +122,12 @@ class NasabahController extends Controller
 
         DB::transaction(function () use ($validated, $nasabah, $request) {
             $nasabah->update([
-                'username' => $validated['nik'],
                 'email' => $validated['email'],
                 'is_aktif' => $validated['is_aktif'],
             ]);
 
             $profilData = [
                 'nama' => $validated['nama'],
-                'nik' => $validated['nik'],
                 'no_hp' => $validated['no_hp'],
                 'alamat' => $validated['alamat'],
             ];

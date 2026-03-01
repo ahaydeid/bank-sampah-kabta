@@ -15,6 +15,7 @@ interface Reward {
     stok_tampil?: number;
     poin_tukar: number;
     kategori_reward: string;
+    foto?: string | null;
 }
 
 interface Props {
@@ -120,6 +121,7 @@ export default function Index({ reward, pos_lokasi, filters }: Props) {
                         <THead>
                             <TR isHeader className="whitespace-nowrap bg-white border-b border-gray-100">
                                 <TH className="font-bold text-gray-500 uppercase p-4 text-[11px] tracking-wider text-left">Nama Barang</TH>
+                                <TH className="font-bold text-gray-500 uppercase p-4 text-[11px] tracking-wider text-left w-16">Foto</TH>
                                 <TH className="font-bold text-gray-500 uppercase p-4 text-[11px] tracking-wider text-left">Kategori</TH>
                                 <TH className="font-bold text-gray-500 uppercase p-4 text-[11px] tracking-wider text-right">Poin Tukar</TH>
                                 <TH className="font-bold text-gray-500 uppercase p-4 text-[11px] tracking-wider text-center w-24">Aksi</TH>
@@ -129,16 +131,25 @@ export default function Index({ reward, pos_lokasi, filters }: Props) {
                             {reward.data.length > 0 ? (
                                 reward.data.map((item, index) => (
                                     <TR key={item.id} index={(reward.meta.current_page - 1) * reward.meta.per_page + index} className='whitespace-nowrap border-b border-gray-100 hover:bg-gray-50/50 transition-colors'>
-                                        <TD className="py-5 px-4 text-left">
+                                        <TD className="py-3 px-4 text-left">
                                             <span className="font-medium text-gray-800 text-sm">{item.nama_reward}</span>
                                         </TD>
-                                        <TD className="py-5 px-4 text-sm font-medium text-gray-500 text-left">
+                                        <TD className="py-3 px-4 text-left">
+                                            <div className="w-10 h-10 rounded-sm overflow-hidden border border-gray-100 bg-gray-50 flex items-center justify-center">
+                                                {item.foto ? (
+                                                    <img src={`/storage/${item.foto}`} alt={item.nama_reward} className="w-full h-full object-cover" />
+                                                ) : (
+                                                    <Package className="w-5 h-5 text-gray-300" />
+                                                )}
+                                            </div>
+                                        </TD>
+                                        <TD className="py-3 px-4 text-sm font-medium text-gray-500 text-left">
                                             {item.kategori_reward}
                                         </TD>
-                                        <TD className="text-right py-5 px-4 text-sm font-medium text-gray-500">
+                                        <TD className="text-right py-3 px-4 text-sm font-medium text-gray-500">
                                             {new Intl.NumberFormat('id-ID').format(item.poin_tukar)}
                                         </TD>
-                                        <TD className="text-center py-5 px-4">
+                                        <TD className="text-center py-3 px-4">
                                             <div className="flex justify-center space-x-2 whitespace-nowrap">
                                                 <Link href={route('master.reward.edit', item.id)}>
                                                     <Button className="bg-amber-500 text-white hover:bg-amber-600 p-2 rounded-sm shadow-xs" title="Edit">

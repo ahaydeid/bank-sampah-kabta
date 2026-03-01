@@ -26,6 +26,13 @@ class Pengguna extends Authenticatable
         'first_login_at',
     ];
 
+    protected $appends = ['role_name'];
+
+    public function getRoleNameAttribute()
+    {
+        return $this->getRoleNames()->first() ?: $this->peran;
+    }
+
     protected $casts = [
         'first_login_at' => 'datetime',
     ];

@@ -14,6 +14,9 @@ interface Profil {
     jabatan: string;
     no_hp: string;
     foto_profil?: string | null;
+    pos?: {
+        nama_pos: string;
+    }
 }
 
 interface Staff {
@@ -100,12 +103,12 @@ export default function Index({ staff, filters }: Props) {
             <div className="space-y-6">
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                     <div>
-                        <h1 className="text-2xl font-bold text-slate-800">Manajemen Staff</h1>
+                        <h1 className="text-2xl font-bold text-slate-800">Manajemen Staff & Petugas</h1>
                     </div>
                     <Link href={route('master.staff.create')}>
                         <Button variant="primary" size="sm" className="w-full md:w-auto">
                             <Plus className="w-4 h-4 me-2" />
-                            Tambah Staff
+                            Tambah Staff/Petugas
                         </Button>
                     </Link>
                 </div>
@@ -125,6 +128,7 @@ export default function Index({ staff, filters }: Props) {
                             <TR isHeader className="whitespace-nowrap">
                                 <TH>Staff / Petugas</TH>
                                 <TH>Jabatan</TH>
+                                <TH>Pos Unit</TH>
                                 <TH>Peran</TH>
                                 <TH>Email</TH>
                                 <TH>Telepon</TH>
@@ -151,6 +155,9 @@ export default function Index({ staff, filters }: Props) {
                                         </TD>
                                         <TD>
                                             <div className="text-sm font-medium text-slate-600 whitespace-nowrap">{item.profil.jabatan || '-'}</div>
+                                        </TD>
+                                        <TD>
+                                            <div className="text-sm font-medium text-slate-600 whitespace-nowrap">{item.profil.pos?.nama_pos || '-'}</div>
                                         </TD>
                                         <TD>
                                             <span className={`px-2 py-0.5 text-[9px] font-bold text-white rounded-sm uppercase tracking-wider ${

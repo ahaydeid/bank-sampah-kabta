@@ -122,6 +122,7 @@ export default function Index({ pos_lokasi, filters }: Props) {
                                 <TH className="font-bold text-gray-700 uppercase p-4 text-[10px] tracking-widest border-b border-gray-100 text-center">Kode</TH>
                                 <TH className="font-bold text-gray-700 uppercase p-4 text-[10px] tracking-widest border-b border-gray-100">Alamat</TH>
                                 <TH className="font-bold text-gray-700 uppercase p-4 text-[10px] tracking-widest border-b border-gray-100 text-center">Barang Terdaftar</TH>
+                                <TH className="font-bold text-gray-700 uppercase p-4 text-[10px] tracking-widest border-b border-gray-100 text-center">Maps</TH>
                                 <TH className="font-bold text-gray-700 uppercase p-4 text-[10px] tracking-widest border-b border-gray-100 text-center">Status</TH>
                                 <TH className="font-bold text-gray-700 uppercase p-4 text-[10px] tracking-widest border-b border-gray-100 text-right">Aksi</TH>
                             </TR>
@@ -142,6 +143,13 @@ export default function Index({ pos_lokasi, filters }: Props) {
                                         <TD className="text-center py-3 px-4">
                                             <span className="inline-flex items-center font-bold px-2.5 py-1 text-sm text-gray-700 tracking-widest">
                                                 {item.rewards_count ?? 0} <span className="text-xs font-normal text-gray-500 ml-1">item</span>
+                                            </span>
+                                        </TD>
+                                        <TD className="text-center py-3 px-4">
+                                            <span className={`inline-flex items-center px-3 py-0.5 text-[9px] font-medium uppercase tracking-widest ${
+                                                item.latitude && item.longitude ? 'bg-emerald-500 text-white' : 'bg-slate-300 text-slate-600'
+                                            }`}>
+                                                {item.latitude && item.longitude ? 'Tersedia' : 'Tidak tersedia'}
                                             </span>
                                         </TD>
                                         <TD className="text-center py-3 px-4">
@@ -171,7 +179,7 @@ export default function Index({ pos_lokasi, filters }: Props) {
                                 ))
                             ) : (
                                 <TR>
-                                    <TD colSpan={5} className="py-12 text-center text-slate-400">
+                                    <TD colSpan={7} className="py-12 text-center text-slate-400">
                                         <p>Belum ada data pos unit tersedia.</p>
                                     </TD>
                                 </TR>

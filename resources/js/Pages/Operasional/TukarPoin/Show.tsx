@@ -43,6 +43,54 @@ export default function Show({ transaksi }: Props) {
         });
     };
 
+    const handleUndoApprove = () => {
+        Swal.fire({
+            title: 'Batalkan Persetujuan?',
+            text: `Apakah Anda yakin ingin membatalkan persetujuan untuk ${transaksi.kode_penukaran}? Status akan kembali menjadi "Menunggu" dan stok akan dikembalikan ke gudang.`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Ya, Batalkan Persetujuan',
+            cancelButtonText: 'Kembali',
+            confirmButtonColor: '#e11d48', // rose-600
+        }).then((result) => {
+            if (result.isConfirmed) {
+                router.patch(route('operasional.tukar-poin.undo-approve', transaksi.id));
+            }
+        });
+    };
+
+    const handleUndoReject = () => {
+        Swal.fire({
+            title: 'Batalkan Penolakan?',
+            text: `Apakah Anda yakin ingin membatalkan penolakan untuk ${transaksi.kode_penukaran}? Status akan kembali menjadi "Menunggu" dan poin nasabah akan dipotong kembali.`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Ya, Batalkan Penolakan',
+            cancelButtonText: 'Kembali',
+            confirmButtonColor: '#0284c7', // sky-600 (use neutral or sky slightly safer)
+        }).then((result) => {
+            if (result.isConfirmed) {
+                router.patch(route('operasional.tukar-poin.undo-reject', transaksi.id));
+            }
+        });
+    };
+
+    const handleFinalize = () => {
+        Swal.fire({
+            title: 'Selesaikan Penolakan?',
+            text: `Pastikan penolakan sudah final. Transaksi akan ditandai sebagai Selesai (Ditolak) dan tidak bisa dibatalkan lagi.`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Ya, Selesaikan',
+            cancelButtonText: 'Batal',
+            confirmButtonColor: '#10b981', // emerald-500
+        }).then((result) => {
+            if (result.isConfirmed) {
+                router.patch(route('operasional.tukar-poin.finalize', transaksi.id));
+            }
+        });
+    };
+
     const formatDate = (dateStr: string) => {
         if (!dateStr) return '-';
         const date = new Date(dateStr);
@@ -55,14 +103,20 @@ export default function Show({ transaksi }: Props) {
         return date.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
     };
 
-    const getStatusInfo = (status: string) => {
+    const getStatusInfo = (item: any) => {
+        const status = item.status;
         const s = status ? status.trim().toLowerCase() : '';
+        
+        // if (s === 'disetujui' && item.tanggal_selesai) {
+        //     return { label: 'Selesai', color: 'bg-emerald-600 text-white' };
+        // }
+
         switch (s) {
             case 'menunggu': return { label: 'Menunggu', color: 'bg-slate-500 text-white' };
-            case 'disetujui': return { label: 'Siap diambil', color: 'bg-sky-600 text-white' };
-            case 'selesai': return { label: 'Selesai', color: 'bg-emerald-600 text-white' };
+            case 'disetujui': return { label: 'Disetujui', color: 'bg-sky-600 text-white' };
+            // case 'selesai': return { label: 'Selesai', color: 'bg-emerald-600 text-white' }; // Handled above
             case 'kadaluwarsa': return { label: 'Kadaluwarsa', color: 'bg-slate-200 text-slate-500' };
-            case 'dibatalkan': return { label: 'Batal', color: 'bg-rose-600 text-white' };
+            case 'dibatalkan': return { label: 'Ditolak', color: 'bg-rose-600 text-white' };
             default: return { label: status ? status : 'Tidak dikenal', color: 'bg-gray-400 text-white' };
         }
     };
@@ -85,14 +139,18 @@ export default function Show({ transaksi }: Props) {
                 </Link>
 
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                    <div>
-                        <div className="flex items-center gap-3 mb-1">
-                             <h1 className="text-2xl font-bold text-gray-800 tracking-tight">{transaksi.kode_penukaran}</h1>
-                             <span className={`px-3 py-0.5 text-[9px] font-bold uppercase tracking-widest rounded-sm ${statusInfo.color}`}>
-                                {statusInfo.label}
-                             </span>
-                        </div>
-                    </div>
+                   {/* Header with ID and Status */}
+            <div className="flex items-center gap-4 mb-8">
+                <h1 className="text-2xl font-black text-gray-800 tracking-tighter uppercase">{transaksi.kode_penukaran}</h1>
+                {(() => {
+                    const status = getStatusInfo(transaksi);
+                    return (
+                        <span className={`px-3 py-1 text-[10px] font-bold uppercase tracking-widest rounded-sm ${status.color}`}>
+                            {status.label}
+                        </span>
+                    );
+                })()}
+            </div>
 
 
                 </div>
@@ -170,20 +228,23 @@ export default function Show({ transaksi }: Props) {
                                         {transaksi.pos?.nama_pos || '-'}
                                     </p>
                                 </div>
-                                <div>
-                                    <p className="text-[10px] uppercase text-gray-400 font-bold tracking-widest mb-1">
-                                        {transaksi.status === 'disetujui' ? 'Batas Waktu Pengambilan' : 'Waktu Selesai'}
-                                    </p>
-                                    <p className={`text-xs font-normal ${transaksi.status === 'disetujui' ? 'text-rose-600 font-bold' : 'text-gray-700'}`}>
-                                        {transaksi.status === 'disetujui' || transaksi.status === 'selesai' || transaksi.status === 'kadaluwarsa' 
-                                            ? `${formatDate(transaksi.expired_at)} ${formatTime(transaksi.expired_at)}` 
-                                            : '-'}
-                                    </p>
+                                <div className="flex flex-col gap-1">
+                    <span className="text-[10px] font-bold text-gray-400 tracking-wider uppercase">
+                        {transaksi.tanggal_selesai ? 'Waktu Selesai' : 'Batas Waktu Pengambilan'}
+                    </span>
+                    <span className="text-sm font-medium text-gray-700">
+                        {transaksi.tanggal_selesai 
+                            ? `${formatDate(transaksi.tanggal_selesai)} ${formatTime(transaksi.tanggal_selesai)}`
+                            : (transaksi.expired_at 
+                                ? `${formatDate(transaksi.expired_at)} ${formatTime(transaksi.expired_at)}` 
+                                : '-')
+                        }
+                    </span>
+                </div>    
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
 
                 <div className="space-y-6">
                     <div className="bg-white rounded-sm border border-gray-200 shadow-xs p-6">
@@ -233,16 +294,47 @@ export default function Show({ transaksi }: Props) {
                     <Button 
                         variant="danger"
                         onClick={handleReject}
-                        className="bg-rose-600 hover:bg-rose-700 text-[10px] font-bold py-2.5 px-8 uppercase tracking-widest"
+                        className="bg-rose-600 hover:bg-rose-700 text-[10px] font-bold py-2.5 px-8 tracking-widest"
                     >
-                        TOLAK
+                        Tolak
                     </Button>
                     <Button 
                         variant="info"
                         onClick={handleApprove}
-                        className="bg-sky-600 hover:bg-sky-700 text-[10px] font-bold py-2.5 px-8 uppercase tracking-widest"
+                        className="bg-sky-600 hover:bg-sky-700 text-[10px] font-bold py-2.5 px-8 tracking-widest"
                     >
-                        SETUJUI
+                        Setujui
+                    </Button>
+                </div>
+            )}
+
+            {transaksi.status === 'disetujui' && !transaksi.tanggal_selesai && (
+                <div className="flex justify-end items-center gap-3 mt-8 pb-10">
+                    <Button 
+                        variant="danger"
+                        onClick={handleUndoApprove}
+                        className="bg-rose-600 hover:bg-rose-700 text-[10px] font-bold py-2.5 px-8 tracking-widest"
+                    >
+                        Batalkan Persetujuan
+                    </Button>
+                </div>
+            )}
+
+            {transaksi.status === 'dibatalkan' && !transaksi.tanggal_selesai && (
+                <div className="flex justify-end gap-3 mt-8">
+                    <Button 
+                        variant="info"
+                        onClick={handleUndoReject}
+                        className="text-[10px] font-bold py-2.5 px-8 tracking-widest"
+                    >
+                        Batalkan Penolakan
+                    </Button>
+                    <Button 
+                        variant="success"
+                        onClick={handleFinalize}
+                        className="text-[10px] font-bold py-2.5 px-8 tracking-widest"
+                    >
+                        Selesaikan
                     </Button>
                 </div>
             )}

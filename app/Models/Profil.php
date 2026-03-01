@@ -18,10 +18,16 @@ class Profil extends Model
         'saldo_poin',
         'token_qr',
         'foto_profil',
+        'pos_id',
     ];
 
     public function pengguna()
     {
         return $this->belongsTo(Pengguna::class, 'pengguna_id');
+    }
+
+    public function pos()
+    {
+        return $this->belongsTo(PosLokasi::class, 'pos_id');
     }
 }

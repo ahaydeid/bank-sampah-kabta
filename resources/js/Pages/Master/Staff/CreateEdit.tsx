@@ -1,7 +1,7 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link, useForm } from '@inertiajs/react';
-import { ArrowLeft, Save, ShieldCheck, Key } from 'lucide-react';
-import { FormEventHandler } from 'react';
+import { ArrowLeft, Save, ShieldCheck, Key, Camera, User } from 'lucide-react';
+import { FormEventHandler, useState, useRef } from 'react';
 import Alert from '@/Components/Base/Alert';
 import Button from '@/Components/Base/Button';
 import Input from '@/Components/Base/Input';
@@ -13,6 +13,8 @@ interface Profil {
     nama: string;
     jabatan: string;
     no_hp: string;
+    pos_id: number | null;
+    foto_profil?: string | null;
 }
 
 interface Staff {
@@ -24,14 +26,38 @@ interface Staff {
     profil: Profil;
 }
 
-interface Props {
-    staff?: Staff;
+interface PosLokasi {
+    id: number;
+    nama_pos: string;
 }
 
-export default function CreateEdit({ staff }: Props) {
-    const isEdit = !!staff;
+interface Props {
+    staff?: Staff;
+    pos_lokasi?: PosLokasi[];
+}
 
-    const { data, setData, post, patch, processing, errors } = useForm({
+interface StaffForm {
+    _method?: string;
+    nama: string;
+    email: string;
+    password: string;
+    peran: 'admin' | 'petugas';
+    jabatan: string;
+    no_hp: string;
+    is_aktif: boolean;
+    pos_id: number | string;
+    foto_profil: File | null;
+}
+
+export default function CreateEdit({ staff, pos_lokasi = [] }: Props) {
+    const isEdit = !!staff;
+    const fileInputRef = useRef<HTMLInputElement>(null);
+    const [previewUrl, setPreviewUrl] = useState<string | null>(
+        staff?.profil.foto_profil ? `/storage/${staff.profil.foto_profil}` : null
+    );
+
+    const { data, setData, post, patch, processing, errors } = useForm<StaffForm>({
+        _method: isEdit ? 'PATCH' : undefined,
         nama: staff?.profil.nama || '',
         email: staff?.email || '',
         password: '',
@@ -39,7 +65,17 @@ export default function CreateEdit({ staff }: Props) {
         jabatan: staff?.profil.jabatan || '',
         no_hp: staff?.profil.no_hp || '',
         is_aktif: staff?.is_aktif ?? true,
+        pos_id: staff?.profil.pos_id || '',
+        foto_profil: null,
     });
+
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            setData('foto_profil', file);
+            setPreviewUrl(URL.createObjectURL(file));
+        }
+    };
 
     const handleSubmit: FormEventHandler = (e) => {
         e.preventDefault();
@@ -47,13 +83,13 @@ export default function CreateEdit({ staff }: Props) {
         const action = isEdit ? 'diperbarui' : 'ditambahkan';
         
         Alert.confirm({
-            title: isEdit ? 'Simpan Perubahan?' : 'Tambah Staff Baru?',
+            title: isEdit ? 'Simpan Perubahan?' : 'Tambah Staff/Petugas Baru?',
             text: `Data staff ini akan ${action}.`,
             confirmButtonText: isEdit ? 'Ya, Simpan' : 'Ya, Tambah',
         }).then((result) => {
             if (result.isConfirmed) {
                 if (isEdit) {
-                    patch(route('master.staff.update', staff.id), {
+                    post(route('master.staff.update', staff.id), {
                         onSuccess: () => {
                             Alert.success({
                                 title: 'Berhasil!',
@@ -81,7 +117,7 @@ export default function CreateEdit({ staff }: Props) {
 
     return (
         <AuthenticatedLayout>
-            <Head title={isEdit ? 'Edit Staff/Admin' : 'Tambah Staff Baru'} />
+            <Head title={isEdit ? 'Edit Staff/Admin' : 'Tambah Staff/Petugas Baru'} />
 
             <div className="space-y-6">
                 <div className="flex items-center space-x-4">
@@ -93,7 +129,7 @@ export default function CreateEdit({ staff }: Props) {
                     </Link>
                     <div>
                         <h1 className="text-2xl font-bold text-slate-800">
-                            {isEdit ? 'Edit Staff/Admin' : 'Tambah Staff Baru'}
+                            {isEdit ? 'Edit Staff/Admin' : 'Tambah Staff/Petugas Baru'}
                         </h1>
                     </div>
                 </div>
@@ -144,6 +180,25 @@ export default function CreateEdit({ staff }: Props) {
                                     {errors.peran && <p className="text-red-500 text-xs mt-1">{errors.peran}</p>}
                                 </div>
 
+                                {data.peran === 'petugas' && (
+                                    <div>
+                                        <Label value="Pos Unit" />
+                                        <select
+                                            value={data.pos_id}
+                                            onChange={(e) => setData('pos_id', e.target.value)}
+                                            className="w-full mt-1 border-slate-300 focus:border-kabta-purple focus:ring-kabta-purple rounded transition-all duration-200"
+                                        >
+                                            <option value="">-- Pilih Pos Unit --</option>
+                                            {pos_lokasi.map((pos) => (
+                                                <option key={pos.id} value={pos.id}>
+                                                    {pos.nama_pos}
+                                                </option>
+                                            ))}
+                                        </select>
+                                        {errors.pos_id && <p className="text-red-500 text-xs mt-1">{errors.pos_id}</p>}
+                                    </div>
+                                )}
+
                                 {isEdit && (
                                     <div className="flex items-center space-x-3 pt-6">
                                         <Checkbox
@@ -163,6 +218,33 @@ export default function CreateEdit({ staff }: Props) {
                         <div className="space-y-6">
                             <div className="flex items-center space-x-2 text-slate-400 pb-2 border-b border-slate-100">
                                 <span className="text-xs font-bold uppercase tracking-wider">Informasi Profil</span>
+                            </div>
+
+                            <div className="flex flex-col items-center mb-6">
+                                <div className="relative group cursor-pointer" onClick={() => fileInputRef.current?.click()}>
+                                    <div className="w-24 h-24 rounded-full overflow-hidden border-2 border-slate-100 shadow-sm relative bg-slate-50 flex items-center justify-center">
+                                        {previewUrl ? (
+                                            <img src={previewUrl} alt="Preview" className="w-full h-full object-cover" />
+                                        ) : (
+                                            <User className="w-10 h-10 text-slate-300" />
+                                        )}
+                                    </div>
+                                    <button
+                                        type="button"
+                                        className="absolute bottom-0 right-0 p-1.5 bg-kabta-purple text-white rounded-full hover:bg-kabta-purple/90 border-2 border-white"
+                                    >
+                                        <Camera size={14} />
+                                    </button>
+                                </div>
+                                <p className="text-[10px] text-slate-400 mt-2 font-medium">Klik foto untuk {isEdit ? 'mengubah' : 'mengunggah'}</p>
+                                <input
+                                    type="file"
+                                    ref={fileInputRef}
+                                    className="hidden"
+                                    accept="image/*"
+                                    onChange={handleFileChange}
+                                />
+                                {errors.foto_profil && <p className="text-red-500 text-xs text-center mt-1">{errors.foto_profil}</p>}
                             </div>
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

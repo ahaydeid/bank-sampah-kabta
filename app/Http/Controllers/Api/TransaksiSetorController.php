@@ -118,4 +118,25 @@ class TransaksiSetorController extends Controller
             'transaksi' => $transaksi
         ]);
     }
+
+    public function historyNasabah(Request $request)
+    {
+        $transaksi = TransaksiSetor::with(['pos', 'detail.sampah'])
+            ->where('member_id', $request->user()->id)
+            ->latest('tanggal_waktu')
+            ->paginate(15);
+
+        return response()->json($transaksi);
+    }
+
+    public function show(Request $request, $id)
+    {
+        $transaksi = TransaksiSetor::with(['pos', 'petugas.profil', 'detail.sampah'])
+            ->where('member_id', $request->user()->id)
+            ->findOrFail($id);
+
+        return response()->json([
+            'data' => $transaksi
+        ]);
+    }
 }

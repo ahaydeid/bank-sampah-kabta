@@ -22,6 +22,19 @@ class TransaksiTukarController extends Controller
         ]);
 
         $user = $request->user();
+        
+        // Cek apakah ada transaksi penukaran yang masih aktif (belum selesai/batal/ditolak)
+        $activeTransaction = TransaksiTukar::where('member_id', $user->id)
+            ->whereNull('tanggal_selesai')
+            ->whereIn('status', ['menunggu', 'disetujui'])
+            ->exists();
+
+        if ($activeTransaction) {
+            throw \Illuminate\Validation\ValidationException::withMessages([
+                'transaksi' => ['Anda masih memiliki transaksi penukaran yang belum selesai. Selesaikan atau batalkan transaksi sebelumnya terlebih dahulu.']
+            ]);
+        }
+
         $profil = $user->profil;
 
         if (!$profil) {
@@ -44,11 +57,9 @@ class TransaksiTukarController extends Controller
                 $reward = Reward::find($item['reward_id']); // Keep for basic info like poin_tukar
 
                 if (!$rewardStok || $rewardStok->stok < $item['jumlah']) {
-                     // Check if reward exists generally to give better error
-                    if (!$reward) {
-                         throw new \Exception("Barang tidak ditemukan.");
-                    }
-                    throw new \Exception("Stok {$reward->nama_reward} di lokasi ini tidak mencukupi.");
+                    throw \Illuminate\Validation\ValidationException::withMessages([
+                        'items' => ["Stok {$reward->nama_reward} di lokasi ini tidak mencukupi."]
+                    ]);
                 }
 
                 $subtotal = $reward->poin_tukar * $item['jumlah'];
@@ -63,7 +74,9 @@ class TransaksiTukarController extends Controller
             }
 
             if ($profil->saldo_poin < $totalPoin) {
-                throw new \Exception("Saldo poin tidak mencukupi. (Saldo: {$profil->saldo_poin}, Butuh: {$totalPoin})");
+                throw \Illuminate\Validation\ValidationException::withMessages([
+                    'poin' => ["Saldo poin tidak mencukupi (Saldo: {$profil->saldo_poin}, Butuh: {$totalPoin})."]
+                ]);
             }
 
             // 1. Potong saldo poin Nasabah
@@ -115,10 +128,21 @@ class TransaksiTukarController extends Controller
     {
         $transaksi = TransaksiTukar::with('detail.reward')
             ->where('member_id', $request->user()->id)
-            ->latest()
+            ->orderBy('id', 'desc')
             ->paginate(10);
 
         return response()->json($transaksi);
+    }
+
+    public function show(Request $request, $id)
+    {
+        $transaksi = TransaksiTukar::with(['detail.reward', 'pos'])
+            ->where('member_id', $request->user()->id)
+            ->findOrFail($id);
+
+        return response()->json([
+            'data' => $transaksi
+        ]);
     }
 
     public function showQr(Request $request, $id)
@@ -172,6 +196,10 @@ class TransaksiTukarController extends Controller
             ], 422);
         }
 
+        if ($transaksi->tanggal_selesai) {
+            return response()->json(['message' => 'Transaksi ini sudah selesai (Barang sudah diambil).'], 422);
+        }
+
         // Double check runtime expiry (Safety)
         if (now()->greaterThan($transaksi->expired_at)) {
             return response()->json(['message' => 'Transaksi ini baru saja kadaluwarsa.'], 422);
@@ -195,12 +223,16 @@ class TransaksiTukarController extends Controller
             return response()->json(['message' => 'Transaksi tidak dalam status disetujui.'], 422);
         }
 
+        if ($transaksi->tanggal_selesai) {
+            return response()->json(['message' => 'Transaksi sudah diselesaikan sebelumnya.'], 422);
+        }
+
         if (now()->greaterThan($transaksi->expired_at)) {
             return response()->json(['message' => 'Transaksi sudah kadaluwarsa.'], 422);
         }
 
         $transaksi->update([
-            'status' => 'selesai',
+            'tanggal_selesai' => now(),
             'petugas_id' => $request->user()->id,
             'pos_id' => $request->pos_id,
         ]);

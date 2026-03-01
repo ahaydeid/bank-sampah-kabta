@@ -41,9 +41,9 @@ class AuthController extends Controller
         $token = $user->createToken('pwa-token')->plainTextToken;
 
         return response()->json([
-            'user' => $user->load('profil'),
+            'user' => $user->load('profil.pos'),
             'token' => $token,
-            'role' => $user->getRoleNames()->first(),
+            'role' => $user->role_name,
         ]);
     }
 
@@ -59,8 +59,8 @@ class AuthController extends Controller
     public function me(Request $request)
     {
         return response()->json([
-            'user' => $request->user()->load('profil'),
-            'role' => $request->user()->getRoleNames()->first(),
+            'user' => $request->user()->load('profil.pos'),
+            'role' => $request->user()->role_name,
         ]);
     }
 }

@@ -76,17 +76,17 @@ export default function Index({ nasabah, filters }: Props) {
 
     return (
         <AuthenticatedLayout>
-            <Head title="Manajemen Nasabah" />
+            <Head title="Manajemen Member" />
 
             <div className="space-y-6">
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                     <div>
-                        <h1 className="text-2xl font-bold text-slate-800">Manajemen Nasabah</h1>
+                        <h1 className="text-2xl font-bold text-slate-800">Manajemen Member</h1>
                     </div>
                     <Link href={route('master.nasabah.create')}>
                         <Button variant="primary" size="sm" className="w-full md:w-auto">
                             <Plus className="w-4 h-4 me-2" />
-                            Tambah Nasabah
+                            Tambah Member
                         </Button>
                     </Link>
                 </div>
@@ -104,7 +104,7 @@ export default function Index({ nasabah, filters }: Props) {
                     <Table>
                         <THead>
                             <TR isHeader className='whitespace-nowrap'>
-                                <TH>Nasabah</TH>
+                                <TH>Member</TH>
                                 <TH>Alamat</TH>
                                 <TH>Email</TH>
                                 <TH>Telepon</TH>

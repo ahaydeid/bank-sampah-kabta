@@ -142,14 +142,14 @@ export default function CreateEdit({ nasabah }: Props) {
                     </Link>
                     <div>
                         <h1 className="text-2xl font-bold text-slate-800">
-                            {isEdit ? 'Edit Nasabah' : 'Tambah Nasabah'}
+                            {isEdit ? 'Edit Member' : 'Tambah Member'}
                         </h1>
                     </div>
                 </div>
 
                 <div className="bg-white rounded-sm border border-slate-200 p-6 shadow-sm">
                     <div className="flex items-center space-x-2 text-slate-400 mb-6 pb-4 border-b border-slate-100">
-                        <span className="text-xs font-bold uppercase tracking-wider">Informasi nasabah</span>
+                        <span className="text-xs font-bold uppercase tracking-wider">Informasi Member</span>
                     </div>
 
                     <form onSubmit={handleSubmit} className="space-y-6">
@@ -199,17 +199,18 @@ export default function CreateEdit({ nasabah }: Props) {
                                 </div>
 
                                 <div>
-                                    <Label value="NIK (Nomor Induk Kependudukan)" />
+                                    <Label value="NIK (Username)" />
                                     <Input
                                         type="text"
                                         value={data.nik}
                                         onChange={(e) => setData('nik', e.target.value)}
-                                        className="w-full mt-1"
+                                        className="w-full mt-1 bg-slate-50 cursor-not-allowed"
                                         placeholder="16 digit nomor NIK"
                                         maxLength={16}
+                                        disabled={isEdit}
                                     />
                                     {errors.nik && <p className="text-red-500 text-xs mt-1">{errors.nik}</p>}
-                                    <p className="text-[10px] text-slate-400 mt-2 italic">* NIK akan digunakan sebagai username dan password default.</p>
+                                    <p className="text-[10px] text-slate-400 mt-2 italic">* NIK tidak dapat diubah.</p>
                                 </div>
 
                                 <div>
@@ -260,7 +261,7 @@ export default function CreateEdit({ nasabah }: Props) {
                                     onChange={(e) => setData('is_aktif', e.target.checked)}
                                 />
                                 <Label htmlFor="is_aktif" className="!mb-0 cursor-pointer text-slate-600">
-                                    Akun Nasabah Aktif
+                                    Akun Member Aktif
                                 </Label>
                             </div>
                         )}

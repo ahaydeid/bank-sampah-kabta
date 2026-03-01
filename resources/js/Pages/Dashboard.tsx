@@ -8,6 +8,27 @@ import {
     ArrowUpRight
 } from 'lucide-react';
 
+interface DashboardProps {
+    stats: {
+        totalMember: number;
+        totalPetugas: number;
+        totalPos: number;
+        kategoriSampah: number;
+        setoranHariIni: {
+            total: number;
+            byStatus: Record<string, number>;
+        };
+        poinHariIni: {
+            total: number;
+            byCategory: Record<string, number>;
+        };
+        trendSetoran: Array<{
+            date: string;
+            total: number;
+        }>;
+    };
+}
+
 // --- Custom Internal Components for Performance ---
 
 const StatCard = ({ label, value, icon: Icon, color }: { label: string, value: string, icon: any, color: string }) => (
@@ -22,14 +43,20 @@ const StatCard = ({ label, value, icon: Icon, color }: { label: string, value: s
     </div>
 );
 
-const CustomLineChart = () => {
-    // Mock Data for "Kehadiran Siswa" equiv -> Setoran Sampah
-    const points = [
-        { x: 0, y: 50 }, { x: 50, y: 60 }, { x: 100, y: 45 }, 
-        { x: 150, y: 55 }, { x: 200, y: 35 }, { x: 250, y: 48 }, 
-        { x: 300, y: 40 }, { x: 350, y: 52 }, { x: 400, y: 45 }, 
-        { x: 450, y: 38 }, { x: 500, y: 42 }
-    ];
+const CustomLineChart = ({ data }: { data: Array<{date: string, total: number}> }) => {
+    if (!data || data.length === 0) {
+        return <div className="flex items-center justify-center w-full h-48 mt-4 text-slate-400">Belum ada data</div>;
+    }
+
+    const minTotal = Math.min(...data.map(d => Number(d.total)));
+    const maxTotal = Math.max(...data.map(d => Number(d.total)), minTotal + 1);
+
+    const points = data.map((d, i) => {
+        const x = data.length > 1 ? (i / (data.length - 1)) * 500 : 250;
+        const normalizedY = (Number(d.total) - minTotal) / (maxTotal - minTotal);
+        const y = 100 - (normalizedY * 80 + 10);
+        return { x, y, label: d.date };
+    });
 
     const pathData = points.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x} ${p.y}`).join(' ');
 
@@ -42,14 +69,16 @@ const CustomLineChart = () => {
                 ))}
                 
                 {/* The Line */}
-                <path
-                    d={pathData}
-                    fill="none"
-                    stroke="#8b5cf6"
-                    strokeWidth="3"
-                    strokeLinejoin="round"
-                    strokeLinecap="round"
-                />
+                {data.length > 1 && (
+                    <path
+                        d={pathData}
+                        fill="none"
+                        stroke="#8b5cf6"
+                        strokeWidth="3"
+                        strokeLinejoin="round"
+                        strokeLinecap="round"
+                    />
+                )}
 
                 {/* Data Points */}
                 {points.map((p, i) => (
@@ -65,12 +94,11 @@ const CustomLineChart = () => {
                 ))}
             </svg>
             <div className="flex justify-between mt-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest px-1">
-                <span>Minggu 1</span>
-                <span>Minggu 3</span>
-                <span>Minggu 5</span>
-                <span>Minggu 7</span>
-                <span>Minggu 9</span>
-                <span>Minggu 11</span>
+                {points.map((p, i) => (
+                    <span key={i} className="text-center">
+                        {new Date(p.label).toLocaleDateString('id-ID', { day: '2-digit', month: 'short' })}
+                    </span>
+                ))}
             </div>
         </div>
     );
@@ -111,7 +139,7 @@ const CustomDonutChart = ({ percentage, color, label }: { percentage: number, co
     );
 };
 
-export default function Dashboard() {
+export default function Dashboard({ stats }: DashboardProps) {
     return (
         <AuthenticatedLayout>
             <Head title="Dashboard" />
@@ -120,25 +148,25 @@ export default function Dashboard() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2">
                 <StatCard 
                     label="Total Member" 
-                    value="1,240" 
+                    value={(stats?.totalMember || 0).toLocaleString('id-ID')} 
                     icon={Users} 
                     color="bg-[#FF006E]" 
                 />
                 <StatCard 
                     label="Total Petugas" 
-                    value="48" 
+                    value={(stats?.totalPetugas || 0).toLocaleString('id-ID')} 
                     icon={GraduationCap} 
                     color="bg-[#FB5607]" 
                 />
                 <StatCard 
                     label="Total Pos" 
-                    value="24" 
+                    value={(stats?.totalPos || 0).toLocaleString('id-ID')} 
                     icon={Store} 
                     color="bg-[#3A86FF]" 
                 />
                 <StatCard 
                     label="Kategori Sampah" 
-                    value="11" 
+                    value={(stats?.kategoriSampah || 0).toLocaleString('id-ID')} 
                     icon={BookOpen} 
                     color="bg-[#8338EC]" 
                 />
@@ -156,33 +184,38 @@ export default function Dashboard() {
                 {/* Left: Line Chart */}
                 <div className="lg:col-span-6 bg-white p-8 rounded border border-slate-100 shadow-sm">
                     <div className="flex items-center justify-between mb-2">
-                        <h4 className="text-md  text-slate-700 font-semibold uppercase tracking-tight">Tren Setoran Sampah <span className="text-slate-400 italic capitalize"> (91%)</span></h4>
+                        <h4 className="text-md  text-slate-700 font-semibold uppercase tracking-tight">Tren Setoran Sampah <span className="text-slate-400 italic capitalize"> (7 Hari Terakhir)</span></h4>
                     </div>
-                    <CustomLineChart />
+                    <CustomLineChart data={stats?.trendSetoran || []} />
                 </div>
 
                 {/* Middle: Donut 1 */}
                 <div className="lg:col-span-3 bg-white p-8 rounded border border-slate-100 shadow-sm flex flex-col justify-between">
                     <h4 className="text-md text-slate-700 font-semibold uppercase tracking-tight mb-8">Setoran Member <span className="text-slate-400 italic capitalize"> (Hari Ini)</span></h4>
-                    <CustomDonutChart percentage={88} color="#10b981" label="TERCATAT" />
+                    <CustomDonutChart 
+                        percentage={stats?.setoranHariIni?.total > 0 ? Math.round(((stats.setoranHariIni.byStatus['tervalidasi'] || 0) / stats.setoranHariIni.total) * 100) : 0} 
+                        color="#10b981" 
+                        label="TERVALIDASI" 
+                    />
                     <div className="mt-8 space-y-3">
                         {[
-                            { label: 'Tervalidasi', count: 42, color: 'bg-emerald-500' },
-                            { label: 'Proses', count: 3, color: 'bg-orange-500' },
-                            { label: 'Tunda', count: 2, color: 'bg-cyan-500' },
-                            { label: 'Batal', count: 1, color: 'bg-rose-500' },
+                            { label: 'Tercatat', key: 'tercatat', color: 'bg-indigo-500' },
+                            { label: 'Tervalidasi', key: 'tervalidasi', color: 'bg-emerald-500' },
+                            { label: 'Proses', key: 'proses', color: 'bg-orange-500' },
+                            { label: 'Tunda', key: 'tunda', color: 'bg-cyan-500' },
+                            { label: 'Batal', key: 'batal', color: 'bg-rose-500' },
                         ].map(item => (
                             <div key={item.label} className="flex items-center justify-between text-xs">
                                 <div className="flex items-center gap-3">
                                     <div className={`w-3 h-3 rounded-full ${item.color}`} />
                                     <span className=" text-slate-500">{item.label}</span>
                                 </div>
-                                <span className="text-slate-800">{item.count}</span>
+                                <span className="text-slate-800">{stats?.setoranHariIni?.byStatus?.[item.key] || 0}</span>
                             </div>
                         ))}
                         <div className="pt-3 border-t border-slate-50 flex items-center justify-between">
                             <span className="text-xs text-slate-800 uppercase font-medium">Total</span>
-                            <span className="text-xs text-slate-800 font-medium">48</span>
+                            <span className="text-xs text-slate-800 font-medium">{(stats?.setoranHariIni?.total || 0).toLocaleString('id-ID')}</span>
                         </div>
                     </div>
                 </div>
@@ -190,25 +223,31 @@ export default function Dashboard() {
                 {/* Right: Donut 2 */}
                 <div className="lg:col-span-3 bg-white p-8 rounded border border-slate-100 shadow-sm flex flex-col justify-between">
                     <h4 className="text-md text-slate-700 font-semibold uppercase tracking-tight mb-8">Poin Member <span className="text-slate-400 capitalize italic"> (Hari Ini)</span></h4>
-                    <CustomDonutChart percentage={94} color="#10b981" label="TERPAKAI" />
+                    <CustomDonutChart 
+                        percentage={stats?.poinHariIni?.total > 0 ? Math.round(((stats.poinHariIni.byCategory['Semabko'] || stats.poinHariIni.byCategory['sembako'] || Object.values(stats.poinHariIni.byCategory)[0] || 0) / stats.poinHariIni.total) * 100) : 0} 
+                        color="#10b981" 
+                        label="TERPAKAI" 
+                    />
                     <div className="mt-8 space-y-3">
-                        {[
-                            { label: 'Sembako', count: 712, color: 'bg-emerald-500' },
-                            { label: 'Uang Tunai', count: 21, color: 'bg-orange-500' },
-                            { label: 'Lainnya', count: 15, color: 'bg-cyan-500' },
-                            { label: 'Tabungan', count: 11, color: 'bg-rose-500' },
-                        ].map(item => (
-                            <div key={item.label} className="flex items-center justify-between text-xs">
-                                <div className="flex items-center gap-3">
-                                    <div className={`w-3 h-3 rounded-full ${item.color}`} />
-                                    <span className="text-slate-500">{item.label}</span>
-                                </div>
-                                <span className="text-slate-800">{item.count}</span>
-                            </div>
-                        ))}
+                        {stats?.poinHariIni?.byCategory && Object.keys(stats.poinHariIni.byCategory).length > 0 ? (
+                            Object.entries(stats.poinHariIni.byCategory).slice(0, 4).map(([category, count], index) => {
+                                const colors = ['bg-emerald-500', 'bg-orange-500', 'bg-cyan-500', 'bg-rose-500', 'bg-indigo-500'];
+                                return (
+                                    <div key={category} className="flex items-center justify-between text-xs">
+                                        <div className="flex items-center gap-3">
+                                            <div className={`w-3 h-3 rounded-full ${colors[index % colors.length]}`} />
+                                            <span className="text-slate-500 capitalize">{category}</span>
+                                        </div>
+                                        <span className="text-slate-800">{Number(count).toLocaleString('id-ID')}</span>
+                                    </div>
+                                );
+                            })
+                        ) : (
+                            <div className="flex items-center justify-center py-4 text-xs text-slate-400">Belum ada penukaran</div>
+                        )}
                         <div className="pt-3 border-t border-slate-50 flex items-center justify-between">
-                            <span className="text-xs text-slate-800 uppercase font-medium">Total</span>
-                            <span className="text-xs text-slate-800 font-medium">759</span>
+                            <span className="text-xs text-slate-800 uppercase font-medium">Total Poin</span>
+                            <span className="text-xs text-slate-800 font-medium">{(stats?.poinHariIni?.total || 0).toLocaleString('id-ID')}</span>
                         </div>
                     </div>
                 </div>

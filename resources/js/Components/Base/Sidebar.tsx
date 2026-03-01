@@ -171,9 +171,9 @@ export default function Sidebar({ isCollapsed }: { isCollapsed: boolean }) {
             ]
         },
         {
-            title: 'Nasabah',
+            title: 'Member',
             items: [
-                { label: 'Nasabah', icon: Users, href: route('master.nasabah.index'), active: route().current('master.nasabah.*') },
+                { label: 'Member', icon: Users, href: route('master.nasabah.index'), active: route().current('master.nasabah.*') },
             ]
         },
         {

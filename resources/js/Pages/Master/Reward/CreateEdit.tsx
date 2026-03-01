@@ -1,7 +1,7 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link, useForm } from '@inertiajs/react';
-import { ArrowLeft, Save, Gift } from 'lucide-react';
-import { FormEventHandler } from 'react';
+import { ArrowLeft, Save, ImagePlus } from 'lucide-react';
+import { FormEventHandler, useState, useRef } from 'react';
 import Alert from '@/Components/Base/Alert';
 import Button from '@/Components/Base/Button';
 import Input from '@/Components/Base/Input';
@@ -13,6 +13,7 @@ interface Reward {
     stok: number;
     poin_tukar: number;
     kategori_reward: string;
+    foto?: string | null;
     stok_per_pos?: any[];
 }
 
@@ -23,11 +24,26 @@ interface Props {
 
 export default function CreateEdit({ reward, pos_lokasi }: Props) {
     const isEdit = !!reward;
-    const { data, setData, post, patch, processing, errors } = useForm({
+    const fileInputRef = useRef<HTMLInputElement>(null);
+    const [previewUrl, setPreviewUrl] = useState<string | null>(
+        reward?.foto ? `/storage/${reward.foto}` : null
+    );
+
+    const { data, setData, post, processing, errors } = useForm({
+        _method: isEdit ? 'PATCH' : undefined,
         nama_reward: reward?.nama_reward || '',
         poin_tukar: Number(reward?.poin_tukar || 0),
         kategori_reward: reward?.kategori_reward || 'Sembako',
+        foto: null as File | null,
     });
+
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            setData('foto', file);
+            setPreviewUrl(URL.createObjectURL(file));
+        }
+    };
 
     const handleSubmit: FormEventHandler = (e) => {
         e.preventDefault();
@@ -40,29 +56,17 @@ export default function CreateEdit({ reward, pos_lokasi }: Props) {
             confirmButtonText: isEdit ? 'Ya, Simpan' : 'Ya, Tambah',
         }).then((result) => {
             if (result.isConfirmed) {
-                if (isEdit) {
-                    patch(route('master.reward.update', reward.id), {
-                        onSuccess: () => {
-                            Alert.success({
-                                title: 'Berhasil!',
-                                text: `Data reward berhasil ${action}.`,
-                                timer: 1500,
-                                showConfirmButton: false,
-                            });
-                        }
-                    });
-                } else {
-                    post(route('master.reward.store'), {
-                        onSuccess: () => {
-                            Alert.success({
-                                title: 'Berhasil!',
-                                text: `Data reward berhasil ${action}.`,
-                                timer: 1500,
-                                showConfirmButton: false,
-                            });
-                        }
-                    });
-                }
+                const route_name = isEdit ? route('master.reward.update', reward.id) : route('master.reward.store');
+                post(route_name, {
+                    onSuccess: () => {
+                        Alert.success({
+                            title: 'Berhasil!',
+                            text: `Data reward berhasil ${action}.`,
+                            timer: 1500,
+                            showConfirmButton: false,
+                        });
+                    }
+                });
             }
         });
     };
@@ -88,6 +92,40 @@ export default function CreateEdit({ reward, pos_lokasi }: Props) {
 
                 <div className="bg-white rounded-sm border border-gray-200 p-8 max-w-2xl shadow-xs">
                     <form onSubmit={handleSubmit} className="space-y-6">
+
+                        {/* Foto Upload */}
+                        <div>
+                            <Label value="Foto Barang" className="text-gray-700 font-semibold mb-1.5" />
+                            <div
+                                className="mt-1 relative group cursor-pointer border-2 border-dashed border-slate-200 hover:border-slate-400 rounded-sm transition-colors flex flex-col items-center justify-center h-48 bg-slate-50 overflow-hidden"
+                                onClick={() => fileInputRef.current?.click()}
+                            >
+                                {previewUrl ? (
+                                    <>
+                                        <img src={previewUrl} alt="Preview" className="w-full h-full object-contain p-2" />
+                                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center">
+                                            <span className="text-white text-xs font-medium opacity-0 group-hover:opacity-100">Klik untuk ganti foto</span>
+                                        </div>
+                                    </>
+                                ) : (
+                                    <div className="flex flex-col items-center gap-2 text-slate-400">
+                                        <ImagePlus className="w-10 h-10" />
+                                        <span className="text-sm">Klik untuk upload foto</span>
+                                        <span className="text-xs">JPG, PNG, max 2MB</span>
+                                    </div>
+                                )}
+                            </div>
+                            <input
+                                type="file"
+                                ref={fileInputRef}
+                                className="hidden"
+                                accept="image/*"
+                                onChange={handleFileChange}
+                            />
+                            {/* @ts-ignore */}
+                            {errors.foto && <p className="text-red-500 text-xs mt-1">{errors.foto}</p>}
+                        </div>
+
                         <div>
                             <Label value="Nama Barang / Reward" className="text-gray-700 font-semibold mb-1.5" />
                             <Input
@@ -111,7 +149,6 @@ export default function CreateEdit({ reward, pos_lokasi }: Props) {
                             />
                             {errors.kategori_reward && <p className="text-red-500 text-xs mt-1">{errors.kategori_reward}</p>}
                         </div>
-
 
                         <div>
                             <Label value="Poin yang Dibutuhkan" className="text-gray-700 font-semibold mb-1.5" />
