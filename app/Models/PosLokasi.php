@@ -12,6 +12,8 @@ class PosLokasi extends Model
         'nama_pos',
         'kode_pos',
         'alamat',
+        'jadwal_buka',
+        'jadwal_tutup',
         'latitude',
         'longitude',
         'is_aktif',

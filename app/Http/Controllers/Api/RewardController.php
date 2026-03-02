@@ -61,7 +61,7 @@ class RewardController extends Controller
     }
     public function units()
     {
-        $units = \App\Models\PosLokasi::select('id', 'nama_pos', 'alamat', 'latitude', 'longitude')
+        $units = \App\Models\PosLokasi::select('id', 'nama_pos', 'alamat', 'jadwal_buka', 'jadwal_tutup', 'latitude', 'longitude')
             ->where('is_aktif', true)
             ->orderBy('nama_pos')
             ->get();

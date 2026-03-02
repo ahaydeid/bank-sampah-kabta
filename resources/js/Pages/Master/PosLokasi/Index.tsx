@@ -12,6 +12,8 @@ interface PosLokasi {
     nama_pos: string;
     kode_pos: string;
     alamat: string;
+    jadwal_buka: string | null;
+    jadwal_tutup: string | null;
     latitude: number;
     longitude: number;
     is_aktif: boolean;
@@ -121,6 +123,7 @@ export default function Index({ pos_lokasi, filters }: Props) {
                                 <TH className="font-bold text-gray-700 uppercase p-4 text-[10px] tracking-widest border-b border-gray-100">Nama Pos</TH>
                                 <TH className="font-bold text-gray-700 uppercase p-4 text-[10px] tracking-widest border-b border-gray-100 text-center">Kode</TH>
                                 <TH className="font-bold text-gray-700 uppercase p-4 text-[10px] tracking-widest border-b border-gray-100">Alamat</TH>
+                                <TH className="font-bold text-gray-700 uppercase p-4 text-[10px] tracking-widest border-b border-gray-100 text-center">Jadwal</TH>
                                 <TH className="font-bold text-gray-700 uppercase p-4 text-[10px] tracking-widest border-b border-gray-100 text-center">Barang Terdaftar</TH>
                                 <TH className="font-bold text-gray-700 uppercase p-4 text-[10px] tracking-widest border-b border-gray-100 text-center">Maps</TH>
                                 <TH className="font-bold text-gray-700 uppercase p-4 text-[10px] tracking-widest border-b border-gray-100 text-center">Status</TH>
@@ -139,6 +142,13 @@ export default function Index({ pos_lokasi, filters }: Props) {
                                         </TD>
                                         <TD className="py-3 px-4 max-w-xs truncate text-gray-500 text-sm">
                                             {item.alamat || '-'}
+                                        </TD>
+                                        <TD className="text-center py-3 px-4">
+                                            <span className="text-sm text-gray-700">
+                                                {item.jadwal_buka && item.jadwal_tutup
+                                                    ? `${item.jadwal_buka.slice(0, 5).replace(':', '.')} - ${item.jadwal_tutup.slice(0, 5).replace(':', '.')}`
+                                                    : '-'}
+                                            </span>
                                         </TD>
                                         <TD className="text-center py-3 px-4">
                                             <span className="inline-flex items-center font-bold px-2.5 py-1 text-sm text-gray-700 tracking-widest">
@@ -179,7 +189,7 @@ export default function Index({ pos_lokasi, filters }: Props) {
                                 ))
                             ) : (
                                 <TR>
-                                    <TD colSpan={7} className="py-12 text-center text-slate-400">
+                                    <TD colSpan={8} className="py-12 text-center text-slate-400">
                                         <p>Belum ada data pos unit tersedia.</p>
                                     </TD>
                                 </TR>

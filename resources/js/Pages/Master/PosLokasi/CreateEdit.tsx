@@ -25,6 +25,8 @@ interface PosLokasi {
     nama_pos: string;
     kode_pos: string;
     alamat: string;
+    jadwal_buka: string | null;
+    jadwal_tutup: string | null;
     latitude: number;
     longitude: number;
     is_aktif: boolean;
@@ -50,6 +52,8 @@ export default function CreateEdit({ pos_lokasi, registered_rewards, available_r
         nama_pos: pos_lokasi?.nama_pos || '',
         kode_pos: pos_lokasi?.kode_pos || '',
         alamat: pos_lokasi?.alamat || '',
+        jadwal_buka: pos_lokasi?.jadwal_buka ? pos_lokasi.jadwal_buka.slice(0, 5) : '',
+        jadwal_tutup: pos_lokasi?.jadwal_tutup ? pos_lokasi.jadwal_tutup.slice(0, 5) : '',
         latitude: pos_lokasi?.latitude || 0,
         longitude: pos_lokasi?.longitude || 0,
         is_aktif: pos_lokasi ? pos_lokasi.is_aktif : true,
@@ -207,7 +211,7 @@ export default function CreateEdit({ pos_lokasi, registered_rewards, available_r
                                             const values = e.target.value.replace(/[^0-9]/g, '');
                                             setData('kode_pos', values);
                                         }}
-                                        className="w-full rounded-sm border-gray-300 font-mono uppercase focus:border-gray-800 focus:ring-gray-800"
+                                        className="w-full rounded-sm border-gray-300 uppercase focus:border-gray-800 focus:ring-gray-800"
                                         placeholder="01"
                                     />
                                     {errors.kode_pos && <p className="text-red-500 text-xs mt-1">{errors.kode_pos}</p>}
@@ -251,6 +255,77 @@ export default function CreateEdit({ pos_lokasi, registered_rewards, available_r
                                     placeholder="Alamat lengkap pos..."
                                 />
                                 {errors.alamat && <p className="text-red-500 text-xs mt-1">{errors.alamat}</p>}
+                            </div>
+
+                            <div>
+                                <Label value="Jadwal Operasional" className="text-gray-700 font-semibold mb-1.5" />
+                                <div className="flex items-center gap-2">
+                                    <div className="flex items-center gap-1">
+                                        <input
+                                            type="text"
+                                            inputMode="numeric"
+                                            maxLength={2}
+                                            value={data.jadwal_buka.split(':')[0] || ''}
+                                            onChange={(e) => {
+                                                const val = e.target.value.replace(/[^0-9]/g, '').slice(0, 2);
+                                                if (Number(val) > 23 && val.length === 2) return;
+                                                const mm = data.jadwal_buka.split(':')[1] || '00';
+                                                setData('jadwal_buka', `${val}:${mm}`);
+                                            }}
+                                            placeholder="JJ"
+                                            className="w-14 text-center px-2 py-2 border border-gray-300 focus:border-gray-800 focus:ring-gray-800 rounded-sm text-sm"
+                                        />
+                                        <span className="text-gray-500 font-bold text-lg">.</span>
+                                        <input
+                                            type="text"
+                                            inputMode="numeric"
+                                            maxLength={2}
+                                            value={data.jadwal_buka.split(':')[1] || ''}
+                                            onChange={(e) => {
+                                                const val = e.target.value.replace(/[^0-9]/g, '').slice(0, 2);
+                                                if (Number(val) > 59 && val.length === 2) return;
+                                                const hh = data.jadwal_buka.split(':')[0] || '00';
+                                                setData('jadwal_buka', `${hh}:${val}`);
+                                            }}
+                                            placeholder="MM"
+                                            className="w-14 text-center px-2 py-2 border border-gray-300 focus:border-gray-800 focus:ring-gray-800 rounded-sm text-sm"
+                                        />
+                                    </div>
+                                    <span className="text-gray-400 font-medium px-1">—</span>
+                                    <div className="flex items-center gap-1">
+                                        <input
+                                            type="text"
+                                            inputMode="numeric"
+                                            maxLength={2}
+                                            value={data.jadwal_tutup.split(':')[0] || ''}
+                                            onChange={(e) => {
+                                                const val = e.target.value.replace(/[^0-9]/g, '').slice(0, 2);
+                                                if (Number(val) > 23 && val.length === 2) return;
+                                                const mm = data.jadwal_tutup.split(':')[1] || '00';
+                                                setData('jadwal_tutup', `${val}:${mm}`);
+                                            }}
+                                            placeholder="JJ"
+                                            className="w-14 text-center px-2 py-2 border border-gray-300 focus:border-gray-800 focus:ring-gray-800 rounded-sm text-sm"
+                                        />
+                                        <span className="text-gray-500 font-bold text-lg">.</span>
+                                        <input
+                                            type="text"
+                                            inputMode="numeric"
+                                            maxLength={2}
+                                            value={data.jadwal_tutup.split(':')[1] || ''}
+                                            onChange={(e) => {
+                                                const val = e.target.value.replace(/[^0-9]/g, '').slice(0, 2);
+                                                if (Number(val) > 59 && val.length === 2) return;
+                                                const hh = data.jadwal_tutup.split(':')[0] || '00';
+                                                setData('jadwal_tutup', `${hh}:${val}`);
+                                            }}
+                                            placeholder="MM"
+                                            className="w-14 text-center px-2 py-2 border border-gray-300 focus:border-gray-800 focus:ring-gray-800 rounded-sm text-sm"
+                                        />
+                                    </div>
+                                </div>
+                                <p className="text-[10px] text-gray-400 mt-1.5">Format 24 jam (contoh: 08.00 — 16.00)</p>
+                                {(errors.jadwal_buka || errors.jadwal_tutup) && <p className="text-red-500 text-xs mt-1">{errors.jadwal_buka || errors.jadwal_tutup}</p>}
                             </div>
 
                             <div className="flex items-center space-x-3 py-2">

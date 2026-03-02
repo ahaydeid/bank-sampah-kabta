@@ -132,7 +132,7 @@ class TransaksiSetorController extends Controller
         $transaksi = TransaksiSetor::with(['pos', 'detail.sampah'])
             ->where('member_id', $request->user()->id)
             ->latest('tanggal_waktu')
-            ->paginate(15);
+            ->paginate(10);
 
         return response()->json($transaksi);
     }
