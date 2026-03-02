@@ -48,7 +48,7 @@ class TransaksiSetorController extends Controller
 
             foreach ($request->items as $item) {
                 $sampah = $sampahMap[$item['sampah_id']] ?? abort(404, 'Sampah tidak ditemukan.');
-                $subtotalPoin = $sampah->poin_per_satuan * $item['berat'];
+                $subtotalPoin = floor($sampah->poin_per_satuan * $item['berat']);
                 
                 $totalBerat += $item['berat'];
                 $totalPoin += $subtotalPoin;
