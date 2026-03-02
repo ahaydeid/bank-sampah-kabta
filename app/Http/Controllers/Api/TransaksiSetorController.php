@@ -14,6 +14,15 @@ use Intervention\Image\Laravel\Facades\Image;
 
 class TransaksiSetorController extends Controller
 {
+    public function getSampahTypes()
+    {
+        $sampah = Sampah::all();
+        return response()->json([
+            'message' => 'Data sampah berhasil diambil.',
+            'data' => $sampah
+        ]);
+    }
+
     public function store(Request $request)
     {
         $request->validate([
@@ -68,17 +77,18 @@ class TransaksiSetorController extends Controller
                 }
             }
 
-            // Generate Sequential ID: YYMMDD + Pos(2) + Seq(3) (e.g., 26021801001)
+            // Generate Sequential ID: STR-YYMMDD + Pos(2) + Seq(3) (e.g., STR-26021801001)
             $pos = \App\Models\PosLokasi::findOrFail($request->pos_id);
             $posCode = str_pad($pos->kode_pos ?? '00', 2, '0', STR_PAD_LEFT);
             $today = now()->format('ymd');
+            $prefix = "STR-{$today}{$posCode}";
             
-            $latest = TransaksiSetor::where('kode_transaksi', 'like', "{$today}{$posCode}%")
+            $latest = TransaksiSetor::where('kode_transaksi', 'like', "{$prefix}%")
                 ->latest('id')
                 ->first();
                 
             $sequence = $latest ? (int)substr($latest->kode_transaksi, -3) + 1 : 1;
-            $kodeTransaksi = $today . $posCode . str_pad($sequence, 3, '0', STR_PAD_LEFT);
+            $kodeTransaksi = "{$prefix}" . str_pad($sequence, 3, '0', STR_PAD_LEFT);
 
             // Create Transaction
             $transaksi = TransaksiSetor::create([
@@ -112,11 +122,9 @@ class TransaksiSetorController extends Controller
         $transaksi = TransaksiSetor::with(['member.profil', 'pos'])
             ->where('petugas_id', $user->id) 
             ->latest('tanggal_waktu')
-            ->get();
+            ->paginate(15);
 
-        return response()->json([
-            'transaksi' => $transaksi
-        ]);
+        return response()->json($transaksi);
     }
 
     public function historyNasabah(Request $request)

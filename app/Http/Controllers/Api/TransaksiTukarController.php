@@ -136,9 +136,14 @@ class TransaksiTukarController extends Controller
 
     public function show(Request $request, $id)
     {
-        $transaksi = TransaksiTukar::with(['detail.reward', 'pos'])
-            ->where('member_id', $request->user()->id)
-            ->findOrFail($id);
+        $query = TransaksiTukar::with(['detail.reward', 'pos', 'member.profil']);
+        
+        $user = $request->user();
+        if ($user->role === 'nasabah') {
+            $query->where('member_id', $user->id);
+        }
+
+        $transaksi = $query->findOrFail($id);
 
         return response()->json([
             'data' => $transaksi
@@ -163,7 +168,7 @@ class TransaksiTukarController extends Controller
 
         return response()->json([
             'data' => $transaksi,
-            'qr_data' => $transaksi->kode_penukaran,
+            'qr_data' => str_replace('TKR-', '', $transaksi->kode_penukaran),
             'remaining_seconds' => max(0, $remainingSeconds),
             'is_expired' => $remainingSeconds <= 0
         ]);
@@ -241,5 +246,17 @@ class TransaksiTukarController extends Controller
             'message' => 'Penukaran berhasil diselesaikan. Barang dapat diserahkan ke nasabah.',
             'data' => $transaksi
         ]);
+    }
+
+    public function listPetugas(Request $request)
+    {
+        $user = $request->user();
+        
+        $transaksi = TransaksiTukar::with(['member.profil', 'detail.reward'])
+            ->where('petugas_id', $user->id)
+            ->latest()
+            ->paginate(15);
+
+        return response()->json($transaksi);
     }
 }

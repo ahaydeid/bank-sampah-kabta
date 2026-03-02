@@ -13,4 +13,8 @@ class Sampah extends Model
         'kategori',
         'poin_per_satuan',
     ];
+
+    protected $casts = [
+        'poin_per_satuan' => 'integer',
+    ];
 }

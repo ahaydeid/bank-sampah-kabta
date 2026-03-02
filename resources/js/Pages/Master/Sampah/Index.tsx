@@ -113,7 +113,7 @@ export default function Index({ sampah, filters }: Props) {
                             <TR isHeader>
                                 <TH>Nama Sampah</TH>
                                 <TH>Kategori</TH>
-                                <TH>Poin / Satuan</TH>
+                                <TH>Poin (per Kg)</TH>
                                 <TH className="text-right">Aksi</TH>
                             </TR>
                         </THead>

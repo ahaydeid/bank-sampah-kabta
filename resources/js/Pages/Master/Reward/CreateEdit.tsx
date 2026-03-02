@@ -80,7 +80,7 @@ export default function CreateEdit({ reward, pos_lokasi }: Props) {
                     <div className="flex items-center gap-3">
                         <Link
                             href={route('master.reward.index')}
-                            className="p-2 hover:bg-gray-100 rounded-sm transition-colors border border-gray-200"
+                            className="p-2 hover:bg-gray-100 rounded-sm transition-colors"
                         >
                             <ArrowLeft className="w-5 h-5 text-gray-600" />
                         </Link>

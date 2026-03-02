@@ -36,7 +36,7 @@ class PetugasController extends Controller
     {
         $posId = $request->query('pos_id') ?: ($request->user()->profil->pos_id ?? null);
         
-        $query = TransaksiTukar::with('member.profil')
+        $query = TransaksiTukar::with(['member.profil', 'detail'])
             ->where('status', 'disetujui') 
             ->whereNull('tanggal_selesai');
 

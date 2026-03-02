@@ -9,8 +9,11 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/me', [AuthController::class, 'me']);
     Route::post('/logout', [AuthController::class, 'logout']);
+    Route::post('/change-password', [AuthController::class, 'changePassword']);
+    Route::get('/users/find/{identifier}', [AuthController::class, 'findUser']);
 
     // Transaksi Setor
+    Route::get('/sampah', [TransaksiSetorController::class, 'getSampahTypes']);
     Route::post('/setoran', [TransaksiSetorController::class, 'store']);
     Route::get('/setoran', [TransaksiSetorController::class, 'list']);
     Route::get('/setoran/history', [TransaksiSetorController::class, 'historyNasabah']);
@@ -24,6 +27,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/{id}/qr', [\App\Http\Controllers\Api\TransaksiTukarController::class, 'showQr']);
         
         // Petugas
+        Route::get('/', [\App\Http\Controllers\Api\TransaksiTukarController::class, 'listPetugas']);
         Route::post('/scan', [\App\Http\Controllers\Api\TransaksiTukarController::class, 'scan']);
         Route::post('/{id}/konfirmasi-ambil', [\App\Http\Controllers\Api\TransaksiTukarController::class, 'konfirmasiAmbil']);
     });
@@ -44,6 +48,6 @@ Route::middleware('auth:sanctum')->group(function () {
     // Petugas Dashboard & Queue
     Route::prefix('petugas')->group(function () {
         Route::get('/stats', [\App\Http\Controllers\Api\PetugasController::class, 'stats']);
-        Route::get('/queue', [\App\Http\Controllers\Api\PetugasController::class, 'queue']);
+        Route::get('/antrian', [\App\Http\Controllers\Api\PetugasController::class, 'queue']);
     });
 });

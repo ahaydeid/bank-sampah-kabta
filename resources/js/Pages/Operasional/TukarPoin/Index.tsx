@@ -224,13 +224,12 @@ export default function Index({ transaksi, filters }: Props) {
                                     <TD className="text-center py-4">
                                         <Link href={route('operasional.tukar-poin.show', item.id)}>
                                             {item.tanggal_selesai ? (
-                                                <Button className="bg-slate-600 text-white hover:bg-slate-700 rounded-sm" title="Lihat">
-                                                    <Eye className="w-4 h-4 mr-1" />
-                                                    Lihat
+                                                <Button className="bg-amber-500 text-white hover:bg-amber-600 rounded-sm" title="Lihat">
+                                                    <Eye className="w-3.5 h-3.5" />
                                                 </Button>
                                             ) : (
                                                 <Button className="bg-amber-500 text-white hover:bg-amber-600 rounded-sm" title="Proses">
-                                                    <Loader2 className="w-4 h-4 mr-1" />
+                                                    <Loader2 className="w-3.5 h-3.5 mr-1" />
                                                     Proses
                                                 </Button>
                                             )}
