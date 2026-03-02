@@ -4,12 +4,12 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\TransaksiSetorController;
 use Illuminate\Support\Facades\Route;
 
-Route::post('/login', [AuthController::class, 'login']);
+Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:5,1');
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/me', [AuthController::class, 'me']);
     Route::post('/logout', [AuthController::class, 'logout']);
-    Route::post('/change-password', [AuthController::class, 'changePassword']);
+    Route::post('/change-password', [AuthController::class, 'changePassword'])->middleware('throttle:3,1');
     Route::get('/users/find/{identifier}', [AuthController::class, 'findUser']);
 
     // Transaksi Setor

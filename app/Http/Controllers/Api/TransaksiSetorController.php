@@ -42,8 +42,12 @@ class TransaksiSetorController extends Controller
             $totalPoin = 0;
             $itemsData = [];
 
+            // Pre-load semua sampah sekaligus (fix N+1)
+            $sampahIds = collect($request->items)->pluck('sampah_id')->unique();
+            $sampahMap = Sampah::whereIn('id', $sampahIds)->get()->keyBy('id');
+
             foreach ($request->items as $item) {
-                $sampah = Sampah::findOrFail($item['sampah_id']);
+                $sampah = $sampahMap[$item['sampah_id']] ?? abort(404, 'Sampah tidak ditemukan.');
                 $subtotalPoin = $sampah->poin_per_satuan * $item['berat'];
                 
                 $totalBerat += $item['berat'];

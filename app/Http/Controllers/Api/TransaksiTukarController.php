@@ -141,6 +141,8 @@ class TransaksiTukarController extends Controller
         $user = $request->user();
         if ($user->role === 'nasabah') {
             $query->where('member_id', $user->id);
+        } elseif ($user->role === 'petugas') {
+            $query->where('pos_id', $user->profil->pos_id);
         }
 
         $transaksi = $query->findOrFail($id);
