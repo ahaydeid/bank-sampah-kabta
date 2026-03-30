@@ -12,11 +12,11 @@ export default function UnderDevelopment() {
                     className="mx-auto object-contain w-80"
                 />
 
-                <h1 className="text-xl font-semibold mt-4 text-gray-600 uppercase tracking-tight">
+                <h1 className="text-xl font-semibold mt-4 text-gray-600 tracking-tight">
                     Fitur Sedang Dalam Pengembangan
                 </h1>
                 <p className="text-slate-400 text-sm mt-2">
-                    Kami sedang mengerjakan fitur ini. Silakan kembali lagi nanti!
+                    Fitur dalam pengembangan. Silakan kembali lagi nanti!
                 </p>
             </div>
         </div>

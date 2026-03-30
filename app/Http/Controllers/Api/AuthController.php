@@ -38,6 +38,12 @@ class AuthController extends Controller
             ], 403);
         }
 
+        if (!in_array($user->peran, ['member', 'petugas'], true)) {
+            return response()->json([
+                'message' => 'Akun ini tidak memiliki akses ke aplikasi mobile.'
+            ], 403);
+        }
+
         $token = $user->createToken('pwa-token')->plainTextToken;
 
         return response()->json([
@@ -67,8 +73,16 @@ class AuthController extends Controller
     public function findUser($identifier)
     {
         $user = Pengguna::where('username', $identifier)->with('profil')->firstOrFail();
+
         return response()->json([
-            'data' => $user
+            'data' => [
+                'id' => $user->id,
+                'username' => $user->username,
+                'profil' => [
+                    'nama' => $user->profil?->nama,
+                    'foto_profil' => $user->profil?->foto_profil,
+                ],
+            ],
         ]);
     }
 

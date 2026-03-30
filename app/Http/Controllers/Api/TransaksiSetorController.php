@@ -36,6 +36,13 @@ class TransaksiSetorController extends Controller
         ]);
 
         $petugas = $request->user();
+        $petugasPosId = $petugas->profil->pos_id ?? null;
+
+        if (!$petugasPosId || (int) $request->pos_id !== (int) $petugasPosId) {
+            return response()->json([
+                'message' => 'Petugas hanya dapat mencatat setoran untuk unitnya sendiri.',
+            ], 403);
+        }
 
         return DB::transaction(function () use ($request, $petugas) {
             $totalBerat = 0;

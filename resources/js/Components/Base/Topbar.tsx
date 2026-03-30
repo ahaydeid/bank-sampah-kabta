@@ -44,7 +44,7 @@ export default function Topbar({ isCollapsed, setIsCollapsed }: Props) {
                     <Link href={route('profile.show')} className="flex items-center group transition duration-150 ease-in-out">
                         <div className="text-right me-4 hidden sm:block">
                             <div className="text-sm font-bold text-slate-800 group-hover:text-kabta-purple transition-colors">{auth.user.profil?.nama || auth.user.email}</div>
-                            <div className="text-[10px] text-gray-400 uppercase tracking-widest">{auth.user.peran}</div>
+                            <div className="text-[9px] text-gray-400 tracking-widest">{auth.user.peran}</div>
                         </div>
                         <Avatar 
                             src={auth.user.profil?.foto_profil ? `/storage/${auth.user.profil.foto_profil}` : null} 

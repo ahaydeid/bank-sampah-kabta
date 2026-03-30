@@ -12,7 +12,7 @@ class PetugasController extends Controller
     public function stats(Request $request)
     {
         $user = $request->user();
-        $posId = $request->query('pos_id') ?: ($user->profil->pos_id ?? null);
+        $posId = $user->profil->pos_id ?? null;
 
         $querySetor = TransaksiSetor::whereDate('tanggal_waktu', now());
         $queryTukar = TransaksiTukar::whereDate('tanggal', now());
@@ -34,7 +34,7 @@ class PetugasController extends Controller
 
     public function queue(Request $request)
     {
-        $posId = $request->query('pos_id') ?: ($request->user()->profil->pos_id ?? null);
+        $posId = $request->user()->profil->pos_id ?? null;
         
         $query = TransaksiTukar::with(['member.profil', 'detail'])
             ->where('status', 'disetujui') 

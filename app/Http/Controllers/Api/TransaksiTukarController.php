@@ -139,10 +139,10 @@ class TransaksiTukarController extends Controller
         $query = TransaksiTukar::with(['detail.reward', 'pos', 'member.profil']);
         
         $user = $request->user();
-        if ($user->role === 'nasabah') {
+        if ($user->peran === 'member') {
             $query->where('member_id', $user->id);
-        } elseif ($user->role === 'petugas') {
-            $query->where('pos_id', $user->profil->pos_id);
+        } elseif ($user->peran === 'petugas') {
+            $query->where('pos_id', $user->profil->pos_id ?? null);
         }
 
         $transaksi = $query->findOrFail($id);
@@ -192,6 +192,12 @@ class TransaksiTukarController extends Controller
             return response()->json(['message' => 'Kode penukaran tidak valid.'], 404);
         }
 
+        $petugasPosId = $request->user()->profil->pos_id ?? null;
+
+        if (!$petugasPosId || (int) $transaksi->pos_id !== (int) $petugasPosId) {
+            return response()->json(['message' => 'Transaksi ini bukan untuk unit Anda.'], 403);
+        }
+
         if ($transaksi->status === 'kadaluwarsa') {
             return response()->json(['message' => 'Transaksi ini sudah kadaluwarsa.'], 422);
         }
@@ -220,11 +226,12 @@ class TransaksiTukarController extends Controller
 
     public function konfirmasiAmbil(Request $request, $id)
     {
-        $request->validate([
-            'pos_id' => 'required|exists:pos_lokasi,id',
-        ]);
-
         $transaksi = TransaksiTukar::findOrFail($id);
+        $petugasPosId = $request->user()->profil->pos_id ?? null;
+
+        if (!$petugasPosId || (int) $transaksi->pos_id !== (int) $petugasPosId) {
+            return response()->json(['message' => 'Transaksi ini bukan untuk unit Anda.'], 403);
+        }
 
         if ($transaksi->status !== 'disetujui') {
             return response()->json(['message' => 'Transaksi tidak dalam status disetujui.'], 422);
@@ -241,7 +248,7 @@ class TransaksiTukarController extends Controller
         $transaksi->update([
             'tanggal_selesai' => now(),
             'petugas_id' => $request->user()->id,
-            'pos_id' => $request->pos_id,
+            'pos_id' => $petugasPosId,
         ]);
 
         return response()->json([

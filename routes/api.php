@@ -10,44 +10,46 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/me', [AuthController::class, 'me']);
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::post('/change-password', [AuthController::class, 'changePassword'])->middleware('throttle:3,1');
-    Route::get('/users/find/{identifier}', [AuthController::class, 'findUser']);
+    Route::get('/tukar-poin/{id}', [\App\Http\Controllers\Api\TransaksiTukarController::class, 'show'])
+        ->middleware('api.role:member,petugas');
 
-    // Transaksi Setor
-    Route::get('/sampah', [TransaksiSetorController::class, 'getSampahTypes']);
-    Route::post('/setoran', [TransaksiSetorController::class, 'store']);
-    Route::get('/setoran', [TransaksiSetorController::class, 'list']);
-    Route::get('/setoran/history', [TransaksiSetorController::class, 'historyNasabah']);
-    Route::get('/setoran/{id}', [TransaksiSetorController::class, 'show']);
+    Route::middleware('api.role:member')->group(function () {
+        Route::get('/setoran/history', [TransaksiSetorController::class, 'historyNasabah']);
+        Route::get('/setoran/{id}', [TransaksiSetorController::class, 'show']);
 
-    // Penukaran Poin
-    Route::prefix('tukar-poin')->group(function () {
-        Route::post('/checkout', [\App\Http\Controllers\Api\TransaksiTukarController::class, 'checkout']);
-        Route::get('/history', [\App\Http\Controllers\Api\TransaksiTukarController::class, 'history']);
-        Route::get('/{id}', [\App\Http\Controllers\Api\TransaksiTukarController::class, 'show']);
-        Route::get('/{id}/qr', [\App\Http\Controllers\Api\TransaksiTukarController::class, 'showQr']);
-        
-        // Petugas
-        Route::get('/', [\App\Http\Controllers\Api\TransaksiTukarController::class, 'listPetugas']);
-        Route::post('/scan', [\App\Http\Controllers\Api\TransaksiTukarController::class, 'scan']);
-        Route::post('/{id}/konfirmasi-ambil', [\App\Http\Controllers\Api\TransaksiTukarController::class, 'konfirmasiAmbil']);
+        Route::prefix('tukar-poin')->group(function () {
+            Route::post('/checkout', [\App\Http\Controllers\Api\TransaksiTukarController::class, 'checkout']);
+            Route::get('/history', [\App\Http\Controllers\Api\TransaksiTukarController::class, 'history']);
+            Route::get('/{id}/qr', [\App\Http\Controllers\Api\TransaksiTukarController::class, 'showQr']);
+        });
+
+        Route::get('/units', [\App\Http\Controllers\Api\RewardController::class, 'units']);
+        Route::get('/rewards', [\App\Http\Controllers\Api\RewardController::class, 'index']);
+
+        Route::prefix('cart')->group(function () {
+            Route::get('/', [\App\Http\Controllers\Api\CartController::class, 'index']);
+            Route::post('/', [\App\Http\Controllers\Api\CartController::class, 'store']);
+            Route::patch('/{id}', [\App\Http\Controllers\Api\CartController::class, 'update']);
+            Route::post('/sync', [\App\Http\Controllers\Api\CartController::class, 'sync']);
+            Route::delete('/{id}', [\App\Http\Controllers\Api\CartController::class, 'destroy']);
+        });
     });
 
-    // Reward Catalog
-    Route::get('/units', [\App\Http\Controllers\Api\RewardController::class, 'units']);
-    Route::get('/rewards', [\App\Http\Controllers\Api\RewardController::class, 'index']);
+    Route::middleware('api.role:petugas')->group(function () {
+        Route::get('/users/find/{identifier}', [AuthController::class, 'findUser']);
+        Route::get('/sampah', [TransaksiSetorController::class, 'getSampahTypes']);
+        Route::post('/setoran', [TransaksiSetorController::class, 'store']);
+        Route::get('/setoran', [TransaksiSetorController::class, 'list']);
 
-    // Shopping Cart
-    Route::prefix('cart')->group(function () {
-        Route::get('/', [\App\Http\Controllers\Api\CartController::class, 'index']);
-        Route::post('/', [\App\Http\Controllers\Api\CartController::class, 'store']); // Add/Update single
-        Route::patch('/{id}', [\App\Http\Controllers\Api\CartController::class, 'update']); // Update quantity
-        Route::post('/sync', [\App\Http\Controllers\Api\CartController::class, 'sync']); // Full Sync
-        Route::delete('/{id}', [\App\Http\Controllers\Api\CartController::class, 'destroy']); // Remove item
-    });
+        Route::prefix('tukar-poin')->group(function () {
+            Route::get('/', [\App\Http\Controllers\Api\TransaksiTukarController::class, 'listPetugas']);
+            Route::post('/scan', [\App\Http\Controllers\Api\TransaksiTukarController::class, 'scan']);
+            Route::post('/{id}/konfirmasi-ambil', [\App\Http\Controllers\Api\TransaksiTukarController::class, 'konfirmasiAmbil']);
+        });
 
-    // Petugas Dashboard & Queue
-    Route::prefix('petugas')->group(function () {
-        Route::get('/stats', [\App\Http\Controllers\Api\PetugasController::class, 'stats']);
-        Route::get('/antrian', [\App\Http\Controllers\Api\PetugasController::class, 'queue']);
+        Route::prefix('petugas')->group(function () {
+            Route::get('/stats', [\App\Http\Controllers\Api\PetugasController::class, 'stats']);
+            Route::get('/antrian', [\App\Http\Controllers\Api\PetugasController::class, 'queue']);
+        });
     });
 });
