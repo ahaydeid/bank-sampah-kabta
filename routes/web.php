@@ -66,9 +66,9 @@ Route::get('/dashboard', function () {
             'trendSetoran' => $trendSetoran,
         ]
     ]);
-})->middleware(['auth', 'verified'])->name('dashboard');
+})->middleware(['auth', 'web.non_petugas', 'verified'])->name('dashboard');
 
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth', 'web.non_petugas'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
     Route::get('/profile/settings', [ProfileController::class, 'settings'])->name('profile.settings');
     Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');

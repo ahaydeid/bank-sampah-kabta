@@ -49,6 +49,17 @@ class LoginRequest extends FormRequest
             ]);
         }
 
+        $user = Auth::user();
+
+        if ($user?->peran === 'petugas') {
+            Auth::guard('web')->logout();
+            RateLimiter::clear($this->throttleKey());
+
+            throw ValidationException::withMessages([
+                'email' => 'Akun petugas hanya dapat mengakses aplikasi mobile.',
+            ]);
+        }
+
         RateLimiter::clear($this->throttleKey());
     }
 

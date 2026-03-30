@@ -46,9 +46,9 @@ export default function Login({
 
             <div className="mb-8">
                 <h2 className="text-3xl font-bold text-slate-800 tracking-tight">
-                    Log In
+                    Log <span className='text-kabta-purple'>In</span>
                 </h2>
-                <p className="mt-2 text-md font-medium text-gray-600 uppercase">
+                <p className="mt-2 text-md font-medium text-gray-500">
                     Bank Sampah Kabta
                 </p>
             </div>
@@ -112,7 +112,7 @@ export default function Login({
                     {canResetPassword && (
                         <Link
                             href={route('password.request')}
-                            className="text-xs text-gray-600 hover:text-kabta-purple/80 transition-colors tracking-widest"
+                            className="text-xs text-gray-600 italic hover:text-kabta-purple/80 transition-colors tracking-widest"
                         >
                             Lupa password?
                         </Link>
