@@ -11,6 +11,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::post('/change-password', [AuthController::class, 'changePassword'])->middleware('throttle:3,1');
     Route::get('/tukar-poin/{id}', [\App\Http\Controllers\Api\TransaksiTukarController::class, 'show'])
+        ->whereNumber('id')
+        ->middleware('api.role:member,petugas');
+    Route::get('/sampah', [TransaksiSetorController::class, 'getSampahTypes'])
         ->middleware('api.role:member,petugas');
 
     Route::middleware('api.role:member')->group(function () {
@@ -20,7 +23,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::prefix('tukar-poin')->group(function () {
             Route::post('/checkout', [\App\Http\Controllers\Api\TransaksiTukarController::class, 'checkout']);
             Route::get('/history', [\App\Http\Controllers\Api\TransaksiTukarController::class, 'history']);
-            Route::get('/{id}/qr', [\App\Http\Controllers\Api\TransaksiTukarController::class, 'showQr']);
+            Route::get('/{id}/qr', [\App\Http\Controllers\Api\TransaksiTukarController::class, 'showQr'])
+                ->whereNumber('id');
         });
 
         Route::get('/units', [\App\Http\Controllers\Api\RewardController::class, 'units']);
@@ -37,14 +41,14 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::middleware('api.role:petugas')->group(function () {
         Route::get('/users/find/{identifier}', [AuthController::class, 'findUser']);
-        Route::get('/sampah', [TransaksiSetorController::class, 'getSampahTypes']);
         Route::post('/setoran', [TransaksiSetorController::class, 'store']);
         Route::get('/setoran', [TransaksiSetorController::class, 'list']);
 
         Route::prefix('tukar-poin')->group(function () {
             Route::get('/', [\App\Http\Controllers\Api\TransaksiTukarController::class, 'listPetugas']);
             Route::post('/scan', [\App\Http\Controllers\Api\TransaksiTukarController::class, 'scan']);
-            Route::post('/{id}/konfirmasi-ambil', [\App\Http\Controllers\Api\TransaksiTukarController::class, 'konfirmasiAmbil']);
+            Route::post('/{id}/konfirmasi-ambil', [\App\Http\Controllers\Api\TransaksiTukarController::class, 'konfirmasiAmbil'])
+                ->whereNumber('id');
         });
 
         Route::prefix('petugas')->group(function () {

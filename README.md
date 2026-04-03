@@ -58,3 +58,52 @@ If you discover a security vulnerability within Laravel, please send an e-mail t
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
 # bank-sampah-kabta
+
+## Docker deployment
+
+This repository includes a lightweight Docker setup intended for a small VPS and easy future scaling.
+
+Services included in [compose.yaml](/home/ahadi/Kerja/Projek/bank-sampah/compose.yaml):
+- `app`: Laravel PHP-FPM application
+- `queue`: Laravel queue worker
+- `scheduler`: Laravel scheduler worker
+- `nginx`: public web server
+- `db`: MariaDB database
+
+### First-time setup
+
+1. Copy [.env.docker.example](/home/ahadi/Kerja/Projek/bank-sampah/.env.docker.example) to `.env.docker`.
+2. Fill in `APP_KEY`, `APP_URL`, `DB_PASSWORD`, and `DB_ROOT_PASSWORD`.
+3. Build and start the stack:
+
+```bash
+docker compose --env-file .env.docker up -d --build
+```
+
+4. Generate the app key if needed:
+
+```bash
+docker compose --env-file .env.docker exec app php artisan key:generate
+```
+
+5. Run migrations:
+
+```bash
+docker compose --env-file .env.docker exec app php artisan migrate --force
+```
+
+### Useful commands
+
+```bash
+docker compose --env-file .env.docker logs -f
+docker compose --env-file .env.docker exec app php artisan optimize
+docker compose --env-file .env.docker exec app php artisan queue:restart
+docker compose --env-file .env.docker exec app php artisan storage:link
+```
+
+### Notes for a 1 GB VPS
+
+- Keep this stack minimal and avoid adding Redis, phpMyAdmin, or Portainer for now.
+- Run only one queue worker until the VPS is upgraded.
+- Build frontend assets inside the image and avoid running Vite dev server in production.
+- Web and mobile clients can share this same Laravel backend/API.
