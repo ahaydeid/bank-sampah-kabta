@@ -62,7 +62,7 @@ export default function Login({
             <form onSubmit={submit} className="space-y-6">
                 {/* Login Field (Email) */}
                 <div className="group">
-                    <label htmlFor="email" className="block text-sm font-semibold text-slate-500 tracking-[0.2em] mb-1">
+                    <label htmlFor="email" className="block text-sm font-semibold text-slate-500 tracking-normal mb-1">
                         Email
                     </label>
                     <input
@@ -81,7 +81,7 @@ export default function Login({
 
                 {/* Password Field */}
                 <div className="group relative">
-                    <label htmlFor="password" className="block text-sm font-semibold text-slate-500 tracking-[0.2em] mb-1">
+                    <label htmlFor="password" className="block text-sm font-semibold text-slate-500 tracking-normal mb-1">
                         Password
                     </label>
                     <div className="relative">

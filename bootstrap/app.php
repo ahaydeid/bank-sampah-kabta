@@ -12,6 +12,8 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        $middleware->trustProxies(at: '*');
+
         $middleware->alias([
             'api.role' => \App\Http\Middleware\EnsureApiRole::class,
             'web.non_petugas' => \App\Http\Middleware\EnsureWebAccessForNonPetugas::class,

@@ -15,6 +15,8 @@ Route::middleware('auth:sanctum')->group(function () {
         ->middleware('api.role:member,petugas');
     Route::get('/sampah', [TransaksiSetorController::class, 'getSampahTypes'])
         ->middleware('api.role:member,petugas');
+    Route::get('/rewards', [\App\Http\Controllers\Api\RewardController::class, 'index'])
+        ->middleware('api.role:member,petugas');
 
     Route::middleware('api.role:member')->group(function () {
         Route::get('/setoran/history', [TransaksiSetorController::class, 'historyNasabah']);
@@ -28,8 +30,6 @@ Route::middleware('auth:sanctum')->group(function () {
         });
 
         Route::get('/units', [\App\Http\Controllers\Api\RewardController::class, 'units']);
-        Route::get('/rewards', [\App\Http\Controllers\Api\RewardController::class, 'index']);
-
         Route::prefix('cart')->group(function () {
             Route::get('/', [\App\Http\Controllers\Api\CartController::class, 'index']);
             Route::post('/', [\App\Http\Controllers\Api\CartController::class, 'store']);
