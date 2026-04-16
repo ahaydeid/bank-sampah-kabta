@@ -15,6 +15,20 @@ use Illuminate\Support\Facades\Request;
 trait LogsActivity
 {
     /**
+     * Atribut yang tidak boleh masuk ke activity log.
+     */
+    protected static array $activityLogExcludedAttributes = [
+        'password',
+        'remember_token',
+        'token_qr',
+        'nik',
+        'alamat',
+        'no_hp',
+        'email',
+        'foto_profil',
+    ];
+
+    /**
      * Boot trait — register model event listeners.
      */
     public static function bootLogsActivity(): void
@@ -61,21 +75,18 @@ trait LogsActivity
         if ($aksi === 'diperbarui') {
             $dataLama = collect($model->getOriginal())
                 ->only(array_keys($model->getChanges()))
-                ->except(['updated_at', 'created_at', 'password'])
                 ->toArray();
 
             $dataBaru = collect($model->getChanges())
-                ->except(['updated_at', 'created_at', 'password'])
                 ->toArray();
         } elseif ($aksi === 'dibuat') {
-            $dataBaru = collect($model->getAttributes())
-                ->except(['password', 'remember_token'])
-                ->toArray();
+            $dataBaru = $model->getAttributes();
         } elseif ($aksi === 'dihapus') {
-            $dataLama = collect($model->getOriginal())
-                ->except(['password', 'remember_token'])
-                ->toArray();
+            $dataLama = $model->getOriginal();
         }
+
+        $dataLama = static::sanitizeActivityData($dataLama);
+        $dataBaru = static::sanitizeActivityData($dataBaru);
 
         try {
             ActivityLog::create([
@@ -120,5 +131,21 @@ trait LogsActivity
         };
 
         return "{$aksiLabel} {$modul}: {$label}";
+    }
+
+    /**
+     * Filter atribut sensitif dan noisy dari payload log.
+     */
+    protected static function sanitizeActivityData(?array $data): ?array
+    {
+        if ($data === null) {
+            return null;
+        }
+
+        $sanitized = collect($data)
+            ->except(['updated_at', 'created_at', ...static::$activityLogExcludedAttributes])
+            ->toArray();
+
+        return empty($sanitized) ? null : $sanitized;
     }
 }

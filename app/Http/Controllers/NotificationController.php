@@ -8,9 +8,6 @@ use App\Models\TransaksiSetor;
 use App\Models\TransaksiTukar;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\DB;
-
 class NotificationController extends Controller
 {
     /**
@@ -23,7 +20,7 @@ class NotificationController extends Controller
         $now = now();
 
         // ─── 1. Setoran Sampah Pending (24 jam terakhir) ──────────────
-        $setoranPending = TransaksiSetor::where('status', 'pending')
+        $setoranPending = TransaksiSetor::where('status', 'berhasil')
             ->where('tanggal_waktu', '>=', $now->copy()->subDay())
             ->select('id', 'kode_transaksi', 'total_berat', 'tanggal_waktu', 'member_id')
             ->with(['member:id', 'member.profil:id,pengguna_id,nama'])
@@ -132,7 +129,7 @@ class NotificationController extends Controller
                 'color' => 'violet',
                 'title' => 'Member Baru Terdaftar',
                 'message' => "{$nama} baru saja mendaftar",
-                'url'   => route('master.nasabah.show', $member->id),
+                'url'   => route('master.nasabah.edit', $member->id),
                 'time'  => $member->created_at->toISOString(),
             ];
         }
@@ -209,7 +206,7 @@ class NotificationController extends Controller
         $now = now();
 
         // Setoran pending
-        $ids = array_merge($ids, TransaksiSetor::where('status', 'pending')
+        $ids = array_merge($ids, TransaksiSetor::where('status', 'berhasil')
             ->where('tanggal_waktu', '>=', $now->copy()->subDay())
             ->pluck('id')
             ->map(fn($id) => 'setor-' . $id)->toArray());
@@ -253,7 +250,7 @@ class NotificationController extends Controller
         $count = 0;
 
         // Count setoran pending
-        $setoranIds = TransaksiSetor::where('status', 'pending')
+        $setoranIds = TransaksiSetor::where('status', 'berhasil')
             ->where('tanggal_waktu', '>=', $now->copy()->subDay())
             ->pluck('id')
             ->map(fn($id) => 'setor-' . $id)
