@@ -103,6 +103,33 @@ docker compose --env-file .env.docker exec app php artisan queue:restart
 docker compose --env-file .env.docker exec app php artisan storage:link
 ```
 
+### Repeatable deploy script
+
+This repository now includes [scripts/deploy-docker.sh](/home/ahadi/Kerja/Projek/bank-sampah/scripts/deploy-docker.sh) to make production deploys more consistent.
+
+Standard deploy on the server:
+
+```bash
+git pull origin main
+scripts/deploy-docker.sh build
+```
+
+Fast fallback deploy when the VPS is too weak for a full image rebuild:
+
+```bash
+git pull origin main
+scripts/deploy-docker.sh sync
+```
+
+Important notes for `sync` mode:
+- use it only when PHP/composer and image-level dependencies have not changed
+- `public/build` must already exist on the host before running it
+- this mode syncs the current checkout into the running `app`, `queue`, and `scheduler` containers, then runs migrations and restarts services
+
+Recommended rule of thumb:
+- use `build` for normal deploys
+- use `sync` only as an operational fallback
+
 ### Notes for a 1 GB VPS
 
 - Keep this stack minimal and avoid adding Redis, phpMyAdmin, or Portainer for now.
