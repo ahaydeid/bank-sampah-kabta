@@ -2,6 +2,7 @@
 set -eu
 
 mkdir -p \
+    /var/www/html/public \
     /var/www/html/storage/app/public \
     /var/www/html/storage/framework/cache \
     /var/www/html/storage/framework/sessions \
@@ -9,6 +10,7 @@ mkdir -p \
     /var/www/html/storage/logs \
     /var/www/html/bootstrap/cache
 
+cp -a /opt/app-public/. /var/www/html/public/
 chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 chmod -R ug+rwx /var/www/html/storage /var/www/html/bootstrap/cache
 

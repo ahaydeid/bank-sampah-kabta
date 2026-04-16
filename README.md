@@ -123,12 +123,21 @@ scripts/deploy-docker.sh sync
 
 Important notes for `sync` mode:
 - use it only when PHP/composer and image-level dependencies have not changed
-- `public/build` must already exist on the host before running it
 - this mode syncs the current checkout into the running `app`, `queue`, and `scheduler` containers, then runs migrations and restarts services
+- it is an operational fallback, not a replacement for proper image-based deploys
 
 Recommended rule of thumb:
 - use `build` for normal deploys
 - use `sync` only as an operational fallback
+
+### Production volume layout
+
+Production uses a named Docker volume for `/var/www/html/public` instead of binding `./public` from the host.
+
+Why this is better:
+- Nginx and PHP read the same public files from Docker-managed storage
+- deploys no longer depend on host files under `./public`
+- app assets bundled in the image are copied into the shared public volume during container startup
 
 ### Notes for a 1 GB VPS
 

@@ -27,7 +27,7 @@ Modes:
   build  Standard deploy. Rebuild image, run migrations, clear cache, optimize.
   sync   Fast fallback. Sync current checkout into running containers, then run
          migrations and restart services. Use only when Docker image/dependency
-         layers are unchanged and public/build is already available on the host.
+         layers are unchanged.
 EOF
 }
 
@@ -46,21 +46,34 @@ container_id() {
 
 sync_service_code() {
     local service="$1"
+    local include_public="${2:-false}"
     local id
 
     id="$(container_id "$service")"
     [ -n "$id" ] || fail "Service '$service' is not running"
 
-    tar \
-        --exclude=.git \
-        --exclude=node_modules \
-        --exclude=vendor \
-        --exclude=storage \
-        --exclude=bootstrap/cache \
-        --exclude=public \
-        -C "$ROOT_DIR" \
-        -cf - . \
-        | docker exec -i "$id" tar -xf - -C /var/www/html
+    if [ "$include_public" = "true" ]; then
+        tar \
+            --exclude=.git \
+            --exclude=node_modules \
+            --exclude=vendor \
+            --exclude=storage \
+            --exclude=bootstrap/cache \
+            -C "$ROOT_DIR" \
+            -cf - . \
+            | docker exec -i "$id" tar -xf - -C /var/www/html
+    else
+        tar \
+            --exclude=.git \
+            --exclude=node_modules \
+            --exclude=vendor \
+            --exclude=storage \
+            --exclude=bootstrap/cache \
+            --exclude=public \
+            -C "$ROOT_DIR" \
+            -cf - . \
+            | docker exec -i "$id" tar -xf - -C /var/www/html
+    fi
 }
 
 run_healthcheck() {
@@ -119,13 +132,11 @@ case "$MODE" in
         log info "Deploy mode: ${MODE}"
         log info "Current revision: $(git rev-parse --short HEAD)"
 
-        [ -d public/build ] || fail "public/build is missing. Build and upload assets before using sync mode."
-
         log step "Ensuring services are running"
         "${COMPOSE[@]}" up -d app queue scheduler nginx db
 
         log step "Syncing current checkout into running containers"
-        sync_service_code app
+        sync_service_code app true
         sync_service_code queue
         sync_service_code scheduler
 
