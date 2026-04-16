@@ -10,9 +10,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/me', [AuthController::class, 'me']);
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::post('/change-password', [AuthController::class, 'changePassword'])->middleware('throttle:3,1');
-    Route::get('/tukar-poin/{id}', [\App\Http\Controllers\Api\TransaksiTukarController::class, 'show'])
-        ->whereNumber('id')
-        ->middleware('api.role:member,petugas');
     Route::get('/sampah', [TransaksiSetorController::class, 'getSampahTypes'])
         ->middleware('api.role:member,petugas');
     Route::get('/rewards', [\App\Http\Controllers\Api\RewardController::class, 'index'])
@@ -20,7 +17,6 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::middleware('api.role:member')->group(function () {
         Route::get('/setoran/history', [TransaksiSetorController::class, 'historyNasabah']);
-        Route::get('/setoran/{id}', [TransaksiSetorController::class, 'show']);
 
         Route::prefix('tukar-poin')->group(function () {
             Route::post('/checkout', [\App\Http\Controllers\Api\TransaksiTukarController::class, 'checkout']);
@@ -38,6 +34,13 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::delete('/{id}', [\App\Http\Controllers\Api\CartController::class, 'destroy']);
         });
     });
+
+    Route::get('/tukar-poin/{id}', [\App\Http\Controllers\Api\TransaksiTukarController::class, 'show'])
+        ->whereNumber('id')
+        ->middleware('api.role:member,petugas');
+    Route::get('/setoran/{id}', [TransaksiSetorController::class, 'show'])
+        ->whereNumber('id')
+        ->middleware('api.role:member,petugas');
 
     Route::middleware('api.role:petugas')->group(function () {
         Route::get('/users/find/{identifier}', [AuthController::class, 'findUser']);

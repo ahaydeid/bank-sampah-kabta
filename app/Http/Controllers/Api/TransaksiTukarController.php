@@ -142,7 +142,7 @@ class TransaksiTukarController extends Controller
         if ($user->peran === 'member') {
             $query->where('member_id', $user->id);
         } elseif ($user->peran === 'petugas') {
-            $query->where('pos_id', $user->profil->pos_id ?? null);
+            $query->where('petugas_id', $user->id);
         }
 
         $transaksi = $query->findOrFail($id);
