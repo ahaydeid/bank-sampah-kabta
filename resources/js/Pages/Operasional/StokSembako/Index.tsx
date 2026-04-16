@@ -51,8 +51,8 @@ export default function Index({ reward, pos_lokasi, filters }: Props) {
 
     const getStockStatus = (stok: number) => {
         if (stok === 0) return { label: 'HABIS', color: 'bg-rose-500 text-white' };
-        if (stok < 10) return { label: 'MENIPIS', color: 'bg-amber-500 text-white' };
-        return { label: 'TERSEDIA', color: 'bg-emerald-500 text-white' };
+        if (stok < 10) return { label: 'MENIPIS', color: 'bg-sankara-warning text-white' };
+        return { label: 'TERSEDIA', color: 'bg-sankara-success text-white' };
     };
 
     return (

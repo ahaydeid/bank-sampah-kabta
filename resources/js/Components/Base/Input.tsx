@@ -13,7 +13,7 @@ export default forwardRef<HTMLInputElement, Props>(function Input(
             {...props}
             type={type}
             className={
-                'border-slate-300 focus:border-kabta-purple focus:ring-kabta-purple rounded transition-all duration-200 ' +
+                'border-slate-300 focus:border-sankara-green focus:ring-sankara-green rounded transition-all duration-200 ' +
                 className
             }
             ref={ref}

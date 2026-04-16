@@ -124,8 +124,8 @@ export default function Index({ sampah, filters }: Props) {
                                         <TD className="text-slate-800">{item.nama_sampah}</TD>
                                         <TD>
                                             <span className={`px-3 py-1.5 text-[9px] font-medium text-white uppercase tracking-wider ${
-                                                item.kategori === 'Organik' ? 'bg-emerald-500' : 
-                                                item.kategori === 'Anorganik' ? 'bg-blue-500' : 
+                                                item.kategori === 'Organik' ? 'bg-sankara-badge-organik' : 
+                                                item.kategori === 'Anorganik' ? 'bg-sankara-badge-anorganik' : 
                                                 'bg-slate-600'
                                             }`}>
                                                 {item.kategori}
@@ -137,13 +137,13 @@ export default function Index({ sampah, filters }: Props) {
                                         <TD className="text-right">
                                             <div className="flex justify-end space-x-2">
                                                 <Link href={route('master.sampah.edit', item.id)}>
-                                                    <Button className="bg-amber-500 text-white hover:bg-amber-600 p-2 rounded-sm shadow-xs" title="Edit">
+                                                    <Button variant="warning" className="p-2 shadow-xs" title="Edit">
                                                         <Edit className="w-3.5 h-3.5" />
                                                     </Button>
                                                 </Link>
                                                 <Button 
                                                     variant="danger" 
-                                                    className="bg-red-600 text-white hover:bg-red-700 p-2 rounded-sm shadow-xs" 
+                                                    className="p-2 shadow-xs" 
                                                     title="Hapus"
                                                     onClick={() => handleDelete(item.id)}
                                                 >

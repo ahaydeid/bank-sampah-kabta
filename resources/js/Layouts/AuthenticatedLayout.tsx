@@ -15,6 +15,7 @@ export default function AuthenticatedLayout({
         }
         return false;
     });
+    const [isMobileOpen, setIsMobileOpen] = useState(false);
 
     useEffect(() => {
         if (flash?.success) {
@@ -36,14 +37,30 @@ export default function AuthenticatedLayout({
         localStorage.setItem('sidebar_collapsed', String(val));
     };
 
+    const handleToggleMobile = () => {
+        setIsMobileOpen(prev => !prev);
+    };
+
+    const handleCloseMobile = () => {
+        setIsMobileOpen(false);
+    };
+
     return (
         <div className="min-h-screen bg-slate-50">
             <Head title="Dashboard" />
 
-            <Sidebar isCollapsed={isCollapsed} />
+            <Sidebar
+                isCollapsed={isCollapsed}
+                isMobileOpen={isMobileOpen}
+                onCloseMobile={handleCloseMobile}
+            />
 
             <div className={`${isCollapsed ? 'lg:ms-20' : 'lg:ms-60'} transition-all duration-300 ease-in-out`}>
-                <Topbar isCollapsed={isCollapsed} setIsCollapsed={handleToggleCollapse} />
+                <Topbar
+                    isCollapsed={isCollapsed}
+                    setIsCollapsed={handleToggleCollapse}
+                    onToggleMobile={handleToggleMobile}
+                />
 
                 <main className="pt-20 pb-12 px-4 max-w-7xl mx-auto">
                     {header && (

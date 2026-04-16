@@ -152,7 +152,7 @@ export default function Index({ nasabah, filters }: Props) {
                                         </TD>
                                         <TD>
                                             <span className={`px-3 py-1.5 text-[9px] font-medium text-white uppercase tracking-wider ${
-                                                item.is_aktif ? 'bg-emerald-500' : 'bg-red-500'
+                                                item.is_aktif ? 'bg-sankara-badge-aktif' : 'bg-sankara-badge-nonaktif'
                                             }`}>
                                                 {item.is_aktif ? 'Aktif' : 'Non-Aktif'}
                                             </span>
@@ -163,7 +163,7 @@ export default function Index({ nasabah, filters }: Props) {
                                                     <QrCode className="w-3.5 h-3.5" />
                                                 </Button>
                                                 <Link href={route('master.nasabah.edit', item.id)}>
-                                                    <Button className="bg-amber-500 text-white hover:bg-amber-600 p-2 rounded-sm shadow-xs" title="Edit">
+                                                    <Button variant="warning" className="p-2 shadow-xs" title="Edit">
                                                         <Edit className="w-3.5 h-3.5" />
                                                     </Button>
                                                 </Link>

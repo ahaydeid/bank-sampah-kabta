@@ -24,14 +24,14 @@ export default function CreateEdit({ sampah }: Props) {
     const { data, setData, post, patch, processing, errors } = useForm({
         nama_sampah: sampah?.nama_sampah || '',
         kategori: sampah?.kategori || 'Anorganik',
-        poin_per_satuan: sampah?.poin_per_satuan || 0,
+        poin_per_satuan: sampah?.poin_per_satuan ?? '',
     });
 
     const handleSubmit: FormEventHandler = (e) => {
         e.preventDefault();
-        
+
         const action = isEdit ? 'diperbarui' : 'ditambahkan';
-        
+
         Alert.confirm({
             title: isEdit ? 'Simpan Perubahan?' : 'Tambah Data?',
             text: `Data sampah ini akan ${action}.`,
@@ -103,7 +103,7 @@ export default function CreateEdit({ sampah }: Props) {
                             <select
                                 value={data.kategori}
                                 onChange={(e) => setData('kategori', e.target.value)}
-                                className="w-full mt-1 border-slate-300 focus:border-kabta-purple focus:ring-kabta-purple rounded transition-all duration-200"
+                                className="w-full mt-1 border-slate-300 focus:border-sankara-green focus:ring-sankara-green rounded transition-all duration-200"
                             >
                                 <option value="Organik">Organik</option>
                                 <option value="Anorganik">Anorganik</option>
@@ -117,7 +117,7 @@ export default function CreateEdit({ sampah }: Props) {
                             <Input
                                 type="number"
                                 value={data.poin_per_satuan}
-                                onChange={(e) => setData('poin_per_satuan', Number(e.target.value))}
+                                onChange={(e) => setData('poin_per_satuan', e.target.value === '' ? '' : Number(e.target.value))}
                                 className="w-full mt-1"
                                 placeholder="0"
                             />

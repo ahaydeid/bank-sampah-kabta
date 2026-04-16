@@ -22,7 +22,7 @@ class RoleAndPermissionSeeder extends Seeder
 
         // Create default Admin User
         $admin = \App\Models\Pengguna::firstOrCreate(
-            ['email' => 'admin@kabta.id'],
+            ['email' => 'admin@sankara.id'],
             [
                 'password' => \Illuminate\Support\Facades\Hash::make('password'),
                 'peran' => 'admin',
@@ -37,7 +37,7 @@ class RoleAndPermissionSeeder extends Seeder
         \App\Models\Profil::firstOrCreate(
             ['pengguna_id' => $admin->id],
             [
-                'nama' => 'Admin Utama Kabta',
+                'nama' => 'Admin Utama Sankara',
                 'jabatan' => 'Kepala Pengelola',
                 'saldo_poin' => 0,
             ]

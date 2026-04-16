@@ -79,9 +79,9 @@ export default function CreateEdit({ staff, pos_lokasi = [] }: Props) {
 
     const handleSubmit: FormEventHandler = (e) => {
         e.preventDefault();
-        
+
         const action = isEdit ? 'diperbarui' : 'ditambahkan';
-        
+
         Alert.confirm({
             title: isEdit ? 'Simpan Perubahan?' : 'Tambah Staff/Petugas Baru?',
             text: `Data staff ini akan ${action}.`,
@@ -141,7 +141,7 @@ export default function CreateEdit({ staff, pos_lokasi = [] }: Props) {
                             <div className="flex items-center space-x-2 text-slate-400 pb-2 border-b border-slate-100">
                                 <span className="text-xs font-bold uppercase tracking-wider">Kredensial & Hak Akses</span>
                             </div>
-                            
+
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
                                     <Label value="Alamat Email" />
@@ -172,7 +172,7 @@ export default function CreateEdit({ staff, pos_lokasi = [] }: Props) {
                                     <select
                                         value={data.peran}
                                         onChange={(e) => setData('peran', e.target.value as any)}
-                                        className="w-full mt-1 border-slate-300 focus:border-kabta-purple focus:ring-kabta-purple rounded transition-all duration-200"
+                                        className="w-full mt-1 border-slate-300 focus:border-sankara-green focus:ring-sankara-green rounded transition-all duration-200"
                                     >
                                         <option value="petugas">Petugas Lapangan</option>
                                         <option value="admin">Administrator System</option>
@@ -186,7 +186,7 @@ export default function CreateEdit({ staff, pos_lokasi = [] }: Props) {
                                         <select
                                             value={data.pos_id}
                                             onChange={(e) => setData('pos_id', e.target.value)}
-                                            className="w-full mt-1 border-slate-300 focus:border-kabta-purple focus:ring-kabta-purple rounded transition-all duration-200"
+                                            className="w-full mt-1 border-slate-300 focus:border-sankara-green focus:ring-sankara-green rounded transition-all duration-200"
                                         >
                                             <option value="">-- Pilih Pos Unit --</option>
                                             {pos_lokasi.map((pos) => (
@@ -231,7 +231,7 @@ export default function CreateEdit({ staff, pos_lokasi = [] }: Props) {
                                     </div>
                                     <button
                                         type="button"
-                                        className="absolute bottom-0 right-0 p-1.5 bg-kabta-purple text-white rounded-full hover:bg-kabta-purple/90 border-2 border-white"
+                                        className="absolute bottom-0 right-0 p-1.5 bg-sankara-green text-white rounded-full hover:bg-sankara-green/90 border-2 border-white"
                                     >
                                         <Camera size={14} />
                                     </button>

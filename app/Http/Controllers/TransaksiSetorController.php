@@ -19,10 +19,10 @@ class TransaksiSetorController extends Controller
         }
 
         if ($request->search) {
-            $search = strtolower($request->search);
-            $query->where(DB::raw('LOWER(kode_transaksi)'), 'like', "%{$search}%")
+            $search = $request->search;
+            $query->where('kode_transaksi', 'like', "%{$search}%")
                 ->orWhereHas('member.profil', function ($q) use ($search) {
-                    $q->where(DB::raw('LOWER(nama)'), 'like', "%{$search}%");
+                    $q->where('nama', 'like', "%{$search}%");
                 });
         }
 

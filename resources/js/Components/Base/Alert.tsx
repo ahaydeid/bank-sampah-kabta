@@ -20,8 +20,8 @@ const VARIANTS = {
         title: 'text-sky-700',
     },
     primary: {
-        confirmButton: `bg-kabta-purple hover:bg-kabta-purple/90 ${BASE_CONFIRM_BTN}`,
-        title: 'text-kabta-purple',
+        confirmButton: `bg-sankara-green hover:bg-sankara-green/90 ${BASE_CONFIRM_BTN}`,
+        title: 'text-sankara-green',
     },
 };
 
@@ -62,7 +62,7 @@ const Alert = {
             },
         });
     },
-    
+
     // Convenience methods
     success: (options: SweetAlertOptions) => Alert.fire({ icon: 'success', variant: 'success', ...options }),
     error: (options: SweetAlertOptions) => Alert.fire({ icon: 'error', variant: 'danger', ...options }),

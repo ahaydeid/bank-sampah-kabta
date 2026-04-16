@@ -92,9 +92,9 @@ export default function CreateEdit({ nasabah }: Props) {
 
     const handleSubmit: FormEventHandler = (e) => {
         e.preventDefault();
-        
+
         const action = isEdit ? 'diperbarui' : 'ditambahkan';
-        
+
         Alert.confirm({
             title: isEdit ? 'Simpan Perubahan?' : 'Tambah Nasabah?',
             text: `Data nasabah ini akan ${action}.`,
@@ -162,12 +162,12 @@ export default function CreateEdit({ nasabah }: Props) {
                                         <User className="w-12 h-12 text-slate-300" />
                                     )}
                                     <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors flex items-center justify-center">
-                                        
+
                                     </div>
                                 </div>
                                 <button
                                     type="button"
-                                    className="absolute bottom-1 right-1 p-2 bg-kabta-purple text-white rounded-full hover:bg-kabta-purple/90 border-2 border-white"
+                                    className="absolute bottom-1 right-1 p-2 bg-sankara-green text-white rounded-full hover:bg-sankara-green/90 border-2 border-white"
                                 >
                                     <Camera size={16} />
                                 </button>
@@ -244,7 +244,7 @@ export default function CreateEdit({ nasabah }: Props) {
                                     <textarea
                                         value={data.alamat}
                                         onChange={(e) => setData('alamat', e.target.value)}
-                                        className="w-full mt-1 px-4 py-2 border border-slate-300 focus:border-kabta-purple focus:ring-kabta-purple rounded transition-all duration-200"
+                                        className="w-full mt-1 px-4 py-2 border border-slate-300 focus:border-sankara-green focus:ring-sankara-green rounded transition-all duration-200"
                                         placeholder="Alamat tempat tinggal..."
                                         rows={4}
                                     />
@@ -336,7 +336,7 @@ export default function CreateEdit({ nasabah }: Props) {
                             </Button>
                             <Button
                                 variant="danger"
-                                className="flex-[2] bg-red-600 hover:bg-red-700"
+                                className="flex-[2] bg-sankara-danger hover:bg-sankara-danger-hover"
                                 onClick={handleFinalDelete}
                                 disabled={confirmName !== nasabah?.profil.nama || processing}
                                 isLoading={processing}

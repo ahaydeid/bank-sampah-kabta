@@ -16,9 +16,8 @@ class SampahController extends Controller
         $perPage = $request->input('per_page', 10);
 
         $sampah = Sampah::when($search, function ($query, $search) {
-                $search = strtolower($search);
-                $query->where(DB::raw('LOWER(nama_sampah)'), 'ilike', "%{$search}%")
-                      ->orWhere(DB::raw('LOWER(kategori)'), 'ilike', "%{$search}%");
+                $query->where('nama_sampah', 'like', "%{$search}%")
+                      ->orWhere('kategori', 'like', "%{$search}%");
             })
             ->latest()
             ->paginate($perPage)

@@ -102,7 +102,7 @@ export default function Index({ transaksi, filters }: Props) {
             case 'disetujui': return { label: 'Disetujui', color: 'bg-sky-500 text-white' };
             case 'kadaluwarsa': return { label: 'Kadaluwarsa', color: 'bg-slate-200 text-slate-500' };
             case 'dibatalkan': return { label: 'Ditolak', color: 'bg-rose-500 text-white' };
-            default: return { label: status ? status : 'Tidak dikenal', color: 'bg-amber-400 text-white' };
+            default: return { label: status ? status : 'Tidak dikenal', color: 'bg-sankara-warning text-white' };
         }
     };
 
@@ -224,11 +224,11 @@ export default function Index({ transaksi, filters }: Props) {
                                     <TD className="text-center py-4">
                                         <Link href={route('operasional.tukar-poin.show', item.id)}>
                                             {item.tanggal_selesai ? (
-                                                <Button className="bg-amber-500 text-white hover:bg-amber-600 rounded-sm" title="Lihat">
+                                                <Button variant="warning" className="rounded-sm" title="Lihat">
                                                     <Eye className="w-3.5 h-3.5" />
                                                 </Button>
                                             ) : (
-                                                <Button className="bg-amber-500 text-white hover:bg-amber-600 rounded-sm" title="Proses">
+                                                <Button variant="warning" className="rounded-sm" title="Proses">
                                                     <Loader2 className="w-3.5 h-3.5 mr-1" />
                                                     Proses
                                                 </Button>

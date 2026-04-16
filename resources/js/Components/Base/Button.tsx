@@ -17,15 +17,15 @@ export default function Button({
     ...props
 }: Props) {
     const baseStyles = 'inline-flex items-center justify-center font-semibold tracking-widest transition ease-in-out duration-150 disabled:opacity-25';
-    
+
     const variants = {
-        primary: 'bg-kabta-purple text-white hover:bg-kabta-purple/90',
+        primary: 'bg-sankara-green text-white hover:bg-sankara-green/90',
         secondary: 'bg-white text-slate-700 hover:bg-slate-50',
-        danger: 'bg-red-600 text-white hover:bg-red-500',
-        success: 'bg-kabta-gold text-slate-900 hover:bg-kabta-gold/90',
-        info: 'bg-sky-600 text-white hover:bg-sky-500',
-        outline: 'bg-transparent text-kabta-purple hover:bg-purple-50',
-        warning: 'bg-yellow-500 text-white hover:bg-yellow-600',
+        danger: 'bg-sankara-danger text-white hover:bg-sankara-danger-hover',
+        success: 'bg-sankara-success text-white hover:bg-sankara-success-hover',
+        info: 'bg-sankara-info text-white hover:bg-sankara-info-hover',
+        outline: 'bg-transparent text-sankara-green hover:bg-green-50',
+        warning: 'bg-sankara-warning text-white hover:bg-sankara-warning-hover',
     };
 
     const sizes = {

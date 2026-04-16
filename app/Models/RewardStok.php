@@ -4,9 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use App\Traits\LogsActivity;
 
 class RewardStok extends Model
 {
+    use LogsActivity;
     protected $table = 'reward_stok';
 
     protected $fillable = [

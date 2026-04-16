@@ -150,17 +150,9 @@ class TransaksiSetorController extends Controller
 
     public function show(Request $request, $id)
     {
-        $user = $request->user();
-
-        $query = TransaksiSetor::with(['member.profil', 'pos', 'petugas.profil', 'detail.sampah']);
-
-        if ($user->peran === 'member') {
-            $query->where('member_id', $user->id);
-        } elseif ($user->peran === 'petugas') {
-            $query->where('petugas_id', $user->id);
-        }
-
-        $transaksi = $query->findOrFail($id);
+        $transaksi = TransaksiSetor::with(['pos', 'petugas.profil', 'detail.sampah'])
+            ->where('member_id', $request->user()->id)
+            ->findOrFail($id);
 
         return response()->json([
             'data' => $transaksi

@@ -161,7 +161,7 @@ export default function Index({ staff, filters }: Props) {
                                         </TD>
                                         <TD>
                                             <span className={`px-2 py-0.5 text-[9px] font-bold text-white rounded-sm uppercase tracking-wider ${
-                                                item.peran === 'admin' ? 'bg-kabta-purple' : 'bg-blue-600'
+                                                item.peran === 'admin' ? 'bg-sankara-badge-admin' : 'bg-sankara-badge-petugas'
                                             }`}>
                                                 {item.peran}
                                             </span>
@@ -178,7 +178,7 @@ export default function Index({ staff, filters }: Props) {
                                         </TD>
                                         <TD>
                                             <span className={`px-3 py-1.5 text-[9px] font-medium text-white uppercase tracking-wider whitespace-nowrap ${
-                                                item.is_aktif ? 'bg-emerald-500' : 'bg-red-500'
+                                                item.is_aktif ? 'bg-sankara-badge-aktif' : 'bg-sankara-badge-nonaktif'
                                             }`}>
                                                 {item.is_aktif ? 'Aktif' : 'Non-Aktif'}
                                             </span>
@@ -186,17 +186,18 @@ export default function Index({ staff, filters }: Props) {
                                         <TD className="text-center">
                                             <div className="flex justify-center space-x-2 whitespace-nowrap">
                                                 <Link href={route('master.staff.show', item.id)}>
-                                                    <Button className="bg-amber-500 text-white hover:bg-amber-600 p-2 rounded-sm shadow-xs" title="Detail">
+                                                    <Button variant="warning" className="p-2 shadow-xs" title="Detail">
                                                         <Eye className="w-3.5 h-3.5" />
                                                     </Button>
                                                 </Link>
                                                 <Link href={route('master.staff.edit', item.id)}>
-                                                    <Button className="bg-amber-500 text-white hover:bg-amber-600 p-2 rounded-sm shadow-xs" title="Edit">
+                                                    <Button variant="warning" className="p-2 shadow-xs" title="Edit">
                                                         <Edit className="w-3.5 h-3.5" />
                                                     </Button>
                                                 </Link>
                                                 <Button 
-                                                    className="bg-red-600 text-white hover:bg-red-700 p-2 rounded-sm shadow-xs" 
+                                                    variant="danger"
+                                                    className="p-2 shadow-xs" 
                                                     title="Hapus"
                                                     onClick={() => handleDelete(item.id)}
                                                     disabled={item.id === 1}

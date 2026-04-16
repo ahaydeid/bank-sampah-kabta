@@ -62,7 +62,7 @@ export default function EditPassword() {
                                     type="password"
                                     value={data.current_password}
                                     onChange={(e) => setData('current_password', e.target.value)}
-                                    className="w-full px-4 py-2.5 border border-slate-200 rounded focus:ring-2 focus:ring-kabta-purple/20 focus:border-kabta-purple transition-all"
+                                    className="w-full px-4 py-2.5 border border-slate-200 rounded focus:ring-2 focus:ring-sankara-green/20 focus:border-sankara-green transition-all"
                                     placeholder="Masukkan password saat ini"
                                 />
                                 {errors.current_password && <p className="text-red-500 text-xs mt-1">{errors.current_password}</p>}
@@ -74,7 +74,7 @@ export default function EditPassword() {
                                     type="password"
                                     value={data.password}
                                     onChange={(e) => setData('password', e.target.value)}
-                                    className="w-full px-4 py-2.5 border border-slate-200 rounded focus:ring-2 focus:ring-kabta-purple/20 focus:border-kabta-purple transition-all"
+                                    className="w-full px-4 py-2.5 border border-slate-200 rounded focus:ring-2 focus:ring-sankara-green/20 focus:border-sankara-green transition-all"
                                     placeholder="Masukkan password baru"
                                 />
                                 {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password}</p>}
@@ -87,7 +87,7 @@ export default function EditPassword() {
                                     type="password"
                                     value={data.password_confirmation}
                                     onChange={(e) => setData('password_confirmation', e.target.value)}
-                                    className="w-full px-4 py-2.5 border border-slate-200 rounded focus:ring-2 focus:ring-kabta-purple/20 focus:border-kabta-purple transition-all"
+                                    className="w-full px-4 py-2.5 border border-slate-200 rounded focus:ring-2 focus:ring-sankara-green/20 focus:border-sankara-green transition-all"
                                     placeholder="Konfirmasi password baru"
                                 />
                             </div>
@@ -102,7 +102,7 @@ export default function EditPassword() {
                                 <button
                                     type="submit"
                                     disabled={processing}
-                                    className="px-6 py-2.5 bg-kabta-purple text-white font-medium rounded hover:bg-kabta-purple/90 transition-colors disabled:opacity-50 flex items-center"
+                                    className="px-6 py-2.5 bg-sankara-green text-white font-medium rounded hover:bg-sankara-green/90 transition-colors disabled:opacity-50 flex items-center"
                                 >
                                     <Save className="w-4 h-4 me-2" />
                                     {processing ? 'Menyimpan...' : 'Simpan Perubahan'}

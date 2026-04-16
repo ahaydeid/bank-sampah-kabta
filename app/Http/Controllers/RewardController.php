@@ -31,8 +31,8 @@ class RewardController extends Controller
         }
 
         $reward = $query->when($search, function ($query, $search) {
-                $query->where('nama_reward', 'ilike', "%{$search}%")
-                      ->orWhere('kategori_reward', 'ilike', "%{$search}%");
+                $query->where('nama_reward', 'like', "%{$search}%")
+                      ->orWhere('kategori_reward', 'like', "%{$search}%");
             })
             ->latest()
             ->paginate($perPage)
@@ -88,6 +88,11 @@ class RewardController extends Controller
         }
 
         Reward::create($validated);
+
+        // Support redirect back ke halaman Kelola Stok Sembako
+        if ($request->input('_redirect_back') === 'stok-sembako') {
+            return redirect()->route('operasional.stok-sembako.edit')->with('success', 'Kategori sembako berhasil ditambahkan');
+        }
 
         return redirect()->route('master.reward.index')->with('success', 'Data reward berhasil ditambahkan');
     }
@@ -155,7 +160,7 @@ class RewardController extends Controller
         }
 
         $reward = $query->when($search, function ($query, $search) {
-                $query->where('nama_reward', 'ilike', "%{$search}%");
+                $query->where('nama_reward', 'like', "%{$search}%");
             })
             ->latest()
             ->paginate($perPage)
@@ -203,7 +208,7 @@ class RewardController extends Controller
                 $query->where('pos_id', $posId);
             })
             ->when($search, function ($query, $search) {
-                $query->where('nama_reward', 'ilike', "%{$search}%");
+                $query->where('nama_reward', 'like', "%{$search}%");
             })
             ->with(['stokPerPos' => function ($query) use ($posId) {
                 $query->where('pos_id', $posId);

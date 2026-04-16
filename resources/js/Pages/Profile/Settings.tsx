@@ -29,8 +29,8 @@ export default function Settings() {
                         >
                             <div className="flex items-start justify-between">
                                 <div className="flex items-start space-x-4">
-                                    <div className="p-3 bg-kabta-purple/10 rounded-lg">
-                                        <User className="w-6 h-6 text-kabta-purple" />
+                                    <div className="p-3 bg-sankara-green/10 rounded-lg">
+                                        <User className="w-6 h-6 text-sankara-green" />
                                     </div>
                                     <div>
                                         <h3 className="font-semibold text-slate-800">Edit Profil</h3>
@@ -47,8 +47,8 @@ export default function Settings() {
                         >
                             <div className="flex items-start justify-between">
                                 <div className="flex items-start space-x-4">
-                                    <div className="p-3 bg-kabta-purple/10 rounded-lg">
-                                        <Lock className="w-6 h-6 text-kabta-purple" />
+                                    <div className="p-3 bg-sankara-green/10 rounded-lg">
+                                        <Lock className="w-6 h-6 text-sankara-green" />
                                     </div>
                                     <div>
                                         <h3 className="font-semibold text-slate-800">Edit Kata Sandi</h3>

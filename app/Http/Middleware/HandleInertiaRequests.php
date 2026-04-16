@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Http\Controllers\NotificationController;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -34,6 +35,14 @@ class HandleInertiaRequests extends Middleware
             'auth' => [
                 'user' => $request->user()?->load('profil'),
             ],
+            'flash' => [
+                'success' => fn () => $request->session()->get('success'),
+                'error'   => fn () => $request->session()->get('error'),
+            ],
+            // Lazy-loaded notification count — hanya dihitung saat diperlukan
+            'notificationCount' => fn () => $request->user()
+                ? NotificationController::getNotificationCount($request->user()->id)
+                : 0,
         ];
     }
 }

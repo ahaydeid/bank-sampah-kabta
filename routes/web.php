@@ -112,11 +112,28 @@ Route::middleware(['auth', 'web.non_petugas'])->group(function () {
         Route::get('/laporan', fn() => Inertia::render('UnderDevelopment'))->name('laporan');
     });
 
+    // Notifikasi (JSON API)
+    Route::prefix('notifications')->name('notifications.')->group(function () {
+        Route::get('/', [App\Http\Controllers\NotificationController::class, 'index'])->name('index');
+        Route::post('/dismiss', [App\Http\Controllers\NotificationController::class, 'dismiss'])->name('dismiss');
+        Route::post('/dismiss-all', [App\Http\Controllers\NotificationController::class, 'dismissAll'])->name('dismiss-all');
+        Route::post('/mark-all-read', [App\Http\Controllers\NotificationController::class, 'markAllRead'])->name('mark-all-read');
+    });
+
     // Sistem
     Route::prefix('sistem')->name('sistem.')->group(function () {
         Route::prefix('pengaturan')->name('pengaturan.')->group(function () {
             Route::get('/penukaran-poin', [App\Http\Controllers\Sistem\SettingController::class, 'penukaranPoin'])->name('penukaran-poin');
             Route::post('/update', [App\Http\Controllers\Sistem\SettingController::class, 'update'])->name('update');
+        });
+
+        // Log Aktivitas — Admin only
+        Route::middleware('web.admin')->group(function () {
+            Route::get('/log-aktivitas', [App\Http\Controllers\Sistem\ActivityLogController::class, 'index'])->name('log-aktivitas');
+            Route::delete('/log-aktivitas/login/{loginLog}', [App\Http\Controllers\Sistem\ActivityLogController::class, 'destroyLoginLog'])->name('log-aktivitas.login.destroy');
+            Route::post('/log-aktivitas/login/mass-destroy', [App\Http\Controllers\Sistem\ActivityLogController::class, 'massDestroyLoginLog'])->name('log-aktivitas.login.mass-destroy');
+            Route::delete('/log-aktivitas/activity/{activityLog}', [App\Http\Controllers\Sistem\ActivityLogController::class, 'destroyActivityLog'])->name('log-aktivitas.activity.destroy');
+            Route::post('/log-aktivitas/activity/mass-destroy', [App\Http\Controllers\Sistem\ActivityLogController::class, 'massDestroyActivityLog'])->name('log-aktivitas.activity.mass-destroy');
         });
     });
 });

@@ -77,9 +77,9 @@ export default function Index({ transaksi, filters }: Props) {
 
     const getStatusColor = (status: string) => {
         switch (status) {
-            case 'berhasil': return 'bg-emerald-500 text-white';
-            case 'dibatalkan': return 'bg-rose-500 text-white';
-            default: return 'bg-emerald-500 text-white';
+            case 'berhasil': return 'bg-sankara-success text-white';
+            case 'dibatalkan': return 'bg-sankara-danger text-white';
+            default: return 'bg-sankara-success text-white';
         }
     };
 
@@ -160,7 +160,7 @@ export default function Index({ transaksi, filters }: Props) {
                                     </TD>
                                     <TD className="text-center">
                                         <Link href={route('operasional.setoran.show', item.id)}>
-                                            <Button className="bg-amber-500 text-white hover:bg-amber-600 p-2 rounded-sm">
+                                            <Button variant="warning" className="p-2 rounded-sm">
                                                 <Eye className="w-3.5 h-3.5" />
                                             </Button>
                                         </Link>

@@ -27,8 +27,8 @@ export default function Register() {
             <Head title="Daftar" />
 
             <div className="mb-6 text-center">
-                <h2 className="text-2xl font-black text-kabta-purple uppercase tracking-tight">Daftar Akun Baru</h2>
-                <div className="h-1 w-10 bg-kabta-gold mx-auto mt-2"></div>
+                <h2 className="text-2xl font-black text-sankara-green uppercase tracking-tight">Daftar Akun Baru</h2>
+                <div className="h-1 w-10 bg-sankara-gold mx-auto mt-2"></div>
             </div>
 
             <form onSubmit={submit} className="space-y-5">
@@ -61,7 +61,7 @@ export default function Register() {
                         className="mt-1 block w-full"
                         autoComplete="username"
                         onChange={(e) => setData('email', e.target.value)}
-                        placeholder="contoh@kabta.id"
+                        placeholder="contoh@sankara.id"
                         required
                     />
 
@@ -121,7 +121,7 @@ export default function Register() {
                 <div className="text-center pt-4">
                     <p className="text-xs font-medium text-slate-400 uppercase tracking-widest">
                         Sudah punya akun?{' '}
-                        <Link href={route('login')} className="text-kabta-purple font-bold hover:underline">
+                        <Link href={route('login')} className="text-sankara-green font-bold hover:underline">
                             Masuk Disini
                         </Link>
                     </p>

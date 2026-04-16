@@ -21,12 +21,11 @@ class NasabahController extends Controller
         $nasabah = Pengguna::where('peran', 'member')
             ->with('profil')
             ->when($search, function ($query, $search) {
-                $search = strtolower($search);
                 $query->whereHas('profil', function ($q) use ($search) {
-                    $q->where(DB::raw('LOWER(nama)'), 'ilike', "%{$search}%")
-                      ->orWhere(DB::raw('LOWER(nik)'), 'ilike', "%{$search}%");
-                })->orWhere(DB::raw('LOWER(email)'), 'ilike', "%{$search}%")
-                  ->orWhere(DB::raw('LOWER(username)'), 'ilike', "%{$search}%");
+                    $q->where('nama', 'like', "%{$search}%")
+                      ->orWhere('nik', 'like', "%{$search}%");
+                })->orWhere('email', 'like', "%{$search}%")
+                  ->orWhere('username', 'like', "%{$search}%");
             })
             ->latest()
             ->paginate($perPage)
@@ -91,6 +90,10 @@ class NasabahController extends Controller
         });
 
         return redirect()->route('master.nasabah.index')->with('success', 'Data nasabah berhasil ditambahkan');
+    }
+    public function show(Pengguna $nasabah): RedirectResponse
+    {
+        return redirect()->route('master.nasabah.edit', $nasabah->id);
     }
 
     public function edit(Pengguna $nasabah)

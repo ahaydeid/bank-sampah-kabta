@@ -34,10 +34,10 @@ export default function Login({
                 <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/20 transition-all duration-300">
                     <div className="flex flex-col items-center space-y-4">
                         <div className="relative">
-                            <div className="w-16 h-16 border-4 border-kabta-purple/20 border-t-kabta-purple rounded-full animate-spin"></div>
-                            <Loader2 className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-6 h-6 text-kabta-purple animate-pulse" />
+                            <div className="w-16 h-16 border-4 border-sankara-green/20 border-t-sankara-green rounded-full animate-spin"></div>
+                            <Loader2 className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-6 h-6 text-sankara-green animate-pulse" />
                         </div>
-                        <div className="text-kabta-purple font-bold tracking-[0.3em] uppercase text-xs animate-pulse">
+                        <div className="text-sankara-green font-bold tracking-[0.3em] uppercase text-xs animate-pulse">
                             Memproses...
                         </div>
                     </div>
@@ -46,15 +46,15 @@ export default function Login({
 
             <div className="mb-8">
                 <h2 className="text-3xl font-bold text-slate-800 tracking-tight">
-                    Log <span className='text-kabta-purple'>In</span>
+                    Log <span className='text-sankara-green'>In</span>
                 </h2>
                 <p className="mt-2 text-md font-medium text-gray-500">
-                    Bank Sampah Kabta
+                    Bank Sampah Sankara
                 </p>
             </div>
 
             {status && (
-                <div className="mb-6 text-sm font-medium text-kabta-purple bg-purple-50 p-4 rounded-xl border border-purple-100">
+                <div className="mb-6 text-sm font-medium text-sankara-green bg-green-50 p-4 rounded-xl border border-green-100">
                     {status}
                 </div>
             )}
@@ -70,9 +70,9 @@ export default function Login({
                         type="email"
                         name="email"
                         value={data.email}
-                        className="w-full bg-transparent border-0 border-b-2 border-slate-100 focus:border-kabta-purple focus:ring-0 px-0 py-2 text-sm placeholder-slate-200 transition-all"
+                        className="w-full bg-transparent border-0 border-b-2 border-slate-100 focus:border-sankara-green focus:ring-0 px-0 py-2 text-sm placeholder-slate-200 transition-all"
                         autoComplete="username"
-                        placeholder="admin@kabta.id"
+                        placeholder="admin@sankara.id"
                         onChange={(e) => setData('email', e.target.value)}
                         required
                     />
@@ -90,7 +90,7 @@ export default function Login({
                             type={showPassword ? 'text' : 'password'}
                             name="password"
                             value={data.password}
-                            className="w-full bg-transparent border-0 border-b-2 border-slate-100 focus:border-kabta-purple focus:ring-0 px-0 py-2 text-sm placeholder-slate-200 transition-all pr-10"
+                            className="w-full bg-transparent border-0 border-b-2 border-slate-100 focus:border-sankara-green focus:ring-0 px-0 py-2 text-sm placeholder-slate-200 transition-all pr-10"
                             autoComplete="current-password"
                             placeholder="••••••••"
                             onChange={(e) => setData('password', e.target.value)}
@@ -99,7 +99,7 @@ export default function Login({
                         <button
                             type="button"
                             onClick={() => setShowPassword(!showPassword)}
-                            className="absolute right-0 top-1/2 -translate-y-1/2 p-2 text-slate-300 hover:text-kabta-purple transition-colors"
+                            className="absolute right-0 top-1/2 -translate-y-1/2 p-2 text-slate-300 hover:text-sankara-green transition-colors"
                         >
                             {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                         </button>
@@ -112,7 +112,7 @@ export default function Login({
                     {canResetPassword && (
                         <Link
                             href={route('password.request')}
-                            className="text-xs text-gray-600 italic hover:text-kabta-purple/80 transition-colors tracking-widest"
+                            className="text-xs text-gray-600 italic hover:text-sankara-green/80 transition-colors tracking-widest"
                         >
                             Lupa password?
                         </Link>
@@ -124,7 +124,7 @@ export default function Login({
                     <button
                         type="submit"
                         disabled={processing}
-                        className="w-full bg-kabta-purple text-white font-medium py-2 rounded-full text-md hover:bg-kabta-purple/90 transition-all disabled:opacity-50"
+                        className="w-full bg-sankara-green text-white font-medium py-2 rounded-full text-md hover:bg-sankara-green/90 transition-all disabled:opacity-50"
                     >
                         Masuk Sekarang
                     </button>

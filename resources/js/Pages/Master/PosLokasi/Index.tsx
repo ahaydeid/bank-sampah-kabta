@@ -157,14 +157,14 @@ export default function Index({ pos_lokasi, filters }: Props) {
                                         </TD>
                                         <TD className="text-center py-3 px-4">
                                             <span className={`inline-flex items-center px-3 py-0.5 text-[9px] font-medium uppercase tracking-widest ${
-                                                item.latitude && item.longitude ? 'bg-emerald-500 text-white' : 'bg-slate-300 text-slate-600'
+                                                item.latitude && item.longitude ? 'bg-sankara-badge-tersedia text-white' : 'bg-sankara-badge-tidak-tersedia text-white'
                                             }`}>
                                                 {item.latitude && item.longitude ? 'Tersedia' : 'Tidak tersedia'}
                                             </span>
                                         </TD>
                                         <TD className="text-center py-3 px-4">
                                             <span className={`inline-flex items-center px-3 py-0.5 text-[9px] font-medium uppercase tracking-widest ${
-                                                item.is_aktif ? 'bg-emerald-500 text-white' : 'bg-red-500 text-white'
+                                                item.is_aktif ? 'bg-sankara-badge-aktif text-white' : 'bg-sankara-badge-nonaktif text-white'
                                             }`}>
                                                 {item.is_aktif ? 'Aktif' : 'Non-Aktif'}
                                             </span>
@@ -172,12 +172,13 @@ export default function Index({ pos_lokasi, filters }: Props) {
                                         <TD className="text-right py-3 px-4">
                                             <div className="flex justify-end space-x-2 whitespace-nowrap">
                                                 <Link href={route('master.pos-lokasi.edit', item.id)}>
-                                                    <Button className="bg-amber-500 text-white hover:bg-amber-600 p-2 rounded-sm shadow-xs" title="Edit">
+                                                    <Button variant="warning" className="p-2 shadow-xs" title="Edit">
                                                         <Edit className="w-3.5 h-3.5" />
                                                     </Button>
                                                 </Link>
                                                 <Button 
-                                                    className="bg-red-600 text-white hover:bg-red-700 p-2 rounded-sm shadow-xs" 
+                                                    variant="danger"
+                                                    className="p-2 shadow-xs" 
                                                     title="Hapus"
                                                     onClick={() => handleDelete(item.id)}
                                                 >

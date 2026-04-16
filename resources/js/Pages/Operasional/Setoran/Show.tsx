@@ -54,9 +54,9 @@ export default function Show({ transaksi }: Props) {
 
     const getStatusStyles = (status: string) => {
         switch (status) {
-            case 'berhasil': return 'bg-emerald-600 text-white';
-            case 'dibatalkan': return 'bg-red-600 text-white';
-            default: return 'bg-emerald-600 text-white';
+            case 'berhasil': return 'bg-sankara-success text-white';
+            case 'dibatalkan': return 'bg-sankara-danger text-white';
+            default: return 'bg-sankara-success text-white';
         }
     };
 
@@ -89,7 +89,7 @@ export default function Show({ transaksi }: Props) {
                                 onClick={() => handleStatusUpdate('berhasil')}
                                 disabled={processing}
                                 variant="primary"
-                                className="bg-emerald-600 hover:bg-emerald-700 rounded-sm"
+                                className="rounded-sm"
                             >
                                 <CheckCircle size={14} className="me-2" />
                                 Aktifkan Kembali
@@ -99,7 +99,7 @@ export default function Show({ transaksi }: Props) {
                                 onClick={() => handleStatusUpdate('dibatalkan')}
                                 disabled={processing}
                                 variant="danger"
-                                className="bg-red-600 text-xs hover:bg-red-700 rounded-sm"
+                                className="text-xs rounded-sm"
                             >
                                 <X size={15} className="me-2" />
                                 Batalkan Transaksi

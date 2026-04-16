@@ -17,6 +17,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'api.role' => \App\Http\Middleware\EnsureApiRole::class,
             'web.non_petugas' => \App\Http\Middleware\EnsureWebAccessForNonPetugas::class,
+            'web.admin' => \App\Http\Middleware\EnsureAdminRole::class,
         ]);
 
         $middleware->web(append: [

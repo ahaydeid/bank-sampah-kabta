@@ -17,10 +17,9 @@ class PosLokasiController extends Controller
 
         $pos_lokasi = PosLokasi::withCount('rewards')
             ->when($search, function ($query, $search) {
-                $search = strtolower($search);
-                $query->where(DB::raw('LOWER(nama_pos)'), 'ilike', "%{$search}%")
-                      ->orWhere(DB::raw('LOWER(alamat)'), 'ilike', "%{$search}%")
-                      ->orWhere(DB::raw('LOWER(kode_pos)'), 'ilike', "%{$search}%");
+                $query->where('nama_pos', 'like', "%{$search}%")
+                      ->orWhere('alamat', 'like', "%{$search}%")
+                      ->orWhere('kode_pos', 'like', "%{$search}%");
             })
             ->latest()
             ->paginate($perPage)
@@ -86,7 +85,7 @@ class PosLokasiController extends Controller
 
         $registeredRewards = $pos_lokasi->rewards()
             ->when($search, function ($query, $search) {
-                $query->where('nama_reward', 'ilike', "%{$search}%");
+                $query->where('nama_reward', 'like', "%{$search}%");
             })
             ->paginate($perPage, ['*'], 'catalog_page')
             ->withQueryString();

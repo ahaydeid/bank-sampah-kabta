@@ -1,6 +1,6 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head } from '@inertiajs/react';
-import { 
+import {
     Users,
     Store,
     GraduationCap,
@@ -43,7 +43,7 @@ const StatCard = ({ label, value, icon: Icon, color }: { label: string, value: s
     </div>
 );
 
-const CustomLineChart = ({ data }: { data: Array<{date: string, total: number}> }) => {
+const CustomLineChart = ({ data }: { data: Array<{ date: string, total: number }> }) => {
     if (!data || data.length === 0) {
         return <div className="flex items-center justify-center w-full h-48 mt-4 text-slate-400">Belum ada data</div>;
     }
@@ -67,7 +67,7 @@ const CustomLineChart = ({ data }: { data: Array<{date: string, total: number}> 
                 {[0, 25, 50, 75, 100].map(y => (
                     <line key={y} x1="0" y1={y} x2="500" y2={y} stroke="#f1f5f9" strokeDasharray="4 4" />
                 ))}
-                
+
                 {/* The Line */}
                 {data.length > 1 && (
                     <path
@@ -82,14 +82,14 @@ const CustomLineChart = ({ data }: { data: Array<{date: string, total: number}> 
 
                 {/* Data Points */}
                 {points.map((p, i) => (
-                    <circle 
-                        key={i} 
-                        cx={p.x} 
-                        cy={p.y} 
-                        r="4" 
-                        fill="white" 
-                        stroke="#8b5cf6" 
-                        strokeWidth="2" 
+                    <circle
+                        key={i}
+                        cx={p.x}
+                        cy={p.y}
+                        r="4"
+                        fill="white"
+                        stroke="#8b5cf6"
+                        strokeWidth="2"
                     />
                 ))}
             </svg>
@@ -105,7 +105,7 @@ const CustomLineChart = ({ data }: { data: Array<{date: string, total: number}> 
 };
 
 const CustomDonutChart = ({ percentage, color, label }: { percentage: number, color: string, label: string }) => {
-    const radius = 50; 
+    const radius = 50;
     const circumference = 2 * Math.PI * radius;
     const offset = circumference - (percentage / 100) * circumference;
 
@@ -146,29 +146,29 @@ export default function Dashboard({ stats }: DashboardProps) {
 
             {/* Top Stats: Custom Solid Cards */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2">
-                <StatCard 
-                    label="Total Member" 
-                    value={(stats?.totalMember || 0).toLocaleString('id-ID')} 
-                    icon={Users} 
-                    color="bg-[#FF006E]" 
+                <StatCard
+                    label="Total Member"
+                    value={(stats?.totalMember || 0).toLocaleString('id-ID')}
+                    icon={Users}
+                    color="bg-sankara-stat-member"
                 />
-                <StatCard 
-                    label="Total Petugas" 
-                    value={(stats?.totalPetugas || 0).toLocaleString('id-ID')} 
-                    icon={GraduationCap} 
-                    color="bg-[#FB5607]" 
+                <StatCard
+                    label="Total Petugas"
+                    value={(stats?.totalPetugas || 0).toLocaleString('id-ID')}
+                    icon={GraduationCap}
+                    color="bg-sankara-stat-petugas"
                 />
-                <StatCard 
-                    label="Total Pos" 
-                    value={(stats?.totalPos || 0).toLocaleString('id-ID')} 
-                    icon={Store} 
-                    color="bg-[#3A86FF]" 
+                <StatCard
+                    label="Total Pos"
+                    value={(stats?.totalPos || 0).toLocaleString('id-ID')}
+                    icon={Store}
+                    color="bg-sankara-stat-pos"
                 />
-                <StatCard 
-                    label="Kategori Sampah" 
-                    value={(stats?.kategoriSampah || 0).toLocaleString('id-ID')} 
-                    icon={BookOpen} 
-                    color="bg-[#8338EC]" 
+                <StatCard
+                    label="Kategori Sampah"
+                    value={(stats?.kategoriSampah || 0).toLocaleString('id-ID')}
+                    icon={BookOpen}
+                    color="bg-sankara-stat-kategori"
                 />
             </div>
 
@@ -180,7 +180,7 @@ export default function Dashboard({ stats }: DashboardProps) {
 
             {/* Main Content Area */}
             <div className="mt-4 grid grid-cols-1 lg:grid-cols-12 gap-2">
-                
+
                 {/* Left: Line Chart */}
                 <div className="lg:col-span-6 bg-white p-8 rounded border border-slate-100 shadow-sm">
                     <div className="flex items-center justify-between mb-2">
@@ -192,10 +192,10 @@ export default function Dashboard({ stats }: DashboardProps) {
                 {/* Middle: Donut 1 */}
                 <div className="lg:col-span-3 bg-white p-8 rounded border border-slate-100 shadow-sm flex flex-col justify-between">
                     <h4 className="text-md text-slate-700 font-semibold uppercase tracking-tight mb-8">Setoran Member <span className="text-slate-400 italic capitalize"> (Hari Ini)</span></h4>
-                    <CustomDonutChart 
-                        percentage={stats?.setoranHariIni?.total > 0 ? Math.round(((stats.setoranHariIni.byStatus['tervalidasi'] || 0) / stats.setoranHariIni.total) * 100) : 0} 
-                        color="#10b981" 
-                        label="TERVALIDASI" 
+                    <CustomDonutChart
+                        percentage={stats?.setoranHariIni?.total > 0 ? Math.round(((stats.setoranHariIni.byStatus['tervalidasi'] || 0) / stats.setoranHariIni.total) * 100) : 0}
+                        color="#10b981"
+                        label="TERVALIDASI"
                     />
                     <div className="mt-8 space-y-3">
                         {[
@@ -223,10 +223,10 @@ export default function Dashboard({ stats }: DashboardProps) {
                 {/* Right: Donut 2 */}
                 <div className="lg:col-span-3 bg-white p-8 rounded border border-slate-100 shadow-sm flex flex-col justify-between">
                     <h4 className="text-md text-slate-700 font-semibold uppercase tracking-tight mb-8">Poin Member <span className="text-slate-400 capitalize italic"> (Hari Ini)</span></h4>
-                    <CustomDonutChart 
-                        percentage={stats?.poinHariIni?.total > 0 ? Math.round(((stats.poinHariIni.byCategory['Semabko'] || stats.poinHariIni.byCategory['sembako'] || Object.values(stats.poinHariIni.byCategory)[0] || 0) / stats.poinHariIni.total) * 100) : 0} 
-                        color="#10b981" 
-                        label="TERPAKAI" 
+                    <CustomDonutChart
+                        percentage={stats?.poinHariIni?.total > 0 ? Math.round(((stats.poinHariIni.byCategory['Sembako'] || stats.poinHariIni.byCategory['sembako'] || Object.values(stats.poinHariIni.byCategory)[0] || 0) / stats.poinHariIni.total) * 100) : 0}
+                        color="#10b981"
+                        label="TERPAKAI"
                     />
                     <div className="mt-8 space-y-3">
                         {stats?.poinHariIni?.byCategory && Object.keys(stats.poinHariIni.byCategory).length > 0 ? (

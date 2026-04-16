@@ -152,12 +152,13 @@ export default function Index({ reward, pos_lokasi, filters }: Props) {
                                         <TD className="text-center py-3 px-4">
                                             <div className="flex justify-center space-x-2 whitespace-nowrap">
                                                 <Link href={route('master.reward.edit', item.id)}>
-                                                    <Button className="bg-amber-500 text-white hover:bg-amber-600 p-2 rounded-sm shadow-xs" title="Edit">
+                                                    <Button variant="warning" className="p-2 shadow-xs" title="Edit">
                                                         <Edit className="w-3.5 h-3.5" />
                                                     </Button>
                                                 </Link>
                                                 <Button 
-                                                    className="bg-red-600 text-white hover:bg-red-700 p-2 rounded-sm shadow-xs" 
+                                                    variant="danger"
+                                                    className="p-2 shadow-xs" 
                                                     title="Hapus"
                                                     onClick={() => handleDelete(item.id)}
                                                 >

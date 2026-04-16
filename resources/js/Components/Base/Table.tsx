@@ -26,7 +26,7 @@ export function TableSearch({ value, onChange, placeholder = "Cari data...", cla
                 value={value}
                 onChange={(e) => onChange(e.target.value)}
                 placeholder={placeholder}
-                className="w-full pl-10 pr-4 py-1.5 text-sm border border-slate-200 rounded-sm focus:border-kabta-purple outline-none transition-all"
+                className="w-full pl-10 pr-4 py-1.5 text-sm border border-slate-200 rounded-sm focus:border-sankara-green outline-none transition-all"
             />
         </div>
     );
@@ -36,10 +36,10 @@ export function PerPageSelector({ value, onChange }: { value: number, onChange: 
     return (
         <div className="flex items-center text-sm text-slate-500">
             <span className="me-2 text-xs font-medium tracking-wider font-sans">Tampilkan</span>
-            <select 
+            <select
                 value={value}
                 onChange={(e) => onChange(Number(e.target.value))}
-                className="border border-slate-200 rounded-sm py-2 px-2 text-xs min-w-[60px] focus:border-kabta-purple outline-none bg-white cursor-pointer"
+                className="border border-slate-200 rounded-sm py-2 px-2 text-xs min-w-[60px] focus:border-sankara-green outline-none bg-white cursor-pointer"
             >
                 <option value={10}>10</option>
                 <option value={50}>50</option>
@@ -130,7 +130,7 @@ interface TRProps extends HTMLAttributes<HTMLTableRowElement> {
 
 export function TR({ children, className = '', index, isHeader, onClick, ...props }: TRProps & BaseTableProps) {
     return (
-        <tr 
+        <tr
             {...props}
             onClick={onClick}
             className={`transition-colors duration-150 ${onClick ? 'cursor-pointer hover:bg-slate-50' : ''} ${className}`}

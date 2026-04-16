@@ -32,7 +32,7 @@ export default function CreateEdit({ reward, pos_lokasi }: Props) {
     const { data, setData, post, processing, errors } = useForm({
         _method: isEdit ? 'PATCH' : undefined,
         nama_reward: reward?.nama_reward || '',
-        poin_tukar: Number(reward?.poin_tukar || 0),
+        poin_tukar: reward?.poin_tukar ?? '',
         kategori_reward: reward?.kategori_reward || 'Sembako',
         foto: null as File | null,
     });
@@ -155,7 +155,7 @@ export default function CreateEdit({ reward, pos_lokasi }: Props) {
                             <Input
                                 type="number"
                                 value={data.poin_tukar}
-                                onChange={(e) => setData('poin_tukar', Number(e.target.value))}
+                                onChange={(e) => setData('poin_tukar', e.target.value === '' ? '' : Number(e.target.value))}
                                 className="w-full rounded-sm border-gray-300 focus:border-gray-800 focus:ring-gray-800"
                                 placeholder="0"
                             />

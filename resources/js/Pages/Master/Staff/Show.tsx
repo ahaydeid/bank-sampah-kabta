@@ -59,8 +59,8 @@ export default function Show({ staff }: Props) {
                     <div className="lg:col-span-1 space-y-6">
                         <div className="bg-white rounded-sm border border-slate-200 p-8 text-center">
                             <div className="flex justify-center mb-6">
-                                <Avatar 
-                                    src={staff.profil.foto_profil ? `/storage/${staff.profil.foto_profil}` : null} 
+                                <Avatar
+                                    src={staff.profil.foto_profil ? `/storage/${staff.profil.foto_profil}` : null}
                                     name={staff.profil.nama}
                                     size="xl"
                                     className="w-32 h-32 text-4xl border-4 border-slate-50 shadow-sm"
@@ -68,16 +68,14 @@ export default function Show({ staff }: Props) {
                             </div>
                             <h2 className="text-xl font-bold text-slate-800 mb-1">{staff.profil.nama}</h2>
                             <p className="text-slate-500 font-medium mb-4">{staff.profil.jabatan || 'Staff'}</p>
-                            
+
                             <div className="flex flex-col space-y-2 mt-6">
-                                <span className={`inline-flex items-center justify-center px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${
-                                    staff.peran === 'admin' ? 'bg-kabta-purple text-white' : 'bg-blue-500 text-white'
-                                } mx-auto`}>
+                                <span className={`inline-flex items-center justify-center px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${staff.peran === 'admin' ? 'bg-sankara-green text-white' : 'bg-blue-500 text-white'
+                                    } mx-auto`}>
                                     {staff.peran === 'admin' ? 'Administrator' : 'Petugas Lapangan'}
                                 </span>
-                                <span className={`inline-flex items-center justify-center px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${
-                                    staff.is_aktif ? 'bg-emerald-500 text-white' : 'bg-red-500 text-white'
-                                } mx-auto`}>
+                                <span className={`inline-flex items-center justify-center px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${staff.is_aktif ? 'bg-emerald-500 text-white' : 'bg-red-500 text-white'
+                                    } mx-auto`}>
                                     {staff.is_aktif ? 'Aktif' : 'Non-Aktif'}
                                 </span>
                             </div>
@@ -152,7 +150,7 @@ export default function Show({ staff }: Props) {
                                             <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1 flex items-center">
                                                 <MapPin className="w-3 h-3 me-2" /> Penugasan Pos Unit
                                             </div>
-                                            <div className="text-slate-700 font-medium text-kabta-purple">
+                                            <div className="text-slate-700 font-medium text-sankara-green">
                                                 {staff.profil.pos?.nama_pos || 'Belum ditugaskan'}
                                             </div>
                                         </div>
