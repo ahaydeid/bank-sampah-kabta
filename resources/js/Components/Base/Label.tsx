@@ -3,9 +3,10 @@ import { LabelHTMLAttributes } from 'react';
 export default function Label({
     value,
     className = '',
+    required = false,
     children,
     ...props
-}: LabelHTMLAttributes<HTMLLabelElement> & { value?: string }) {
+}: LabelHTMLAttributes<HTMLLabelElement> & { value?: string, required?: boolean }) {
     return (
         <label
             {...props}
@@ -14,6 +15,7 @@ export default function Label({
             }
         >
             {value ? value : children}
+            {required && <span className="text-red-500 ml-1">*</span>}
         </label>
     );
 }

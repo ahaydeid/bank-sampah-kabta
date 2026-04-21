@@ -187,7 +187,7 @@ export default function CreateEdit({ nasabah }: Props) {
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div className="space-y-6">
                                 <div>
-                                    <Label value="Nama Lengkap" />
+                                    <Label value="Nama Lengkap" required />
                                     <Input
                                         type="text"
                                         value={data.nama}
@@ -199,7 +199,7 @@ export default function CreateEdit({ nasabah }: Props) {
                                 </div>
 
                                 <div>
-                                    <Label value="NIK (Username)" />
+                                    <Label value="NIK (Username)" required />
                                     <Input
                                         type="text"
                                         value={data.nik}
@@ -214,7 +214,7 @@ export default function CreateEdit({ nasabah }: Props) {
                                 </div>
 
                                 <div>
-                                    <Label value="Kontak / No. HP" />
+                                    <Label value="Kontak / No. HP" required />
                                     <Input
                                         type="text"
                                         value={data.no_hp}
@@ -228,7 +228,7 @@ export default function CreateEdit({ nasabah }: Props) {
 
                             <div className="space-y-6">
                                 <div>
-                                    <Label value="Alamat Email" />
+                                    <Label value="Alamat Email" required />
                                     <Input
                                         type="email"
                                         value={data.email}
@@ -240,7 +240,7 @@ export default function CreateEdit({ nasabah }: Props) {
                                 </div>
 
                                 <div>
-                                    <Label value="Alamat Lengkap" />
+                                    <Label value="Alamat Lengkap" required />
                                     <textarea
                                         value={data.alamat}
                                         onChange={(e) => setData('alamat', e.target.value)}

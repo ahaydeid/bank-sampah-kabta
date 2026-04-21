@@ -34,7 +34,7 @@ export default function ResetPassword({
 
             <form onSubmit={submit}>
                 <div>
-                    <Label htmlFor="email" value="Email" />
+                    <Label htmlFor="email" value="Email" required />
 
                     <Input
                         id="email"
@@ -50,7 +50,7 @@ export default function ResetPassword({
                 </div>
 
                 <div className="mt-4">
-                    <Label htmlFor="password" value="Password" />
+                    <Label htmlFor="password" value="Password" required />
 
                     <Input
                         id="password"
@@ -70,6 +70,7 @@ export default function ResetPassword({
                     <Label
                         htmlFor="password_confirmation"
                         value="Confirm Password"
+                        required
                     />
 
                     <Input

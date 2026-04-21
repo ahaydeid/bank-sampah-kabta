@@ -63,7 +63,7 @@ export default function Login({
                 {/* Login Field (Email) */}
                 <div className="group">
                     <label htmlFor="email" className="block text-sm font-semibold text-slate-500 tracking-normal mb-1">
-                        Email
+                        Email <span className="text-red-500 ml-1">*</span>
                     </label>
                     <input
                         id="email"
@@ -82,7 +82,7 @@ export default function Login({
                 {/* Password Field */}
                 <div className="group relative">
                     <label htmlFor="password" className="block text-sm font-semibold text-slate-500 tracking-normal mb-1">
-                        Password
+                        Password <span className="text-red-500 ml-1">*</span>
                     </label>
                     <div className="relative">
                         <input

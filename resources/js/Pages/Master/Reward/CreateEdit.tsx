@@ -127,7 +127,7 @@ export default function CreateEdit({ reward, pos_lokasi }: Props) {
                         </div>
 
                         <div>
-                            <Label value="Nama Barang / Reward" className="text-gray-700 font-semibold mb-1.5" />
+                            <Label value="Nama Barang / Reward" className="text-gray-700 font-semibold mb-1.5" required />
                             <Input
                                 type="text"
                                 value={data.nama_reward}
@@ -139,7 +139,7 @@ export default function CreateEdit({ reward, pos_lokasi }: Props) {
                         </div>
 
                         <div>
-                            <Label value="Kategori" className="text-gray-700 font-semibold mb-1.5" />
+                            <Label value="Kategori" className="text-gray-700 font-semibold mb-1.5" required />
                             <Input
                                 type="text"
                                 value={data.kategori_reward}
@@ -151,7 +151,7 @@ export default function CreateEdit({ reward, pos_lokasi }: Props) {
                         </div>
 
                         <div>
-                            <Label value="Poin yang Dibutuhkan" className="text-gray-700 font-semibold mb-1.5" />
+                            <Label value="Poin yang Dibutuhkan" className="text-gray-700 font-semibold mb-1.5" required />
                             <Input
                                 type="number"
                                 value={data.poin_tukar}

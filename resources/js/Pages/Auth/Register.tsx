@@ -33,7 +33,7 @@ export default function Register() {
 
             <form onSubmit={submit} className="space-y-5">
                 <div>
-                    <Label htmlFor="name" value="Nama Lengkap" />
+                    <Label htmlFor="name" value="Nama Lengkap" required />
 
                     <Input
                         id="name"
@@ -51,7 +51,7 @@ export default function Register() {
                 </div>
 
                 <div>
-                    <Label htmlFor="email" value="Alamat Email" />
+                    <Label htmlFor="email" value="Alamat Email" required />
 
                     <Input
                         id="email"
@@ -69,7 +69,7 @@ export default function Register() {
                 </div>
 
                 <div>
-                    <Label htmlFor="password" value="Password" />
+                    <Label htmlFor="password" value="Password" required />
 
                     <Input
                         id="password"
@@ -90,6 +90,7 @@ export default function Register() {
                     <Label
                         htmlFor="password_confirmation"
                         value="Konfirmasi Password"
+                        required
                     />
 
                     <Input
