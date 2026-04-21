@@ -332,7 +332,7 @@ export default function Sidebar({ isCollapsed, isMobileOpen, onCloseMobile }: Si
                         rel="noopener noreferrer"
                         className={`text-xs text-blue-600 hover:text-blue-800 transition-colors ${isCollapsed ? 'font-bold' : ''}`}
                     >
-                        {isCollapsed ? 'D' : 'Noy'}
+                        {isCollapsed ? 'N' : 'Noy'}
                     </a>
                 </div>
             </aside>

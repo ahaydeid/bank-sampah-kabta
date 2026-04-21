@@ -116,10 +116,10 @@ export default function Index({ staff, filters }: Props) {
                 <div className="bg-white overflow-hidden py-4">
                     <div className="flex flex-col md:flex-row md:items-center justify-end gap-4 mb-4">
                         <PerPageSelector value={staff.meta.per_page} onChange={handlePerPageChange} />
-                        <TableSearch 
-                            value={search} 
-                            onChange={onSearchChange} 
-                            placeholder="Cari nama staff atau jabatan..." 
+                        <TableSearch
+                            value={search}
+                            onChange={onSearchChange}
+                            placeholder="Cari nama staff atau jabatan..."
                         />
                     </div>
 
@@ -142,8 +142,8 @@ export default function Index({ staff, filters }: Props) {
                                     <TR className="whitespace-nowrap" key={item.id} index={(staff.meta.current_page - 1) * staff.meta.per_page + index}>
                                         <TD>
                                             <div className="flex items-center whitespace-nowrap">
-                                                <Avatar 
-                                                    src={item.profil?.foto_profil ? `/storage/${item.profil.foto_profil}` : null} 
+                                                <Avatar
+                                                    src={item.profil?.foto_profil ? `/storage/${item.profil.foto_profil}` : null}
                                                     name={item.profil?.nama}
                                                     size="sm"
                                                     className="me-3"
@@ -160,9 +160,8 @@ export default function Index({ staff, filters }: Props) {
                                             <div className="text-sm font-medium text-slate-600 whitespace-nowrap">{item.profil.pos?.nama_pos || '-'}</div>
                                         </TD>
                                         <TD>
-                                            <span className={`px-2 py-0.5 text-[9px] font-bold text-white rounded-sm uppercase tracking-wider ${
-                                                item.peran === 'admin' ? 'bg-sankara-badge-admin' : 'bg-sankara-badge-petugas'
-                                            }`}>
+                                            <span className={`px-2 py-0.5 text-[9px] font-bold text-white rounded-sm uppercase tracking-wider ${item.peran === 'admin' ? 'bg-sankara-badge-admin' : 'bg-sankara-badge-petugas'
+                                                }`}>
                                                 {item.peran}
                                             </span>
                                         </TD>
@@ -177,9 +176,8 @@ export default function Index({ staff, filters }: Props) {
                                             </div>
                                         </TD>
                                         <TD>
-                                            <span className={`px-3 py-1.5 text-[9px] font-medium text-white uppercase tracking-wider whitespace-nowrap ${
-                                                item.is_aktif ? 'bg-sankara-badge-aktif' : 'bg-sankara-badge-nonaktif'
-                                            }`}>
+                                            <span className={`px-3 py-1.5 text-[9px] font-medium text-white uppercase tracking-wider whitespace-nowrap ${item.is_aktif ? 'bg-sankara-badge-aktif' : 'bg-sankara-badge-nonaktif'
+                                                }`}>
                                                 {item.is_aktif ? 'Aktif' : 'Non-Aktif'}
                                             </span>
                                         </TD>
@@ -195,9 +193,9 @@ export default function Index({ staff, filters }: Props) {
                                                         <Edit className="w-3.5 h-3.5" />
                                                     </Button>
                                                 </Link>
-                                                <Button 
+                                                <Button
                                                     variant="danger"
-                                                    className="p-2 shadow-xs" 
+                                                    className="p-2 shadow-xs"
                                                     title="Hapus"
                                                     onClick={() => handleDelete(item.id)}
                                                     disabled={item.id === 1}
@@ -212,16 +210,16 @@ export default function Index({ staff, filters }: Props) {
                                 <TR>
                                     <TD colSpan={8} className="py-12 text-center text-slate-400">
                                         <ShieldCheck className="w-12 h-12 mx-auto mb-4 opacity-20" />
-                                        <p>Belum ada data staff tersedia.</p>
+                                        <p className='text-xs'>Belum ada data staff tersedia.</p>
                                     </TD>
                                 </TR>
                             )}
                         </TBody>
                     </Table>
 
-                    <Pagination 
-                        links={staff.links} 
-                        meta={staff.meta} 
+                    <Pagination
+                        links={staff.links}
+                        meta={staff.meta}
                     />
                 </div>
             </div>
