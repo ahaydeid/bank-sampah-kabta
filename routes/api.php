@@ -37,6 +37,11 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::post('/sync', [\App\Http\Controllers\Api\CartController::class, 'sync']);
             Route::delete('/{id}', [\App\Http\Controllers\Api\CartController::class, 'destroy']);
         });
+
+        Route::prefix('kuis')->group(function () {
+            Route::get('/', [\App\Http\Controllers\Api\KuisController::class, 'index']);
+            Route::post('/submit', [\App\Http\Controllers\Api\KuisController::class, 'submit']);
+        });
     });
 
     Route::middleware('api.role:petugas')->group(function () {

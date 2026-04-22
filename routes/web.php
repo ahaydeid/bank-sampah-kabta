@@ -8,6 +8,7 @@ use App\Http\Controllers\NasabahController;
 use App\Http\Controllers\StaffController;
 use App\Http\Controllers\TransaksiSetorController;
 use App\Http\Controllers\TransaksiTukarController;
+use App\Http\Controllers\DashboardController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -16,182 +17,9 @@ Route::get('/', function () {
     return redirect()->route('login');
 });
 
-Route::get('/dashboard', function (\Illuminate\Http\Request $request) {
-    $totalMember = \App\Models\Pengguna::where('peran', 'member')->count();
-    $totalPetugas = \App\Models\Pengguna::where('peran', '!=', 'member')->count();
-    $totalPos = \App\Models\PosLokasi::count();
-    $kategoriSampah = \App\Models\Sampah::count();
-
-    $getSetoranStats = function($startDate) {
-        $stats = \App\Models\TransaksiSetor::where('tanggal_waktu', '>=', $startDate)
-            ->select('status', \Illuminate\Support\Facades\DB::raw('count(*) as count'))
-            ->groupBy('status')
-            ->pluck('count', 'status')
-            ->toArray();
-        return [
-            'total' => array_sum($stats),
-            'byStatus' => $stats,
-        ];
-    };
-
-    $setoranStats = [
-        'hari_ini' => $getSetoranStats(now()->startOfDay()),
-        'minggu_ini' => $getSetoranStats(now()->startOfWeek()),
-        'bulan_ini' => $getSetoranStats(now()->startOfMonth()),
-        'tahun_ini' => $getSetoranStats(now()->startOfYear()),
-    ];
-
-    $totalPoinHariIni = \App\Models\TransaksiTukar::whereDate('tanggal', today())->sum('total_poin');
-
-    $poinTukarByCategory = \App\Models\TransaksiTukarDetail::whereHas('transaksiTukar', function($query) {
-            $query->whereDate('tanggal', today());
-        })
-        ->join('reward', 'transaksi_tukar_detail.reward_id', '=', 'reward.id')
-        ->select('reward.kategori_reward', \Illuminate\Support\Facades\DB::raw('SUM(transaksi_tukar_detail.jumlah * reward.poin_tukar) as total'))
-        ->groupBy('reward.kategori_reward')
-        ->pluck('total', 'kategori_reward')
-        ->toArray();
-
-    $timeRange = $request->query('timeRange', '7hari');
-    $month = $request->query('month', now()->month);
-    $year = $request->query('year', now()->year);
-
-    $aktivitasTime = $request->query('aktivitasTime', 'Bulan Ini');
-    $startDateAktivitas = match ($aktivitasTime) {
-        'Minggu Ini' => now()->startOfWeek(),
-        'Tahun Ini' => now()->startOfYear(),
-        default => now()->startOfMonth(),
-    };
-
-    $allMembers = \App\Models\Pengguna::where('peran', 'member')->with('profil.pos')->get();
-    $activeMemberIds = \App\Models\TransaksiSetor::where('tanggal_waktu', '>=', $startDateAktivitas)
-        ->distinct()
-        ->pluck('member_id')
-        ->toArray();
-
-    $memberPosRecords = \App\Models\TransaksiSetor::whereNotNull('pos_id')
-        ->select('member_id', 'pos_id')
-        ->distinct()
-        ->with('pos')
-        ->get()
-        ->groupBy('member_id');
-
-    $aktivitasData = $allMembers->map(function($member) use ($activeMemberIds, $memberPosRecords) {
-        $posNames = [];
-        if ($member->profil && $member->profil->pos) {
-            $posNames[] = $member->profil->pos->nama_pos;
-        }
-
-        if (isset($memberPosRecords[$member->id])) {
-            foreach ($memberPosRecords[$member->id] as $record) {
-                if ($record->pos) {
-                    $posNames[] = $record->pos->nama_pos;
-                }
-            }
-        }
-
-        $posNames = array_unique($posNames);
-        if (empty($posNames)) {
-            $posNames[] = 'Belum Ditentukan';
-        }
-
-        return [
-            'name' => $member->profil->nama ?? $member->username,
-            'pos' => array_values($posNames),
-            'active' => in_array($member->id, $activeMemberIds)
-        ];
-    })->toArray();
-
-    $allPosUnits = \App\Models\PosLokasi::pluck('nama_pos')->toArray();
-
-    $topMembersQuery = \App\Models\TransaksiSetor::where('tanggal_waktu', '>=', $startDateAktivitas)
-        ->with('member.profil')
-        ->select('member_id', \Illuminate\Support\Facades\DB::raw('SUM(total_berat) as total_berat'))
-        ->groupBy('member_id')
-        ->orderByDesc('total_berat')
-        ->limit(10)
-        ->get();
-
-    $topMembersData = $topMembersQuery->map(function ($item) {
-        return [
-            'name' => $item->member->profil->nama ?? $item->member->username ?? 'Unknown',
-            'total_berat' => (float) $item->total_berat
-        ];
-    })->toArray();
-
-    $querySetoran = \App\Models\TransaksiSetor::join('pos_lokasi', 'transaksi_setor.pos_id', '=', 'pos_lokasi.id')
-        ->select(
-            'transaksi_setor.pos_id',
-            'pos_lokasi.nama_pos',
-            \Illuminate\Support\Facades\DB::raw('SUM(transaksi_setor.total_berat) as total_berat'),
-            \Illuminate\Support\Facades\DB::raw('COUNT(*) as total_transaksi'),
-            \Illuminate\Support\Facades\DB::raw('COUNT(DISTINCT transaksi_setor.member_id) as jumlah_member'),
-            \Illuminate\Support\Facades\DB::raw('COUNT(DISTINCT transaksi_setor.petugas_id) as jumlah_petugas')
-        );
-
-    $queryKategori = \App\Models\TransaksiSetorDetail::join('transaksi_setor', 'transaksi_setor_detail.transaksi_setor_id', '=', 'transaksi_setor.id')
-        ->join('sampah', 'transaksi_setor_detail.sampah_id', '=', 'sampah.id')
-        ->join('pos_lokasi', 'transaksi_setor.pos_id', '=', 'pos_lokasi.id')
-        ->select(
-            'transaksi_setor.pos_id',
-            'pos_lokasi.nama_pos',
-            'sampah.kategori',
-            \Illuminate\Support\Facades\DB::raw('SUM(transaksi_setor_detail.berat) as total_berat')
-        );
-
-    if ($timeRange === 'bulanan') {
-        $querySetoran->whereYear('transaksi_setor.tanggal_waktu', $year)
-                     ->whereMonth('transaksi_setor.tanggal_waktu', $month);
-        $queryKategori->whereYear('transaksi_setor.tanggal_waktu', $year)
-                      ->whereMonth('transaksi_setor.tanggal_waktu', $month);
-    } else {
-        $startDate = now()->subDays(6)->startOfDay();
-        $querySetoran->where('transaksi_setor.tanggal_waktu', '>=', $startDate);
-        $queryKategori->where('transaksi_setor.tanggal_waktu', '>=', $startDate);
-    }
-
-    $trendSetoran = $querySetoran->groupBy('transaksi_setor.pos_id', 'pos_lokasi.nama_pos')
-        ->orderBy('total_berat', 'desc')
-        ->get();
-
-    $trendByKategori = $queryKategori->groupBy('transaksi_setor.pos_id', 'pos_lokasi.nama_pos', 'sampah.kategori')
-        ->orderBy('transaksi_setor.pos_id')
-        ->get()
-        ->groupBy('pos_id')
-        ->map(function ($items) {
-            return $items->pluck('total_berat', 'kategori')->toArray();
-        })
-        ->toArray();
-
-    // Get all unique categories
-    $allKategori = \App\Models\Sampah::distinct()->pluck('kategori')->toArray();
-
-    return Inertia::render('Dashboard', [
-        'stats' => [
-            'totalMember' => $totalMember,
-            'totalPetugas' => $totalPetugas,
-            'totalPos' => $totalPos,
-            'kategoriSampah' => $kategoriSampah,
-            'setoranStats' => $setoranStats,
-            'poinHariIni' => [
-                'total' => $totalPoinHariIni,
-                'byCategory' => $poinTukarByCategory,
-            ],
-            'trendSetoran' => $trendSetoran,
-            'trendByKategori' => $trendByKategori,
-            'allKategori' => $allKategori,
-            'aktivitasMember' => $aktivitasData,
-            'allPosUnits' => $allPosUnits,
-            'topMembers' => $topMembersData,
-        ],
-        'filters' => [
-            'timeRange' => $timeRange,
-            'month' => (int)$month,
-            'year' => (int)$year,
-            'aktivitasTime' => $aktivitasTime,
-        ]
-    ]);
-})->middleware(['auth', 'web.non_petugas', 'verified'])->name('dashboard');
+Route::get('/dashboard', [DashboardController::class, 'index'])
+    ->middleware(['auth', 'web.non_petugas', 'verified'])
+    ->name('dashboard');
 
 Route::middleware(['auth', 'web.non_petugas'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
@@ -235,6 +63,12 @@ Route::middleware(['auth', 'web.non_petugas'])->group(function () {
     // Analitik
     Route::prefix('analitik')->name('analitik.')->group(function () {
         Route::get('/laporan', fn() => Inertia::render('UnderDevelopment'))->name('laporan');
+    });
+
+    // Gamifikasi
+    Route::prefix('gamifikasi')->name('gamifikasi.')->group(function () {
+        Route::post('/kuis/settings', [\App\Http\Controllers\Gamifikasi\KuisController::class, 'updateSettings'])->name('kuis.settings.update');
+        Route::resource('kuis', \App\Http\Controllers\Gamifikasi\KuisController::class);
     });
 
     // Notifikasi (JSON API)

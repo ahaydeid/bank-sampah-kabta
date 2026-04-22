@@ -202,7 +202,7 @@ export default function CreateEdit({ pos_lokasi, registered_rewards, available_r
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
-                                    <Label value="Kode Unit" className="text-gray-700 font-semibold mb-1.5" required />
+                                    <Label value="Kode Unit" className="text-gray-700 font-semibold mb-1.5" />
                                     <Input
                                         type="text"
                                         maxLength={2}
@@ -220,7 +220,7 @@ export default function CreateEdit({ pos_lokasi, registered_rewards, available_r
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
-                                    <Label value="Latitude" className="text-gray-700 font-semibold mb-1.5" required />
+                                    <Label value="Latitude" className="text-gray-700 font-semibold mb-1.5" />
                                     <Input
                                         type="number"
                                         value={data.latitude}
@@ -232,7 +232,7 @@ export default function CreateEdit({ pos_lokasi, registered_rewards, available_r
                                     {errors.latitude && <p className="text-red-500 text-xs mt-1">{errors.latitude}</p>}
                                 </div>
                                 <div>
-                                    <Label value="Longitude" className="text-gray-700 font-semibold mb-1.5" required />
+                                    <Label value="Longitude" className="text-gray-700 font-semibold mb-1.5" />
                                     <Input
                                         type="number"
                                         value={data.longitude}
@@ -246,7 +246,7 @@ export default function CreateEdit({ pos_lokasi, registered_rewards, available_r
                             </div>
 
                             <div>
-                                <Label value="Alamat Lengkap" className="text-gray-700 font-semibold mb-1.5" required />
+                                <Label value="Alamat Lengkap" className="text-gray-700 font-semibold mb-1.5" />
                                 <textarea
                                     value={data.alamat}
                                     onChange={(e) => setData('alamat', e.target.value)}
@@ -258,7 +258,7 @@ export default function CreateEdit({ pos_lokasi, registered_rewards, available_r
                             </div>
 
                             <div>
-                                <Label value="Jadwal Operasional" className="text-gray-700 font-semibold mb-1.5" required />
+                                <Label value="Jadwal Operasional" className="text-gray-700 font-semibold mb-1.5" />
                                 <div className="flex items-center gap-2">
                                     <div className="flex items-center gap-1">
                                         <input

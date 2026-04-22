@@ -261,7 +261,7 @@ export default function CreateEdit({ staff, pos_lokasi = [] }: Props) {
                                 </div>
 
                                 <div>
-                                    <Label value="Jabatan" required />
+                                    <Label value="Jabatan" />
                                     <Input
                                         type="text"
                                         value={data.jabatan}
@@ -273,7 +273,7 @@ export default function CreateEdit({ staff, pos_lokasi = [] }: Props) {
                                 </div>
 
                                 <div>
-                                    <Label value="No. WhatsApp / HP" required />
+                                    <Label value="No. WhatsApp / HP" />
                                     <Input
                                         type="text"
                                         value={data.no_hp}

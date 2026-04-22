@@ -11,7 +11,8 @@ import {
     Recycle,
     Wallet,
     ShieldCheck,
-    X
+    X,
+    Gamepad2
 } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
 
@@ -242,6 +243,12 @@ export default function Sidebar({ isCollapsed, isMobileOpen, onCloseMobile }: Si
                 title: 'Member',
                 items: [
                     { label: 'Member', icon: Users, href: route('master.nasabah.index'), active: route().current('master.nasabah.*') },
+                ]
+            },
+            {
+                title: 'Gamifikasi',
+                items: [
+                    { label: 'Kuis Sankara', icon: Gamepad2, href: route('gamifikasi.kuis.index'), active: route().current('gamifikasi.kuis.*') },
                 ]
             },
             {

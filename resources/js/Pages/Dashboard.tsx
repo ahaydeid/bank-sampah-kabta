@@ -221,7 +221,6 @@ const CustomBarChart = ({ data, trendByKategori, allKategori }: {
                                             fill={isActive ? '#f1f5f9' : 'transparent'}
                                             rx={4}
                                         />
-                                        {/* Bar */}
                                         <rect
                                             x={x}
                                             y={barY}
@@ -231,6 +230,7 @@ const CustomBarChart = ({ data, trendByKategori, allKategori }: {
                                             ry={4}
                                             fill="url(#barGradient)"
                                             opacity={activeBar === null || isActive ? 1 : 0.4}
+                                            className="transition-all duration-500 ease-in-out"
                                         />
                                         {/* Value on top */}
                                         {Number(item.total_berat) > 0 && (
@@ -241,6 +241,7 @@ const CustomBarChart = ({ data, trendByKategori, allKategori }: {
                                                 fontSize="10"
                                                 fill="#4f46e5"
                                                 fontWeight="bold"
+                                                className="transition-all duration-500 ease-in-out"
                                             >
                                                 {Number(item.total_berat).toFixed(1)} kg
                                             </text>
@@ -288,6 +289,7 @@ const CustomBarChart = ({ data, trendByKategori, allKategori }: {
                                                     ry={isLast ? 4 : 0}
                                                     fill={getKategoriColor(kat, ki)}
                                                     opacity={activeBar === null || isActive ? 1 : 0.4}
+                                                    className="transition-all duration-500 ease-in-out"
                                                 />
                                             );
                                         })}
@@ -300,6 +302,7 @@ const CustomBarChart = ({ data, trendByKategori, allKategori }: {
                                                 fontSize="10"
                                                 fill="#475569"
                                                 fontWeight="bold"
+                                                className="transition-all duration-500 ease-in-out"
                                             >
                                                 {totalCat.toFixed(1)}
                                             </text>

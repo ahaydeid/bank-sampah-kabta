@@ -1,11 +1,13 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link, useForm, router } from '@inertiajs/react';
-import { Plus, Edit, QrCode } from 'lucide-react';
+import { Plus, Edit, QrCode, Info, X } from 'lucide-react';
 import { Table, THead, TBody, TR, TH, TD, TableSearch, Pagination, PerPageSelector } from '@/Components/Base/Table';
 import Button from '@/Components/Base/Button';
 import Avatar from '@/Components/Avatar';
 import { useState, useEffect, useCallback } from 'react';
 import { debounce } from '@/lib/debounce';
+import QRCode from 'react-qr-code';
+import Modal from '@/Components/Modal';
 
 interface Profil {
     id: number;
@@ -48,6 +50,7 @@ interface Props {
 export default function Index({ nasabah, filters }: Props) {
     const { delete: destroy } = useForm();
     const [search, setSearch] = useState(filters.search || '');
+    const [selectedNasabah, setSelectedNasabah] = useState<Nasabah | null>(null);
 
     const handleSearch = useCallback(
         debounce((query: string) => {
@@ -158,7 +161,11 @@ export default function Index({ nasabah, filters }: Props) {
                                         </TD>
                                         <TD className="text-right">
                                             <div className="flex justify-center space-x-2">
-                                                <Button className="!bg-gray-200 !text-gray-800 hover:bg-gray-600 p-2 rounded-sm shadow-xs" title="QR Code">
+                                                <Button
+                                                    className="!bg-gray-200 !text-gray-800 hover:bg-gray-600 p-2 rounded-sm shadow-xs"
+                                                    title="QR Code"
+                                                    onClick={() => setSelectedNasabah(item)}
+                                                >
                                                     <QrCode className="w-3.5 h-3.5" />
                                                 </Button>
                                                 <Link href={route('master.nasabah.edit', item.id)}>
@@ -186,6 +193,29 @@ export default function Index({ nasabah, filters }: Props) {
                     />
                 </div>
             </div>
+
+            {/* Modal QR Code */}
+            <Modal show={!!selectedNasabah} onClose={() => setSelectedNasabah(null)} maxWidth="sm">
+                <div className="p-6 text-center">
+                    <h3 className="text-lg font-bold mb-4 text-slate-800">QR Code Member</h3>
+                    <div className="bg-white p-4 rounded-xl border border-slate-100 shadow-sm inline-block">
+                        {selectedNasabah && (
+                            <QRCode
+                                value={selectedNasabah.username}
+                                size={200}
+                            />
+                        )}
+                    </div>
+                    <p className="mt-4 text-sm text-slate-500">
+                        Scan QR Code ini melalui aplikasi mobile petugas untuk memproses transaksi nasabah.
+                    </p>
+                    <div className="mt-6 flex justify-center">
+                        <Button variant="secondary" className="w-full border border-gray-400 bg-gray-400 justify-center" onClick={() => setSelectedNasabah(null)}>
+                            Tutup
+                        </Button>
+                    </div>
+                </div>
+            </Modal>
         </AuthenticatedLayout>
     );
 }

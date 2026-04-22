@@ -199,7 +199,7 @@ export default function CreateEdit({ nasabah }: Props) {
                                 </div>
 
                                 <div>
-                                    <Label value="NIK (Username)" required />
+                                    <Label value="NIK (Username)" />
                                     <Input
                                         type="text"
                                         value={data.nik}
@@ -214,7 +214,7 @@ export default function CreateEdit({ nasabah }: Props) {
                                 </div>
 
                                 <div>
-                                    <Label value="Kontak / No. HP" required />
+                                    <Label value="Kontak / No. HP" />
                                     <Input
                                         type="text"
                                         value={data.no_hp}
@@ -240,7 +240,7 @@ export default function CreateEdit({ nasabah }: Props) {
                                 </div>
 
                                 <div>
-                                    <Label value="Alamat Lengkap" required />
+                                    <Label value="Alamat Lengkap" />
                                     <textarea
                                         value={data.alamat}
                                         onChange={(e) => setData('alamat', e.target.value)}
