@@ -69,7 +69,7 @@ export default function PenukaranPoin({ settings }: Props) {
                                 <div>
                                     <div className="flex items-center gap-2 mb-1">
                                         <label htmlFor="kadaluwarsa_jam" className="block text-sm font-medium text-gray-700">
-                                            Batas Waktu Penukaran (Jam)
+                                            Batas Waktu Penukaran (Jam) <span className="text-red-500 ml-1">*</span>
                                         </label>
                                     </div>
                                     <p className="text-xs text-gray-400 mb-3">

@@ -107,10 +107,10 @@ export default function Index({ reward, pos_lokasi, filters }: Props) {
                 <div className="bg-white py-4 rounded-sm border border-gray-200 shadow-xs">
                     <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 px-4 mb-6">
                         <div className="flex flex-1 items-center gap-4">
-                            <TableSearch 
-                                value={search} 
-                                onChange={onSearchChange} 
-                                placeholder="Cari nama barang..." 
+                            <TableSearch
+                                value={search}
+                                onChange={onSearchChange}
+                                placeholder="Cari nama barang..."
                                 className="flex-1 max-w-sm rounded-sm border-gray-200"
                             />
                         </div>
@@ -156,9 +156,9 @@ export default function Index({ reward, pos_lokasi, filters }: Props) {
                                                         <Edit className="w-3.5 h-3.5" />
                                                     </Button>
                                                 </Link>
-                                                <Button 
+                                                <Button
                                                     variant="danger"
-                                                    className="p-2 shadow-xs" 
+                                                    className="p-2 shadow-xs"
                                                     title="Hapus"
                                                     onClick={() => handleDelete(item.id)}
                                                 >
@@ -171,16 +171,16 @@ export default function Index({ reward, pos_lokasi, filters }: Props) {
                             ) : (
                                 <TR>
                                     <TD colSpan={5} className="py-20 text-center text-gray-400">
-                                        <p className="text-sm font-medium">Belum ada data reward tersedia.</p>
+                                        <p className="text-xs font-medium">Belum ada data reward tersedia.</p>
                                     </TD>
                                 </TR>
                             )}
                         </TBody>
                     </Table>
 
-                    <Pagination 
-                        links={reward.links} 
-                        meta={reward.meta} 
+                    <Pagination
+                        links={reward.links}
+                        meta={reward.meta}
                     />
                 </div>
             </div>

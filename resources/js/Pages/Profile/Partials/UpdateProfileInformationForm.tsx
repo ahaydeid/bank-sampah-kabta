@@ -43,7 +43,7 @@ export default function UpdateProfileInformation({
 
             <form onSubmit={submit} className="mt-6 space-y-6">
                 <div>
-                    <Label htmlFor="name" value="Name" />
+                    <Label htmlFor="name" value="Name" required />
 
                     <Input
                         id="name"
@@ -59,7 +59,7 @@ export default function UpdateProfileInformation({
                 </div>
 
                 <div>
-                    <Label htmlFor="email" value="Email" />
+                    <Label htmlFor="email" value="Email" required />
 
                     <Input
                         id="email"

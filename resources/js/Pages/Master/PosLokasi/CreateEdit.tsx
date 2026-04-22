@@ -189,7 +189,7 @@ export default function CreateEdit({ pos_lokasi, registered_rewards, available_r
                     <div className="bg-white rounded-sm border border-gray-200 p-8 shadow-xs h-fit">
                         <form onSubmit={handleSubmit} className="space-y-6">
                             <div>
-                                <Label value="Nama Pos" className="text-gray-700 font-semibold mb-1.5" />
+                                <Label value="Nama Pos" className="text-gray-700 font-semibold mb-1.5" required />
                                 <Input
                                     type="text"
                                     value={data.nama_pos}

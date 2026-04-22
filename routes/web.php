@@ -8,6 +8,7 @@ use App\Http\Controllers\NasabahController;
 use App\Http\Controllers\StaffController;
 use App\Http\Controllers\TransaksiSetorController;
 use App\Http\Controllers\TransaksiTukarController;
+use App\Http\Controllers\DashboardController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -16,57 +17,9 @@ Route::get('/', function () {
     return redirect()->route('login');
 });
 
-Route::get('/dashboard', function () {
-    $totalMember = \App\Models\Pengguna::where('peran', 'member')->count();
-    $totalPetugas = \App\Models\Pengguna::where('peran', '!=', 'member')->count();
-    $totalPos = \App\Models\PosLokasi::count();
-    $kategoriSampah = \App\Models\Sampah::count();
-
-    $setoranByStatus = \App\Models\TransaksiSetor::whereDate('tanggal_waktu', today())
-        ->select('status', \Illuminate\Support\Facades\DB::raw('count(*) as count'))
-        ->groupBy('status')
-        ->pluck('count', 'status')
-        ->toArray();
-    $totalSetoranHariIni = array_sum($setoranByStatus);
-
-    $totalPoinHariIni = \App\Models\TransaksiTukar::whereDate('tanggal', today())->sum('total_poin');
-
-    $poinTukarByCategory = \App\Models\TransaksiTukarDetail::whereHas('transaksiTukar', function($query) {
-            $query->whereDate('tanggal', today());
-        })
-        ->join('reward', 'transaksi_tukar_detail.reward_id', '=', 'reward.id')
-        ->select('reward.kategori_reward', \Illuminate\Support\Facades\DB::raw('SUM(transaksi_tukar_detail.jumlah * reward.poin_tukar) as total'))
-        ->groupBy('reward.kategori_reward')
-        ->pluck('total', 'kategori_reward')
-        ->toArray();
-
-    $trendSetoran = \App\Models\TransaksiSetor::select(
-            \Illuminate\Support\Facades\DB::raw('DATE(tanggal_waktu) as date'),
-            \Illuminate\Support\Facades\DB::raw('SUM(total_berat) as total')
-        )
-        ->where('tanggal_waktu', '>=', now()->subDays(6)->startOfDay())
-        ->groupBy('date')
-        ->orderBy('date')
-        ->get();
-
-    return Inertia::render('Dashboard', [
-        'stats' => [
-            'totalMember' => $totalMember,
-            'totalPetugas' => $totalPetugas,
-            'totalPos' => $totalPos,
-            'kategoriSampah' => $kategoriSampah,
-            'setoranHariIni' => [
-                'total' => $totalSetoranHariIni,
-                'byStatus' => $setoranByStatus,
-            ],
-            'poinHariIni' => [
-                'total' => $totalPoinHariIni,
-                'byCategory' => $poinTukarByCategory,
-            ],
-            'trendSetoran' => $trendSetoran,
-        ]
-    ]);
-})->middleware(['auth', 'web.non_petugas', 'verified'])->name('dashboard');
+Route::get('/dashboard', [DashboardController::class, 'index'])
+    ->middleware(['auth', 'web.non_petugas', 'verified'])
+    ->name('dashboard');
 
 Route::middleware(['auth', 'web.non_petugas'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
@@ -110,6 +63,12 @@ Route::middleware(['auth', 'web.non_petugas'])->group(function () {
     // Analitik
     Route::prefix('analitik')->name('analitik.')->group(function () {
         Route::get('/laporan', fn() => Inertia::render('UnderDevelopment'))->name('laporan');
+    });
+
+    // Gamifikasi
+    Route::prefix('gamifikasi')->name('gamifikasi.')->group(function () {
+        Route::post('/kuis/settings', [\App\Http\Controllers\Gamifikasi\KuisController::class, 'updateSettings'])->name('kuis.settings.update');
+        Route::resource('kuis', \App\Http\Controllers\Gamifikasi\KuisController::class);
     });
 
     // Notifikasi (JSON API)

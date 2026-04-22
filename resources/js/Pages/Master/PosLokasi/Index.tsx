@@ -107,10 +107,10 @@ export default function Index({ pos_lokasi, filters }: Props) {
                 <div className="bg-white py-4 rounded-sm border border-gray-200 shadow-xs">
                     <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 px-4 mb-6">
                         <div className="flex flex-1 items-center gap-4">
-                            <TableSearch 
-                                value={search} 
-                                onChange={onSearchChange} 
-                                placeholder="Cari nama pos atau alamat..." 
+                            <TableSearch
+                                value={search}
+                                onChange={onSearchChange}
+                                placeholder="Cari nama pos atau alamat..."
                                 className="flex-1 max-w-sm rounded-sm border-gray-200"
                             />
                         </div>
@@ -156,16 +156,14 @@ export default function Index({ pos_lokasi, filters }: Props) {
                                             </span>
                                         </TD>
                                         <TD className="text-center py-3 px-4">
-                                            <span className={`inline-flex items-center px-3 py-0.5 text-[9px] font-medium uppercase tracking-widest ${
-                                                item.latitude && item.longitude ? 'bg-sankara-badge-tersedia text-white' : 'bg-sankara-badge-tidak-tersedia text-white'
-                                            }`}>
+                                            <span className={`inline-flex items-center px-3 py-0.5 text-[9px] font-medium uppercase tracking-widest ${item.latitude && item.longitude ? 'bg-sankara-badge-tersedia text-white' : 'bg-sankara-badge-tidak-tersedia text-white'
+                                                }`}>
                                                 {item.latitude && item.longitude ? 'Tersedia' : 'Tidak tersedia'}
                                             </span>
                                         </TD>
                                         <TD className="text-center py-3 px-4">
-                                            <span className={`inline-flex items-center px-3 py-0.5 text-[9px] font-medium uppercase tracking-widest ${
-                                                item.is_aktif ? 'bg-sankara-badge-aktif text-white' : 'bg-sankara-badge-nonaktif text-white'
-                                            }`}>
+                                            <span className={`inline-flex items-center px-3 py-0.5 text-[9px] font-medium uppercase tracking-widest ${item.is_aktif ? 'bg-sankara-badge-aktif text-white' : 'bg-sankara-badge-nonaktif text-white'
+                                                }`}>
                                                 {item.is_aktif ? 'Aktif' : 'Non-Aktif'}
                                             </span>
                                         </TD>
@@ -176,9 +174,9 @@ export default function Index({ pos_lokasi, filters }: Props) {
                                                         <Edit className="w-3.5 h-3.5" />
                                                     </Button>
                                                 </Link>
-                                                <Button 
+                                                <Button
                                                     variant="danger"
-                                                    className="p-2 shadow-xs" 
+                                                    className="p-2 shadow-xs"
                                                     title="Hapus"
                                                     onClick={() => handleDelete(item.id)}
                                                 >
@@ -191,16 +189,16 @@ export default function Index({ pos_lokasi, filters }: Props) {
                             ) : (
                                 <TR>
                                     <TD colSpan={8} className="py-12 text-center text-slate-400">
-                                        <p>Belum ada data pos unit tersedia.</p>
+                                        <p className='text-xs'>Belum ada data pos unit tersedia.</p>
                                     </TD>
                                 </TR>
                             )}
                         </TBody>
                     </Table>
 
-                    <Pagination 
-                        links={pos_lokasi.links} 
-                        meta={pos_lokasi.meta} 
+                    <Pagination
+                        links={pos_lokasi.links}
+                        meta={pos_lokasi.meta}
                     />
                 </div>
             </div>

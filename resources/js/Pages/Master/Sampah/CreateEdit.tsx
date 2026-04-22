@@ -87,7 +87,7 @@ export default function CreateEdit({ sampah }: Props) {
                 <div className="bg-white rounded-sm border border-slate-200 p-6 max-w-2xl shadow-sm">
                     <form onSubmit={handleSubmit} className="space-y-6">
                         <div>
-                            <Label value="Nama Sampah" />
+                            <Label value="Nama Sampah" required />
                             <Input
                                 type="text"
                                 value={data.nama_sampah}
@@ -99,7 +99,7 @@ export default function CreateEdit({ sampah }: Props) {
                         </div>
 
                         <div>
-                            <Label value="Kategori" />
+                            <Label value="Kategori" required />
                             <select
                                 value={data.kategori}
                                 onChange={(e) => setData('kategori', e.target.value)}
@@ -113,7 +113,7 @@ export default function CreateEdit({ sampah }: Props) {
                         </div>
 
                         <div>
-                            <Label value="Poin per Satuan (kg)" />
+                            <Label value="Poin per Satuan (kg)" required />
                             <Input
                                 type="number"
                                 value={data.poin_per_satuan}

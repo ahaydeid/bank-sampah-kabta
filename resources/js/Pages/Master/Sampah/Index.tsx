@@ -101,10 +101,10 @@ export default function Index({ sampah, filters }: Props) {
                 <div className="bg-white overflow-hidden py-4">
                     <div className="flex flex-col md:flex-row md:items-center justify-end gap-4 mb-4">
                         <PerPageSelector value={sampah.meta.per_page} onChange={handlePerPageChange} />
-                        <TableSearch 
-                            value={search} 
-                            onChange={onSearchChange} 
-                            placeholder="Cari nama sampah atau kategori..." 
+                        <TableSearch
+                            value={search}
+                            onChange={onSearchChange}
+                            placeholder="Cari nama sampah atau kategori..."
                         />
                     </div>
 
@@ -123,11 +123,10 @@ export default function Index({ sampah, filters }: Props) {
                                     <TR key={item.id} index={(sampah.meta.current_page - 1) * sampah.meta.per_page + index}>
                                         <TD className="text-slate-800">{item.nama_sampah}</TD>
                                         <TD>
-                                            <span className={`px-3 py-1.5 text-[9px] font-medium text-white uppercase tracking-wider ${
-                                                item.kategori === 'Organik' ? 'bg-sankara-badge-organik' : 
-                                                item.kategori === 'Anorganik' ? 'bg-sankara-badge-anorganik' : 
-                                                'bg-slate-600'
-                                            }`}>
+                                            <span className={`px-3 py-1.5 text-[9px] font-medium text-white uppercase tracking-wider ${item.kategori === 'Organik' ? 'bg-sankara-badge-organik' :
+                                                    item.kategori === 'Anorganik' ? 'bg-sankara-badge-anorganik' :
+                                                        'bg-slate-600'
+                                                }`}>
                                                 {item.kategori}
                                             </span>
                                         </TD>
@@ -141,9 +140,9 @@ export default function Index({ sampah, filters }: Props) {
                                                         <Edit className="w-3.5 h-3.5" />
                                                     </Button>
                                                 </Link>
-                                                <Button 
-                                                    variant="danger" 
-                                                    className="p-2 shadow-xs" 
+                                                <Button
+                                                    variant="danger"
+                                                    className="p-2 shadow-xs"
                                                     title="Hapus"
                                                     onClick={() => handleDelete(item.id)}
                                                 >
@@ -156,16 +155,16 @@ export default function Index({ sampah, filters }: Props) {
                             ) : (
                                 <TR>
                                     <TD colSpan={5} className="py-12 text-center text-slate-400">
-                                        <p>Belum ada data sampah tersedia.</p>
+                                        <p className='text-xs'>Belum ada data sampah tersedia.</p>
                                     </TD>
                                 </TR>
                             )}
                         </TBody>
                     </Table>
 
-                    <Pagination 
-                        links={sampah.links} 
-                        meta={sampah.meta} 
+                    <Pagination
+                        links={sampah.links}
+                        meta={sampah.meta}
                     />
                 </div>
             </div>

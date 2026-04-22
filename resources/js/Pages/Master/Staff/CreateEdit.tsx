@@ -144,7 +144,7 @@ export default function CreateEdit({ staff, pos_lokasi = [] }: Props) {
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
-                                    <Label value="Alamat Email" />
+                                    <Label value="Alamat Email" required />
                                     <Input
                                         type="email"
                                         value={data.email}
@@ -156,7 +156,7 @@ export default function CreateEdit({ staff, pos_lokasi = [] }: Props) {
                                 </div>
 
                                 <div>
-                                    <Label value={isEdit ? "Password (Kosongkan jika tidak ganti)" : "Password"} />
+                                    <Label value={isEdit ? "Password (Kosongkan jika tidak ganti)" : "Password"} required={!isEdit} />
                                     <Input
                                         type="password"
                                         value={data.password}
@@ -168,7 +168,7 @@ export default function CreateEdit({ staff, pos_lokasi = [] }: Props) {
                                 </div>
 
                                 <div>
-                                    <Label value="Peran / Hak Akses" />
+                                    <Label value="Peran / Hak Akses" required />
                                     <select
                                         value={data.peran}
                                         onChange={(e) => setData('peran', e.target.value as any)}
@@ -182,7 +182,7 @@ export default function CreateEdit({ staff, pos_lokasi = [] }: Props) {
 
                                 {data.peran === 'petugas' && (
                                     <div>
-                                        <Label value="Pos Unit" />
+                                        <Label value="Pos Unit" required />
                                         <select
                                             value={data.pos_id}
                                             onChange={(e) => setData('pos_id', e.target.value)}
@@ -249,7 +249,7 @@ export default function CreateEdit({ staff, pos_lokasi = [] }: Props) {
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
-                                    <Label value="Nama Lengkap" />
+                                    <Label value="Nama Lengkap" required />
                                     <Input
                                         type="text"
                                         value={data.nama}

@@ -57,7 +57,7 @@ export default function EditPassword() {
                     <div className="bg-white rounded border border-slate-100 p-6">
                         <form onSubmit={handleSubmit} className="space-y-4">
                             <div>
-                                <label className="block text-sm font-medium text-slate-700 mb-2">Password Saat Ini</label>
+                                <label className="block text-sm font-medium text-slate-700 mb-2">Password Saat Ini <span className="text-red-500 ms-1">*</span></label>
                                 <input
                                     type="password"
                                     value={data.current_password}
@@ -69,7 +69,7 @@ export default function EditPassword() {
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium text-slate-700 mb-2">Password Baru</label>
+                                <label className="block text-sm font-medium text-slate-700 mb-2">Password Baru <span className="text-red-500 ms-1">*</span></label>
                                 <input
                                     type="password"
                                     value={data.password}
@@ -82,7 +82,7 @@ export default function EditPassword() {
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium text-slate-700 mb-2">Konfirmasi Password Baru</label>
+                                <label className="block text-sm font-medium text-slate-700 mb-2">Konfirmasi Password Baru <span className="text-red-500 ms-1">*</span></label>
                                 <input
                                     type="password"
                                     value={data.password_confirmation}
