@@ -183,7 +183,7 @@ interface SidebarProps {
 
 export default function Sidebar({ isCollapsed, isMobileOpen, onCloseMobile }: SidebarProps) {
     const { auth } = usePage().props as any;
-    const isAdmin = auth?.user?.peran === 'admin';
+    const isAdminLevel = ['admin', 'superadmin'].includes(auth?.user?.peran);
     const scrollRef = useRef<HTMLDivElement>(null);
     const mobileScrollRef = useRef<HTMLDivElement>(null);
 
@@ -283,7 +283,7 @@ export default function Sidebar({ isCollapsed, isMobileOpen, onCloseMobile }: Si
                             { label: 'Penukaran Poin', href: route('sistem.pengaturan.penukaran-poin'), active: route().current('sistem.pengaturan.penukaran-poin') },
                         ]
                     },
-                    ...(isAdmin ? [{
+                    ...(isAdminLevel ? [{
                         label: 'Log Aktivitas',
                         icon: ShieldCheck,
                         href: route('sistem.log-aktivitas'),

@@ -59,6 +59,7 @@ sync_service_code() {
             --exclude=vendor \
             --exclude=storage \
             --exclude=bootstrap/cache \
+            --exclude=public/hot \
             -C "$ROOT_DIR" \
             -cf - . \
             | docker exec -i "$id" tar -xf - -C /var/www/html
@@ -70,6 +71,7 @@ sync_service_code() {
             --exclude=storage \
             --exclude=bootstrap/cache \
             --exclude=public \
+            --exclude=public/hot \
             -C "$ROOT_DIR" \
             -cf - . \
             | docker exec -i "$id" tar -xf - -C /var/www/html

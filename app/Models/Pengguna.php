@@ -14,6 +14,11 @@ class Pengguna extends Authenticatable
 {
     use Notifiable, HasRoles, HasApiTokens, LogsActivity;
 
+    public const SUPERADMIN = 'superadmin';
+    public const ADMIN = 'admin';
+    public const PETUGAS = 'petugas';
+    public const MEMBER = 'member';
+
     protected $table = 'pengguna';
 
     protected $guard_name = 'web';
@@ -32,6 +37,25 @@ class Pengguna extends Authenticatable
     public function getRoleNameAttribute()
     {
         return $this->getRoleNames()->first() ?: $this->peran;
+    }
+
+    public function isSuperAdmin(): bool
+    {
+        return $this->peran === self::SUPERADMIN;
+    }
+
+    public function isAdminLevel(): bool
+    {
+        return in_array($this->peran, [self::SUPERADMIN, self::ADMIN], true);
+    }
+
+    public function allowedManagedStaffRoles(): array
+    {
+        if ($this->isSuperAdmin()) {
+            return [self::SUPERADMIN, self::ADMIN, self::PETUGAS];
+        }
+
+        return [self::ADMIN, self::PETUGAS];
     }
 
     protected $casts = [

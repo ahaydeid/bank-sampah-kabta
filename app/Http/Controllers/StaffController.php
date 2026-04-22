@@ -18,8 +18,20 @@ class StaffController extends Controller
     {
         $search = $request->input('search');
         $perPage = $request->input('per_page', 10);
+        $user = $this->currentUser();
 
-        $staff = Pengguna::whereIn('peran', ['petugas', 'admin'])
+        $staff = Pengguna::query()
+            ->where(function ($query) use ($user) {
+                $query->whereIn('peran', [Pengguna::ADMIN, Pengguna::PETUGAS]);
+
+                if ($user->isSuperAdmin()) {
+                    $query->orWhere(function ($superadminQuery) use ($user) {
+                        $superadminQuery
+                            ->where('peran', Pengguna::SUPERADMIN)
+                            ->where('id', $user->id);
+                    });
+                }
+            })
             ->with(['profil' => function($q) {
                 $q->with('pos:id,nama_pos');
             }])
@@ -55,9 +67,7 @@ class StaffController extends Controller
 
     public function show(Pengguna $staff)
     {
-        if (!in_array($staff->peran, ['petugas', 'admin'])) {
-            abort(404);
-        }
+        $this->ensureStaffIsManageable($staff);
 
         $staff->load(['profil.pos']);
         return Inertia::render('Master/Staff/Show', [
@@ -74,11 +84,13 @@ class StaffController extends Controller
 
     public function store(Request $request): RedirectResponse
     {
+        $allowedRoles = $this->allowedManageableStaffRoles();
+
         $validated = $request->validate([
             'nama' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'unique:pengguna,email'],
             'password' => ['required', 'string', 'min:8'],
-            'peran' => ['required', 'in:petugas,admin'],
+            'peran' => ['required', 'in:' . implode(',', $allowedRoles)],
             'jabatan' => ['nullable', 'string', 'max:100'],
             'no_hp' => ['nullable', 'string', 'max:20'],
             'pos_id' => ['required_if:peran,petugas', 'nullable', 'exists:pos_lokasi,id'],
@@ -112,9 +124,7 @@ class StaffController extends Controller
 
     public function edit(Pengguna $staff)
     {
-        if (!in_array($staff->peran, ['petugas', 'admin'])) {
-            abort(404);
-        }
+        $this->ensureStaffIsManageable($staff);
 
         $staff->load('profil');
         return Inertia::render('Master/Staff/CreateEdit', [
@@ -125,15 +135,14 @@ class StaffController extends Controller
 
     public function update(Request $request, Pengguna $staff): RedirectResponse
     {
-        if (!in_array($staff->peran, ['petugas', 'admin'])) {
-            abort(404);
-        }
+        $this->ensureStaffIsManageable($staff);
+        $allowedRoles = $this->allowedManageableStaffRoles();
 
         $validated = $request->validate([
             'nama' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'unique:pengguna,email,' . $staff->id],
             'password' => ['nullable', 'string', 'min:8'],
-            'peran' => ['required', 'in:petugas,admin'],
+            'peran' => ['required', 'in:' . implode(',', $allowedRoles)],
             'jabatan' => ['nullable', 'string', 'max:100'],
             'no_hp' => ['nullable', 'string', 'max:20'],
             'is_aktif' => ['required', 'boolean'],
@@ -176,9 +185,7 @@ class StaffController extends Controller
 
     public function destroy(Pengguna $staff): RedirectResponse
     {
-        if (!in_array($staff->peran, ['petugas', 'admin'])) {
-            abort(404);
-        }
+        $this->ensureStaffIsManageable($staff);
 
         // Prevent self-deletion
         if (auth()->id() === $staff->id) {
@@ -188,5 +195,39 @@ class StaffController extends Controller
         $staff->delete();
 
         return redirect()->route('master.staff.index')->with('success', 'Data staff berhasil dihapus');
+    }
+
+    private function allowedManageableStaffRoles(): array
+    {
+        return $this->currentUser()->allowedManagedStaffRoles();
+    }
+
+    private function currentUser(): Pengguna
+    {
+        /** @var Pengguna|null $user */
+        $user = auth()->user();
+
+        if (!$user) {
+            abort(403);
+        }
+
+        return $user;
+    }
+
+    private function ensureStaffIsManageable(Pengguna $staff): void
+    {
+        $user = $this->currentUser();
+
+        if (!in_array($staff->peran, [Pengguna::SUPERADMIN, Pengguna::ADMIN, Pengguna::PETUGAS], true)) {
+            abort(404);
+        }
+
+        if ($staff->peran === Pengguna::SUPERADMIN && $staff->id !== $user->id) {
+            abort(404);
+        }
+
+        if (!in_array($staff->peran, $this->allowedManageableStaffRoles(), true)) {
+            abort(404);
+        }
     }
 }

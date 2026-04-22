@@ -18,10 +18,10 @@ Route::get('/', function () {
 });
 
 Route::get('/dashboard', [DashboardController::class, 'index'])
-    ->middleware(['auth', 'web.non_petugas', 'verified'])
+    ->middleware(['auth', 'web.admin', 'verified'])
     ->name('dashboard');
 
-Route::middleware(['auth', 'web.non_petugas'])->group(function () {
+Route::middleware(['auth', 'web.admin'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
     Route::get('/profile/settings', [ProfileController::class, 'settings'])->name('profile.settings');
     Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -86,7 +86,7 @@ Route::middleware(['auth', 'web.non_petugas'])->group(function () {
             Route::post('/update', [App\Http\Controllers\Sistem\SettingController::class, 'update'])->name('update');
         });
 
-        // Log Aktivitas — Admin only
+        // Log Aktivitas — Admin / Superadmin
         Route::middleware('web.admin')->group(function () {
             Route::get('/log-aktivitas', [App\Http\Controllers\Sistem\ActivityLogController::class, 'index'])->name('log-aktivitas');
             Route::delete('/log-aktivitas/login/{loginLog}', [App\Http\Controllers\Sistem\ActivityLogController::class, 'destroyLoginLog'])->name('log-aktivitas.login.destroy');

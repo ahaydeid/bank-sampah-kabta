@@ -1,5 +1,5 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head, Link, useForm } from '@inertiajs/react';
+import { Head, Link, useForm, usePage } from '@inertiajs/react';
 import { ArrowLeft, Save, ShieldCheck, Key, Camera, User } from 'lucide-react';
 import { FormEventHandler, useState, useRef } from 'react';
 import Alert from '@/Components/Base/Alert';
@@ -21,7 +21,7 @@ interface Staff {
     id: number;
     username: string;
     email: string;
-    peran: 'admin' | 'petugas';
+    peran: 'superadmin' | 'admin' | 'petugas';
     is_aktif: boolean;
     profil: Profil;
 }
@@ -41,7 +41,7 @@ interface StaffForm {
     nama: string;
     email: string;
     password: string;
-    peran: 'admin' | 'petugas';
+    peran: 'superadmin' | 'admin' | 'petugas';
     jabatan: string;
     no_hp: string;
     is_aktif: boolean;
@@ -50,6 +50,8 @@ interface StaffForm {
 }
 
 export default function CreateEdit({ staff, pos_lokasi = [] }: Props) {
+    const { auth } = usePage().props as any;
+    const canManageSuperadmin = auth?.user?.peran === 'superadmin';
     const isEdit = !!staff;
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [previewUrl, setPreviewUrl] = useState<string | null>(
@@ -83,7 +85,7 @@ export default function CreateEdit({ staff, pos_lokasi = [] }: Props) {
         const action = isEdit ? 'diperbarui' : 'ditambahkan';
 
         Alert.confirm({
-            title: isEdit ? 'Simpan Perubahan?' : 'Tambah Staff/Petugas Baru?',
+            title: isEdit ? 'Simpan Perubahan?' : 'Tambah Staff Baru?',
             text: `Data staff ini akan ${action}.`,
             confirmButtonText: isEdit ? 'Ya, Simpan' : 'Ya, Tambah',
         }).then((result) => {
@@ -117,7 +119,7 @@ export default function CreateEdit({ staff, pos_lokasi = [] }: Props) {
 
     return (
         <AuthenticatedLayout>
-            <Head title={isEdit ? 'Edit Staff/Admin' : 'Tambah Staff/Petugas Baru'} />
+            <Head title={isEdit ? 'Edit Staff' : 'Tambah Staff Baru'} />
 
             <div className="space-y-6">
                 <div className="flex items-center space-x-4">
@@ -129,7 +131,7 @@ export default function CreateEdit({ staff, pos_lokasi = [] }: Props) {
                     </Link>
                     <div>
                         <h1 className="text-2xl font-bold text-slate-800">
-                            {isEdit ? 'Edit Staff/Admin' : 'Tambah Staff/Petugas Baru'}
+                            {isEdit ? 'Edit Staff' : 'Tambah Staff Baru'}
                         </h1>
                     </div>
                 </div>
@@ -176,6 +178,9 @@ export default function CreateEdit({ staff, pos_lokasi = [] }: Props) {
                                     >
                                         <option value="petugas">Petugas Lapangan</option>
                                         <option value="admin">Administrator System</option>
+                                        {canManageSuperadmin && (
+                                            <option value="superadmin">Super Administrator</option>
+                                        )}
                                     </select>
                                     {errors.peran && <p className="text-red-500 text-xs mt-1">{errors.peran}</p>}
                                 </div>

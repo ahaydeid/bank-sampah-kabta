@@ -19,7 +19,7 @@ interface Staff {
     id: number;
     username: string;
     email: string;
-    peran: 'admin' | 'petugas';
+    peran: 'superadmin' | 'admin' | 'petugas';
     is_aktif: boolean;
     profil: Profil;
 }
@@ -70,9 +70,14 @@ export default function Show({ staff }: Props) {
                             <p className="text-slate-500 font-medium mb-4">{staff.profil.jabatan || 'Staff'}</p>
 
                             <div className="flex flex-col space-y-2 mt-6">
-                                <span className={`inline-flex items-center justify-center px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${staff.peran === 'admin' ? 'bg-sankara-green text-white' : 'bg-blue-500 text-white'
+                                <span className={`inline-flex items-center justify-center px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${
+                                    staff.peran === 'superadmin'
+                                        ? 'bg-slate-800 text-white'
+                                        : staff.peran === 'admin'
+                                            ? 'bg-sankara-green text-white'
+                                            : 'bg-blue-500 text-white'
                                     } mx-auto`}>
-                                    {staff.peran === 'admin' ? 'Administrator' : 'Petugas Lapangan'}
+                                    {staff.peran === 'superadmin' ? 'Super Administrator' : staff.peran === 'admin' ? 'Administrator' : 'Petugas Lapangan'}
                                 </span>
                                 <span className={`inline-flex items-center justify-center px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${staff.is_aktif ? 'bg-emerald-500 text-white' : 'bg-red-500 text-white'
                                     } mx-auto`}>

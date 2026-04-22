@@ -23,7 +23,7 @@ interface Staff {
     id: number;
     username: string;
     email: string;
-    peran: 'admin' | 'petugas';
+    peran: 'superadmin' | 'admin' | 'petugas';
     is_aktif: boolean;
     profil: Profil;
 }
@@ -160,7 +160,12 @@ export default function Index({ staff, filters }: Props) {
                                             <div className="text-sm font-medium text-slate-600 whitespace-nowrap">{item.profil.pos?.nama_pos || '-'}</div>
                                         </TD>
                                         <TD>
-                                            <span className={`px-2 py-0.5 text-[9px] font-bold text-white rounded-sm uppercase tracking-wider ${item.peran === 'admin' ? 'bg-sankara-badge-admin' : 'bg-sankara-badge-petugas'
+                                            <span className={`px-2 py-0.5 text-[9px] font-bold text-white rounded-sm uppercase tracking-wider ${
+                                                item.peran === 'superadmin'
+                                                    ? 'bg-slate-800'
+                                                    : item.peran === 'admin'
+                                                        ? 'bg-sankara-badge-admin'
+                                                        : 'bg-sankara-badge-petugas'
                                                 }`}>
                                                 {item.peran}
                                             </span>

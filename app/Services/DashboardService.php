@@ -14,7 +14,7 @@ use Carbon\Carbon;
 
 class DashboardService
 {
-    public function getDashboardStats($filters)
+    public function getDashboardStats($filters, ?Pengguna $viewer = null)
     {
         $timeRange = $filters['timeRange'] ?? '7hari';
         $month = $filters['month'] ?? now()->month;
@@ -23,7 +23,13 @@ class DashboardService
 
         // Summary Counts
         $totalMember = Pengguna::where('peran', 'member')->count();
-        $totalPetugas = Pengguna::where('peran', '!=', 'member')->count();
+        $nonMemberQuery = Pengguna::where('peran', '!=', Pengguna::MEMBER);
+
+        if (!$viewer?->isSuperAdmin()) {
+            $nonMemberQuery->where('peran', '!=', Pengguna::SUPERADMIN);
+        }
+
+        $totalPetugas = $nonMemberQuery->count();
         $totalPos = PosLokasi::count();
         $kategoriSampah = Sampah::count();
 

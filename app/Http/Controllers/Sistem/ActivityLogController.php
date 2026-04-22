@@ -5,7 +5,9 @@ namespace App\Http\Controllers\Sistem;
 use App\Http\Controllers\Controller;
 use App\Models\ActivityLog;
 use App\Models\LoginLog;
+use App\Models\Pengguna;
 use Illuminate\Http\Request;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
@@ -18,13 +20,15 @@ class ActivityLogController extends Controller
     {
         $perPageLogin = $request->input('per_page_login', 10);
         $perPageActivity = $request->input('per_page_activity', 10);
+        $loginLogsQuery = $this->visibleLoginLogsQuery();
+        $activityLogsQuery = $this->visibleActivityLogsQuery();
 
         // Shared date range filter
         $dateFrom = $request->input('date_from');
         $dateTo = $request->input('date_to');
 
         // Tab 1: Riwayat Login — dengan filter event & status
-        $loginLogs = LoginLog::query()
+        $loginLogs = $loginLogsQuery
             ->when($request->input('search_login'), function ($query, $search) {
                 $query->where(function ($q) use ($search) {
                     $q->where('nama_user', 'like', "%{$search}%")
@@ -48,7 +52,7 @@ class ActivityLogController extends Controller
             ->withQueryString();
 
         // Tab 2: Riwayat Perubahan Data — dengan filter modul & aksi
-        $activityLogs = ActivityLog::query()
+        $activityLogs = $activityLogsQuery
             ->when($request->input('search_activity'), function ($query, $search) {
                 $query->where(function ($q) use ($search) {
                     $q->where('nama_user', 'like', "%{$search}%")
@@ -74,10 +78,10 @@ class ActivityLogController extends Controller
 
         // Ambil opsi filter dari data yang sudah ada (ringan, pakai distinct)
         $filterOptions = [
-            'events'   => LoginLog::select('event')->distinct()->orderBy('event')->pluck('event')->toArray(),
-            'statuses' => LoginLog::select('status')->distinct()->orderBy('status')->pluck('status')->toArray(),
-            'moduls'   => ActivityLog::select('modul')->distinct()->orderBy('modul')->pluck('modul')->toArray(),
-            'aksis'    => ActivityLog::select('aksi')->distinct()->orderBy('aksi')->pluck('aksi')->toArray(),
+            'events'   => (clone $loginLogsQuery)->select('event')->distinct()->orderBy('event')->pluck('event')->toArray(),
+            'statuses' => (clone $loginLogsQuery)->select('status')->distinct()->orderBy('status')->pluck('status')->toArray(),
+            'moduls'   => (clone $activityLogsQuery)->select('modul')->distinct()->orderBy('modul')->pluck('modul')->toArray(),
+            'aksis'    => (clone $activityLogsQuery)->select('aksi')->distinct()->orderBy('aksi')->pluck('aksi')->toArray(),
         ];
 
         return Inertia::render('Sistem/LogAktivitas/Index', [
@@ -104,6 +108,8 @@ class ActivityLogController extends Controller
      */
     public function destroyLoginLog(LoginLog $loginLog)
     {
+        $this->ensureLoginLogVisible($loginLog);
+
         DB::transaction(function () use ($loginLog) {
             $loginLog->delete();
         });
@@ -121,6 +127,14 @@ class ActivityLogController extends Controller
             'ids.*' => 'integer|exists:login_logs,id',
         ]);
 
+        $visibleCount = (clone $this->visibleLoginLogsQuery())
+            ->whereIn('id', $request->ids)
+            ->count();
+
+        if ($visibleCount !== count($request->ids)) {
+            abort(404);
+        }
+
         DB::transaction(function () use ($request) {
             LoginLog::whereIn('id', $request->ids)->delete();
         });
@@ -133,6 +147,8 @@ class ActivityLogController extends Controller
      */
     public function destroyActivityLog(ActivityLog $activityLog)
     {
+        $this->ensureActivityLogVisible($activityLog);
+
         DB::transaction(function () use ($activityLog) {
             $activityLog->delete();
         });
@@ -150,10 +166,95 @@ class ActivityLogController extends Controller
             'ids.*' => 'integer|exists:activity_logs,id',
         ]);
 
+        $visibleCount = (clone $this->visibleActivityLogsQuery())
+            ->whereIn('id', $request->ids)
+            ->count();
+
+        if ($visibleCount !== count($request->ids)) {
+            abort(404);
+        }
+
         DB::transaction(function () use ($request) {
             ActivityLog::whereIn('id', $request->ids)->delete();
         });
 
         return back()->with('success', count($request->ids) . ' log aktivitas berhasil dihapus.');
+    }
+
+    private function visibleLoginLogsQuery(): Builder
+    {
+        return $this->applySuperadminVisibility(LoginLog::query());
+    }
+
+    private function visibleActivityLogsQuery(): Builder
+    {
+        return $this->applySuperadminVisibility(ActivityLog::query());
+    }
+
+    private function applySuperadminVisibility(Builder $query): Builder
+    {
+        if ($this->currentUser()->isSuperAdmin()) {
+            return $query;
+        }
+
+        $superadminIds = Pengguna::query()
+            ->where('peran', Pengguna::SUPERADMIN)
+            ->pluck('id');
+
+        $identifiers = Pengguna::query()
+            ->where('peran', Pengguna::SUPERADMIN)
+            ->with('profil:id,pengguna_id,nama')
+            ->get()
+            ->flatMap(fn (Pengguna $user) => [
+                $user->email,
+                $user->username,
+                $user->profil?->nama,
+            ])
+            ->filter()
+            ->unique()
+            ->values()
+            ->all();
+
+        return $query->where(function (Builder $visibleQuery) use ($superadminIds, $identifiers) {
+            $visibleQuery->whereNotIn('pengguna_id', $superadminIds);
+
+            if ($identifiers !== []) {
+                $visibleQuery->whereNotIn('nama_user', $identifiers);
+            }
+        });
+    }
+
+    private function ensureLoginLogVisible(LoginLog $loginLog): void
+    {
+        $exists = (clone $this->visibleLoginLogsQuery())
+            ->whereKey($loginLog->getKey())
+            ->exists();
+
+        if (!$exists) {
+            abort(404);
+        }
+    }
+
+    private function ensureActivityLogVisible(ActivityLog $activityLog): void
+    {
+        $exists = (clone $this->visibleActivityLogsQuery())
+            ->whereKey($activityLog->getKey())
+            ->exists();
+
+        if (!$exists) {
+            abort(404);
+        }
+    }
+
+    private function currentUser(): Pengguna
+    {
+        /** @var Pengguna|null $user */
+        $user = auth()->user();
+
+        if (!$user) {
+            abort(403);
+        }
+
+        return $user;
     }
 }

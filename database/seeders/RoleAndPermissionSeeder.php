@@ -16,9 +16,31 @@ class RoleAndPermissionSeeder extends Seeder
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
 
         // Create roles idempotently
+        $superadminRole = \Spatie\Permission\Models\Role::firstOrCreate(['name' => 'superadmin', 'guard_name' => 'web']);
         $adminRole = \Spatie\Permission\Models\Role::firstOrCreate(['name' => 'admin', 'guard_name' => 'web']);
         \Spatie\Permission\Models\Role::firstOrCreate(['name' => 'petugas', 'guard_name' => 'web']);
         \Spatie\Permission\Models\Role::firstOrCreate(['name' => 'member', 'guard_name' => 'web']);
+
+        // Create default Superadmin User
+        $superadmin = \App\Models\Pengguna::firstOrCreate(
+            ['email' => 'superadmin@sankara.id'],
+            [
+                'password' => \Illuminate\Support\Facades\Hash::make('Superadmin123!'),
+                'peran' => 'superadmin',
+                'is_aktif' => true,
+            ]
+        );
+
+        $superadmin->assignRole($superadminRole);
+
+        \App\Models\Profil::firstOrCreate(
+            ['pengguna_id' => $superadmin->id],
+            [
+                'nama' => 'Superadmin Sankara',
+                'jabatan' => 'Super Administrator',
+                'saldo_poin' => 0,
+            ]
+        );
 
         // Create default Admin User
         $admin = \App\Models\Pengguna::firstOrCreate(

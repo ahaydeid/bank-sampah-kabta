@@ -56,7 +56,8 @@ RUN apk add --no-cache \
 COPY --from=vendor /app/vendor ./vendor
 COPY . .
 COPY --from=frontend /app/public/build ./public/build
-RUN cp -a ./public /opt/app-public
+RUN rm -f ./public/hot \
+    && cp -a ./public /opt/app-public
 COPY docker/app/entrypoint.sh /usr/local/bin/app-entrypoint
 
 RUN chmod +x /usr/local/bin/app-entrypoint \

@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Auth;
 
+use App\Models\Pengguna;
 use Illuminate\Auth\Events\Lockout;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
@@ -51,12 +52,29 @@ class LoginRequest extends FormRequest
 
         $user = Auth::user();
 
-        if ($user?->peran === 'petugas') {
+        if (!$user instanceof Pengguna) {
+            Auth::guard('web')->logout();
+
+            throw ValidationException::withMessages([
+                'email' => trans('auth.failed'),
+            ]);
+        }
+
+        if (! $user->is_aktif) {
             Auth::guard('web')->logout();
             RateLimiter::clear($this->throttleKey());
 
             throw ValidationException::withMessages([
-                'email' => 'Akun petugas hanya dapat mengakses aplikasi mobile.',
+                'email' => 'Akun Anda telah dinonaktifkan.',
+            ]);
+        }
+
+        if (! $user->isAdminLevel()) {
+            Auth::guard('web')->logout();
+            RateLimiter::clear($this->throttleKey());
+
+            throw ValidationException::withMessages([
+                'email' => 'Hanya akun admin atau superadmin yang dapat mengakses aplikasi web.',
             ]);
         }
 
